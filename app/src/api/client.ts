@@ -1,5 +1,5 @@
 // HTTP client nói chuyện với firmware qua Wi-Fi AP của jammer.
-// Firmware mặc định: SoftAP "jammer" -> http://192.168.4.1
+// Firmware mặc định: SoftAP "nRF24-Tool" (pass 123456788) -> http://192.168.4.1
 // Điều khiển qua /WebCommand?command=<text> (giống lệnh serial).
 
 const DEFAULT_BASE = 'http://192.168.4.1';

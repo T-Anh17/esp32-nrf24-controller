@@ -71,7 +71,7 @@ export default function HubScreen({ navigation }: Props) {
         </View>
         {!connected && (
           <Text style={styles.hint}>
-            Kết nối Wi-Fi <Text style={styles.hintB}>jammer</Text> rồi kéo xuống để làm mới.
+            Kết nối Wi-Fi <Text style={styles.hintB}>nRF24-Tool</Text> rồi kéo xuống để làm mới.
           </Text>
         )}
       </Card>

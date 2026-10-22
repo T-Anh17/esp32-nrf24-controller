@@ -12,10 +12,10 @@ cd app
 npm install
 npm start
 ```
-Quét QR bằng Expo Go. Điện thoại và máy tính cùng mạng khi phát triển; khi điều khiển thật thì **điện thoại nối Wi-Fi `jammer`** (AP của ESP).
+Quét QR bằng Expo Go. Điện thoại và máy tính cùng mạng khi phát triển; khi điều khiển thật thì **điện thoại nối Wi-Fi `nRF24-Tool`** (mật khẩu `123456788`) — AP của ESP.
 
 ## Kết nối ESP
-- Mặc định firmware phát AP `jammer` tại `http://192.168.4.1`.
+- Mặc định firmware phát AP `nRF24-Tool` (mật khẩu `123456788`) tại `http://192.168.4.1`.
 - Đổi địa chỉ trong **Cài đặt → Kết nối** nếu khác.
 
 ## Cấu trúc

@@ -46,7 +46,7 @@ export default function SettingsScreen() {
       Alert.alert('Kết nối OK', `${s.nrf24_count} module nRF24.`);
       setCount(s.nrf24_count);
     } catch {
-      Alert.alert('Không kết nối được', 'Kiểm tra đã vào Wi-Fi "jammer" chưa.');
+      Alert.alert('Không kết nối được', 'Kiểm tra đã vào Wi-Fi "nRF24-Tool" chưa.');
     } finally {
       setBusy(false);
     }
