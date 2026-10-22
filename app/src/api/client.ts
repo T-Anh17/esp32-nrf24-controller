@@ -52,13 +52,20 @@ export const stopAll = () => sendCommand('stop');
 export const reboot = () => sendCommand('reboot');
 export const scanWifi = () => sendCommand('scan wifi');
 
-/** Danh sách AP quét được, kèm kênh. Lọc bỏ ô rỗng. */
+/**
+ * Danh sách AP quét được, kèm kênh.
+ * Firmware trả ssids_by_channel[i] = các SSID trên kênh (i+1), nối bằng '\n'
+ * (nhiều AP cùng kênh -> nhiều dòng). Vậy kênh thật = i + 1, và phải tách '\n'
+ * để mỗi AP thành 1 dòng. (wifi_channels[] là SỐ LƯỢNG AP mỗi kênh, không dùng ở đây.)
+ */
 export async function wifiAps(): Promise<{ ssid: string; channel: number }[]> {
   const s = await getStatus();
   const out: { ssid: string; channel: number }[] = [];
-  s.ssids_by_channel.forEach((ssid, i) => {
-    if (ssid && ssid.trim().length > 0) {
-      out.push({ ssid, channel: s.wifi_channels[i] ?? i + 1 });
+  s.ssids_by_channel.forEach((entry, i) => {
+    if (!entry) return;
+    for (const ssid of entry.split('\n')) {
+      const name = ssid.trim();
+      if (name.length > 0) out.push({ ssid: name, channel: i + 1 });
     }
   });
   return out;
