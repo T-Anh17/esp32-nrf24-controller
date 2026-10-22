@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>nRF24 Jammer — nối dây</title>
+<style>
+  :root{
+    --bg:#f6f6f7; --paper:#fff; --fg:#18181b; --mut:#6b6b74; --line:#dedee3;
+    --board:#1f2a24; --board-edge:#0f1712; --pin:#d4b25a; --silk:#e9eee9;
+    --part:#f1f5f9; --part-edge:#94a3b8; --warn:#ea580c; --ok:#16a34a;
+    --w-power:#dc2626; --w-gnd:#27272a; --w-ce:#d4a72c; --w-csn:#e0823d;
+    --w-sck:#2563eb; --w-mosi:#16a34a; --w-miso:#a371f7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0d0d10; --paper:#17171b; --fg:#f1f1f3; --mut:#a0a0aa; --line:#2c2c33;
+      --board:#1c3326; --board-edge:#2f5a42; --silk:#dfe8df;
+      --part:#23232a; --part-edge:#55556a;
+      --w-gnd:#d4d4d8; --w-ce:#e3b341; --w-csn:#e0823d; --w-sck:#58a6ff; --w-mosi:#3fb950; --w-miso:#c08cff;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  main{max-width:1040px;margin:0 auto;padding:24px 16px 48px}
+  h1{font-size:24px;margin:0 0 4px}
+  h2{font-size:18px;margin:32px 0 10px}
+  .sub{color:var(--mut);margin:0 0 20px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  svg{width:100%;height:auto;display:block}
+  svg text{fill:var(--fg);font-family:inherit}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  .grid .card{margin:0}
+  .grid h3{font-size:15px;margin:0 0 8px}
+  .note{color:var(--mut);font-size:13px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600;font-size:13px}
+  .sw{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--mut);margin-top:10px}
+  ul.check{list-style:none;padding:0;margin:0}
+  ul.check li{padding:6px 0 6px 28px;position:relative;border-bottom:1px solid var(--line)}
+  ul.check li:last-child{border:0}
+  ul.check li::before{content:"☐";position:absolute;left:4px;top:5px;color:var(--mut)}
+  .warn{color:var(--warn);font-weight:600}
+  code{font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px}
+  .scroll{overflow-x:auto}
+  /* SVG */
+  .board{fill:var(--board);stroke:var(--board-edge);stroke-width:2}
+  .silk{fill:var(--silk);font-size:13px;font-weight:600}
+  .silk-s{fill:var(--silk);font-size:11px;opacity:.75}
+  .pin{fill:var(--pin);stroke:#8a6d1f;stroke-width:1}
+  .pin-used{fill:var(--pin);stroke:var(--fg);stroke-width:2.5}
+  .part{fill:var(--part);stroke:var(--part-edge);stroke-width:1.5}
+  .pad{fill:#d1d5db;stroke:#6b7280;stroke-width:1}
+  .w{fill:none;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  .w-power{stroke:var(--w-power)} .w-gnd{stroke:var(--w-gnd)} .w-ce{stroke:var(--w-ce)}
+  .w-csn{stroke:var(--w-csn)} .w-sck{stroke:var(--w-sck)} .w-mosi{stroke:var(--w-mosi)} .w-miso{stroke:var(--w-miso)}
+  .dot{fill:var(--fg)}
+  .lbl{font-size:13px} .lbl-b{font-size:13px;font-weight:700}
+  .lbl-s{font-size:11.5px;fill:var(--mut)!important}
+  .lbl-warn{font-size:12px;font-weight:700;fill:var(--warn)!important}
+  .cap{fill:#1f2937;stroke:#9ca3af;stroke-width:1.5}
+  .cap-band{fill:#d1d5db}
+</style>
+</head>
+<body>
+<main>
+  <h1>nRF24 Jammer: sơ đồ nối dây</h1>
+  <p class="sub">LilyGo T-Display-S3 (ESP32-S3, đã tháo màn hình) · module NRF24L01+PA+LNA · chạy headless, điều khiển bằng app</p>
+
+  <!-- ===== SƠ ĐỒ TỔNG ===== -->
+  <div class="card scroll">
+    <svg viewBox="0 0 760 620" role="img" aria-label="Sơ đồ nối nRF24 với ESP32-S3" style="min-width:680px">
+      <!-- Board -->
+      <rect class="board" x="420" y="88" width="160" height="476" rx="10"/>
+      <rect x="455" y="96" width="90" height="34" rx="4" fill="none" stroke="var(--silk)" stroke-opacity=".35" stroke-dasharray="4 3"/>
+      <text class="silk-s" x="500" y="117" text-anchor="middle">anten</text>
+      <text class="lbl-b" x="500" y="78" text-anchor="middle">T-Display-S3 · mặt sau</text>
+      <rect x="478" y="556" width="44" height="20" rx="6" fill="#9ca3af" stroke="#4b5563"/>
+      <text class="lbl-s" x="500" y="590" text-anchor="middle">USB-C</text>
+
+      <!-- Header trái: 3V 1 2 3 10 11 12 13 NC NC GND 5V -->
+      <circle class="pin-used" cx="440" cy="150" r="7"/><text class="silk" x="455" y="155">3V</text>
+      <circle class="pin-used" cx="440" cy="182" r="7"/><text class="silk" x="455" y="187">1</text>
+      <circle class="pin" cx="440" cy="214" r="7"/><text class="silk" x="455" y="219">2</text>
+      <circle class="pin" cx="440" cy="246" r="7"/><text class="silk" x="455" y="251">3</text>
+      <circle class="pin-used" cx="440" cy="278" r="7"/><text class="silk" x="455" y="283">10</text>
+      <circle class="pin-used" cx="440" cy="310" r="7"/><text class="silk" x="455" y="315">11</text>
+      <circle class="pin-used" cx="440" cy="342" r="7"/><text class="silk" x="455" y="347">12</text>
+      <circle class="pin-used" cx="440" cy="374" r="7"/><text class="silk" x="455" y="379">13</text>
+      <circle class="pin" cx="440" cy="406" r="7"/><text class="silk-s" x="455" y="410">NC</text>
+      <circle class="pin" cx="440" cy="438" r="7"/><text class="silk-s" x="455" y="442">NC</text>
+      <circle class="pin-used" cx="440" cy="470" r="7"/><text class="silk" x="455" y="475">GND</text>
+      <circle class="pin" cx="440" cy="502" r="7"/><text class="silk" x="455" y="507">5V</text>
+
+      <!-- Header phải: GND GND 43 44 18 17 21 16 NC GND GND 3V (không dùng) -->
+      <circle class="pin" cx="560" cy="150" r="7"/><text class="silk" x="545" y="155" text-anchor="end">GND</text>
+      <circle class="pin" cx="560" cy="182" r="7"/><text class="silk" x="545" y="187" text-anchor="end">GND</text>
+      <circle class="pin" cx="560" cy="214" r="7"/><text class="silk" x="545" y="219" text-anchor="end">43</text>
+      <circle class="pin" cx="560" cy="246" r="7"/><text class="silk" x="545" y="251" text-anchor="end">44</text>
+      <circle class="pin" cx="560" cy="278" r="7"/><text class="silk" x="545" y="283" text-anchor="end">18</text>
+      <circle class="pin" cx="560" cy="310" r="7"/><text class="silk" x="545" y="315" text-anchor="end">17</text>
+      <circle class="pin" cx="560" cy="342" r="7"/><text class="silk" x="545" y="347" text-anchor="end">21</text>
+      <circle class="pin" cx="560" cy="374" r="7"/><text class="silk" x="545" y="379" text-anchor="end">16</text>
+      <circle class="pin" cx="560" cy="406" r="7"/><text class="silk-s" x="545" y="410" text-anchor="end">NC</text>
+      <circle class="pin" cx="560" cy="438" r="7"/><text class="silk" x="545" y="443" text-anchor="end">GND</text>
+      <circle class="pin" cx="560" cy="470" r="7"/><text class="silk" x="545" y="475" text-anchor="end">GND</text>
+      <circle class="pin" cx="560" cy="502" r="7"/><text class="silk" x="545" y="507" text-anchor="end">3V</text>
+
+      <!-- nRF24 module: header 2x4 + nhãn màu 2 bên (như ảnh thật) -->
+      <text class="lbl-b" x="178" y="166" text-anchor="middle">NRF24L01+ PA/LNA</text>
+      <!-- connector 2x4 -->
+      <rect x="150" y="178" width="56" height="156" rx="8" fill="#15181d" stroke="#3a3f47" stroke-width="2"/>
+      <rect x="161" y="199" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="199" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+      <rect x="161" y="239" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="239" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+      <rect x="161" y="279" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="279" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+      <rect x="161" y="319" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="319" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+      <!-- stub pad<->nhãn -->
+      <path d="M122 205H161" stroke="#8b949e" stroke-width="2"/><path d="M122 245H161" stroke="#d4a72c" stroke-width="2"/>
+      <path d="M122 285H161" stroke="#2f81f7" stroke-width="2"/><path d="M122 325H161" stroke="#a371f7" stroke-width="2"/>
+      <path d="M195 205H234" stroke="#da3633" stroke-width="2"/><path d="M195 245H234" stroke="#e0823d" stroke-width="2"/>
+      <path d="M195 285H234" stroke="#2ea043" stroke-width="2"/><path d="M195 325H234" stroke="#8b949e" stroke-width="2"/>
+      <!-- nhãn trái -->
+      <rect x="36" y="193" width="86" height="24" rx="5" fill="#161b22" stroke="#30363d"/><text x="79" y="209" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">GND</text>
+      <rect x="36" y="233" width="86" height="24" rx="5" fill="#d4a72c"/><text x="79" y="249" text-anchor="middle" style="fill:#161b22;font-size:12px;font-weight:700">CE</text>
+      <rect x="36" y="273" width="86" height="24" rx="5" fill="#2f81f7"/><text x="79" y="289" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">SCK</text>
+      <rect x="36" y="313" width="86" height="24" rx="5" fill="#a371f7"/><text x="79" y="329" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">MISO</text>
+      <!-- nhãn phải -->
+      <rect x="234" y="193" width="86" height="24" rx="5" fill="#da3633"/><text x="277" y="209" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">VCC</text>
+      <rect x="234" y="233" width="86" height="24" rx="5" fill="#e0823d"/><text x="277" y="249" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">CSN</text>
+      <rect x="234" y="273" width="86" height="24" rx="5" fill="#2ea043"/><text x="277" y="289" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">MOSI</text>
+      <rect x="234" y="313" width="86" height="24" rx="5" fill="#8b949e"/><text x="277" y="329" text-anchor="middle" style="fill:#161b22;font-size:12px;font-weight:700">IRQ</text>
+      <text class="lbl-s" x="277" y="352" text-anchor="middle">không nối</text>
+      <text class="lbl-s" x="178" y="420" text-anchor="middle">module 2 hàng × 4 chân — nhãn 2 bên</text>
+
+      <!-- dây sang board: phải đi thẳng, trái vòng xuống dưới -->
+      <path class="w w-power" d="M320 205 H356 V150 H433"/>
+      <path class="w w-csn"   d="M320 245 H338 V182 H433"/>
+      <path class="w w-mosi"  d="M320 285 H378 V310 H433"/>
+      <path class="w w-gnd"   d="M36 205 H18 V392 H408 V470 H433"/>
+      <path class="w w-ce"    d="M36 245 H22 V368 H402 V278 H433"/>
+      <path class="w w-sck"   d="M36 285 H26 V380 H396 V342 H433"/>
+      <path class="w w-miso"  d="M36 325 H30 V356 H390 V374 H433"/>
+    </svg>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--w-power)"></i>VCC (3V3)</span>
+      <span><i class="sw" style="background:var(--w-gnd)"></i>GND</span>
+      <span><i class="sw" style="background:var(--w-ce)"></i>CE</span>
+      <span><i class="sw" style="background:var(--w-csn)"></i>CSN</span>
+      <span><i class="sw" style="background:var(--w-sck)"></i>SCK</span>
+      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI</span>
+      <span><i class="sw" style="background:var(--w-miso)"></i>MISO</span>
+      <span>● = điểm nối · chân tô viền đậm trên board = chân đang dùng</span>
+    </div>
+    <p class="note">
+      Board vẽ <b>nhìn từ mặt sau</b> (mặt có chip, anten ở trên, USB-C ở dưới), theo sơ đồ chân chính thức của LilyGo.
+      Lật sang mặt trước thì 2 hàng chân đổi bên, nên <b>luôn làm theo số in trên board</b>.
+      Toàn bộ 7 dây gom về <b>hàng chân trái</b> cho gọn; hàng phải để trống.
+    </p>
+  </div>
+
+  <!-- ===== BẢNG DÂY ===== -->
+  <h2>Bảng nối dây</h2>
+  <div class="card scroll">
+    <table>
+      <tr><th>#</th><th>nRF24</th><th>Board (GPIO)</th><th>Dây</th><th>Ghi chú</th></tr>
+      <tr><td>1</td><td><b>GND</b></td><td><b>GND</b></td><td><i class="sw" style="background:var(--w-gnd)"></i></td><td>Mát chung</td></tr>
+      <tr><td>2</td><td><b>VCC</b></td><td><b>3V</b> (3.3V)</td><td><i class="sw" style="background:var(--w-power)"></i></td><td><span class="warn">Chỉ 3.3V</span> — cắm 5V vào VCC là chết module</td></tr>
+      <tr><td>3</td><td><b>CE</b></td><td><b>10</b></td><td><i class="sw" style="background:var(--w-ce)"></i></td><td>Khuyến nghị · đặt runtime (app / auto-dò)</td></tr>
+      <tr><td>4</td><td><b>CSN</b></td><td><b>1</b></td><td><i class="sw" style="background:var(--w-csn)"></i></td><td>Khuyến nghị · đặt runtime</td></tr>
+      <tr><td>5</td><td><b>SCK</b></td><td><b>12</b></td><td><i class="sw" style="background:var(--w-sck)"></i></td><td><b>Cố định</b> trong firmware (<code>HSPI_init</code>)</td></tr>
+      <tr><td>6</td><td><b>MOSI</b></td><td><b>11</b></td><td><i class="sw" style="background:var(--w-mosi)"></i></td><td><b>Cố định</b></td></tr>
+      <tr><td>7</td><td><b>MISO</b></td><td><b>13</b></td><td><i class="sw" style="background:var(--w-miso)"></i></td><td><b>Cố định</b></td></tr>
+      <tr><td>–</td><td><b>IRQ</b></td><td colspan="3">Không nối</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== CHI TIẾT ===== -->
+  <h2>Chi tiết</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>① Chân module nRF24 (nhìn như ảnh thật)</h3>
+      <svg viewBox="0 0 360 212" role="img" aria-label="Pinout module nRF24 kiểu nhãn màu">
+        <text x="180" y="16" text-anchor="middle" style="fill:var(--mut);font-size:11px">NRF24L01+ PA/LNA · nhìn từ trên</text>
+        <!-- connector 2x4 -->
+        <rect x="150" y="30" width="60" height="160" rx="8" fill="#15181d" stroke="#3a3f47" stroke-width="2"/>
+        <!-- hàng: 46 / 86 / 126 / 166 ; cột trái x=168, phải x=192 -->
+        <g>
+          <rect x="161" y="39" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="185" y="39" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+          <rect x="161" y="79" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="185" y="79" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+          <rect x="161" y="119" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="185" y="119" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+          <rect x="161" y="159" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="185" y="159" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/>
+        </g>
+        <!-- dây nối ngắn -->
+        <path d="M92 46H150" stroke="#161b22" stroke-width="3"/><path d="M92 86H150" stroke="#d4a72c" stroke-width="3"/>
+        <path d="M92 126H150" stroke="#2f81f7" stroke-width="3"/><path d="M92 166H150" stroke="#a371f7" stroke-width="3"/>
+        <path d="M210 46H268" stroke="#da3633" stroke-width="3"/><path d="M210 86H268" stroke="#e0823d" stroke-width="3"/>
+        <path d="M210 126H268" stroke="#2ea043" stroke-width="3"/><path d="M210 166H268" stroke="#8b949e" stroke-width="3"/>
+        <!-- nhãn trái -->
+        <rect x="8" y="33" width="84" height="26" rx="6" fill="#161b22" stroke="#30363d"/><text x="50" y="50" text-anchor="middle" style="fill:#fff;font-size:13px;font-weight:700">GND</text>
+        <rect x="8" y="73" width="84" height="26" rx="6" fill="#d4a72c"/><text x="50" y="90" text-anchor="middle" style="fill:#161b22;font-size:13px;font-weight:700">CE</text>
+        <rect x="8" y="113" width="84" height="26" rx="6" fill="#2f81f7"/><text x="50" y="130" text-anchor="middle" style="fill:#fff;font-size:13px;font-weight:700">SCK</text>
+        <rect x="8" y="153" width="84" height="26" rx="6" fill="#a371f7"/><text x="50" y="170" text-anchor="middle" style="fill:#fff;font-size:13px;font-weight:700">MISO</text>
+        <!-- nhãn phải -->
+        <rect x="268" y="33" width="84" height="26" rx="6" fill="#da3633"/><text x="310" y="50" text-anchor="middle" style="fill:#fff;font-size:13px;font-weight:700">VCC</text>
+        <rect x="268" y="73" width="84" height="26" rx="6" fill="#e0823d"/><text x="310" y="90" text-anchor="middle" style="fill:#fff;font-size:13px;font-weight:700">CSN</text>
+        <rect x="268" y="113" width="84" height="26" rx="6" fill="#2ea043"/><text x="310" y="130" text-anchor="middle" style="fill:#fff;font-size:13px;font-weight:700">MOSI</text>
+        <rect x="268" y="153" width="84" height="26" rx="6" fill="#8b949e"/><text x="310" y="170" text-anchor="middle" style="fill:#161b22;font-size:13px;font-weight:700">IRQ</text>
+      </svg>
+      <p class="note">Nhãn màu khớp dây ở sơ đồ tổng. Một số bo in <b>CNS</b> hoặc <b>CS</b> thay cho <b>CSN</b> — cùng là chân chọn chip. Luôn theo chữ in thực tế trên bo.</p>
+    </div>
+
+    <div class="card">
+      <h3>② Nguồn cho bản PA+LNA</h3>
+      <svg viewBox="0 0 300 150" role="img" aria-label="Tụ lọc nguồn nRF24">
+        <rect class="part" x="30" y="56" width="150" height="40" rx="6"/>
+        <text class="lbl-b" x="105" y="80" text-anchor="middle">nRF24 VCC/GND</text>
+        <path class="w w-power" d="M180 66 H250"/>
+        <path class="w w-gnd" d="M180 86 H250"/>
+        <text class="lbl-s" x="258" y="70">3V3</text>
+        <text class="lbl-s" x="258" y="90">GND</text>
+        <path d="M200 60 H208 M224 60 H232" stroke="var(--fg)" stroke-width="2"/>
+        <rect class="cap" x="208" y="54" width="16" height="12" rx="3"/>
+        <rect class="cap-band" x="210" y="55" width="3" height="10"/>
+        <circle class="dot" cx="200" cy="60" r="3.5"/><circle class="dot" cx="232" cy="60" r="3.5"/>
+        <text class="lbl-s" x="216" y="44" text-anchor="middle">tụ 10–100µF</text>
+      </svg>
+      <p class="note">Bản <b>PA+LNA</b> ăn dòng lớn lúc phát. Hàn tụ <b>10–100µF</b> sát chân VCC–GND của module.
+        Nếu board sụt áp/khởi động lại khi phát, cấp <b>3.3V riêng</b> cho module thay vì lấy 3V3 của board.</p>
+    </div>
+  </div>
+
+  <!-- ===== KIỂM TRA ===== -->
+  <h2>Kiểm tra trước khi cấp điện</h2>
+  <div class="card">
+    <ul class="check">
+      <li>VCC vào đúng <b>3V3</b>, <span class="warn">không phải 5V</span>.</li>
+      <li>SCK=<b>12</b>, MOSI=<b>11</b>, MISO=<b>13</b> nối đúng (các chân này cố định trong firmware).</li>
+      <li>CE, CSN nối tới chân đã đặt ở app (khuyến nghị <b>10</b> và <b>1</b>), hoặc để firmware tự dò.</li>
+      <li>Có tụ <b>10–100µF</b> sát VCC–GND của module.</li>
+      <li>Không dùng <b>GPIO14</b> (nút KEY onboard) và <b>GPIO0</b> (BOOT) cho nRF24.</li>
+      <li>Đo thang Ω: giữa 3V3 và GND <b>không chập</b>.</li>
+      <li>Cấp điện qua USB-C, mở app → Cài đặt → Kiểm tra, thấy đúng số module nRF24.</li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #21262d;
+            --border: #30363d;
+            --text-primary: #ffffff;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --success: #238636;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .version-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background-color: var(--bg-card);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .version-badge:hover {
+            color: var(--text-primary);
+            background-color: var(--border);
+            transform: scale(1.05);
+        }
+        
+        .header {
+            text-align: center;
+        }
+        
+        .btn {
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            color: var(--text-primary);
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 166, 255, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            border-color: var(--border);
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .file-upload-container {
+            position: relative;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .file-selection-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+        
+        .file-info-display {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            min-height: 50px;
+            overflow: hidden;
+        }
+        
+        .file-info-display.has-file {
+            color: var(--text-primary);
+        }
+        
+        .file-info-display::before {
+            content: "📁";
+            font-size: 16px;
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+        
+        .file-info-display.has-file::before {
+            opacity: 1;
+        }
+        
+        .file-select-btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+        
+        .file-select-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 166, 255, 0.2);
+        }
+        
+        .file-upload-container input[type="file"] {
+            display: none;
+        }
+        
+        .warning {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(240, 136, 62, 0.1);
+            border: 1px solid #f0883e;
+            border-radius: 8px;
+            color: #f0883e;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+        
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .back-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .back-btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .form-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px;
+            margin-top: 10px;
+            display: block;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--accent);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        .no-file-text {
+            opacity: 0.7;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="version-badge" id="versionBadge">—</div>
+
+        <div class="header">
+            <h2>Firmware Update</h2>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+
+        <form enctype='multipart/form-data' action='/update' method='POST' class="upload-form" id="uploadForm">
+            <div class="file-upload-container">
+                <div class="file-selection-wrapper">
+                    <div class="file-info-display" id="fileInfoDisplay">
+                        <span class="no-file-text">No file selected</span>
+                    </div>
+                    <label for="file-upload" class="file-select-btn">Select File</label>
+                    <input type='file' id="file-upload" name='update' accept=".bin" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn" type="submit" id="uploadBtn">Update Firmware</button>
+                <button class="back-btn" type="button" onclick="location.href='/'">← Back to Main Menu</button>
+            </div>
+
+            <div class="warning" id="warningBox">⚠️ Do not select bootloader or partition files!</div>
+        </form>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-upload');
+        const fileInfoDisplay = document.getElementById('fileInfoDisplay');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const warningBox = document.getElementById('warningBox');
+
+        fileInput.addEventListener('change', function(e) {
+            warningBox.style.display = 'none';
+
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                fileInfoDisplay.innerHTML = `<span>Selected: <strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>`;
+                fileInfoDisplay.classList.add('has-file');
+
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const buf = new Uint8Array(evt.target.result);
+                    const view = new DataView(evt.target.result);
+
+                    let isValidFirmware = false;
+                    let errorMessage = '⚠️ Do not select bootloader or partition files!';
+
+                    if (buf.length < 64) {
+                        errorMessage = '⚠️ Selected file is corrupted or too small!';
+                    } else if (buf[0] === 0xAA && buf[1] === 0x50) {
+                        errorMessage = '⚠️ Do not select partition files! Please choose firmware.bin';
+                    } else if (buf[0] !== 0xE9) {
+                        errorMessage = '⚠️ Not a valid ESP32 binary image!';
+                    } else {
+                        const APP_DESC_MAGIC = 0xABCD5432;
+                        let foundAppDesc = false;
+
+                        if (view.getUint32(0x20, true) === APP_DESC_MAGIC) {
+                            foundAppDesc = true;
+                        } else {
+                            for (let i = 0; i <= buf.length - 32; i += 4) {
+                                if (view.getUint32(i, true) === APP_DESC_MAGIC) {
+                                    foundAppDesc = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!foundAppDesc) {
+                            errorMessage = '⚠️ Do not select bootloader files! Please choose firmware.bin';
+                        } else {
+                            isValidFirmware = true;
+                        }
+                    }
+
+                    if (!isValidFirmware) {
+                        warningBox.textContent = errorMessage;
+                        warningBox.style.display = 'block';
+                        uploadBtn.disabled = true;
+                    } else {
+                        warningBox.style.display = 'none';
+                        uploadBtn.disabled = false;
+                    }
+                };
+
+                reader.readAsArrayBuffer(file.slice(0, 512));
+
+            } else {
+                fileInfoDisplay.innerHTML = '<span class="no-file-text">No file selected</span>';
+                fileInfoDisplay.classList.remove('has-file');
+                warningBox.style.display = 'none';
+                uploadBtn.disabled = false;
+            }
+        });
+
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', function(event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    progressBar.style.width = percentComplete + '%';
+                    progressText.textContent = Math.round(percentComplete) + '%';
+
+                    if (!progressContainer.style.display || progressContainer.style.display === 'none') {
+                        progressContainer.style.display = 'block';
+                    }
+                }
+            });
+
+            xhr.addEventListener('load', function() {
+                if (xhr.status === 200) {
+                    progressText.textContent = 'Upload complete! Updating...';
+                    setTimeout(() => {
+                        progressText.textContent = 'Update successful! Device is restarting...';
+                    }, 1000);
+                } else {
+                    progressText.textContent = 'Upload failed - server error';
+                    progressBar.style.background = '#f85149';
+                    uploadBtn.disabled = false;
+                }
+            });
+
+            xhr.addEventListener('error', function() {
+                progressText.textContent = 'Upload failed - connection error';
+                progressBar.style.background = '#f85149';
+                uploadBtn.disabled = false;
+            });
+
+            xhr.open('POST', '/update');
+            xhr.send(formData);
+            uploadBtn.disabled = true;
+        });
+
+        fetch('/api/version', { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(d => {
+                const el = document.getElementById('versionBadge');
+                if (el) el.textContent = d.version || '—';
+            })
+            .catch(() => {});
+    </script>
+</body>
+</html>

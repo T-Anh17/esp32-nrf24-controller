@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "nRF24 Jammer",
+    "slug": "nrf24-jammer-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0d1117",
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": false },
+    "android": {
+      "package": "com.nrf24.jammer"
+    }
+  }
+}

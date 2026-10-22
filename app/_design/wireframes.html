@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>nRF24 Jammer App — Wireframes</title>
+<style>
+  :root{
+    --bg:#0d1117; --surface:#161b22; --card:#21262d; --card2:#2d333b;
+    --border:#30363d; --text:#f0f6fc; --muted:#8b949e; --accent:#58a6ff;
+    --danger:#f85149; --warn:#f0883e; --ok:#3fb950; --purple:#d2a8ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif}
+  body{background:#07090d;color:var(--text);padding:28px 16px 64px}
+  .page{max-width:1200px;margin:0 auto}
+  h1{font-size:22px;margin-bottom:4px}
+  .lead{color:var(--muted);font-size:14px;margin-bottom:8px}
+  .dir{margin:40px 0 14px;padding-top:20px;border-top:1px solid #1c222b}
+  .dir h2{font-size:18px;color:var(--accent)}
+  .dir p{color:var(--muted);font-size:13px;margin-top:4px;max-width:720px;line-height:1.5}
+  .row{display:flex;gap:20px;flex-wrap:wrap;margin-top:18px}
+  .frameWrap{width:300px}
+  .cap{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+  /* phone */
+  .phone{width:300px;height:620px;background:var(--bg);border:8px solid #1b2129;border-radius:32px;
+    overflow:hidden;position:relative;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:22px;background:#1b2129;border-radius:0 0 14px 14px;z-index:5}
+  .scr{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden}
+  .stat{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;color:var(--muted);flex-shrink:0}
+  .body{flex:1;overflow-y:auto;padding:4px 14px 14px}
+  .body::-webkit-scrollbar{width:0}
+  /* bits */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 12px}
+  .topbar .t{font-size:17px;font-weight:700}
+  .gear{width:30px;height:30px;border-radius:8px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:14px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted)}
+  .dot{width:7px;height:7px;border-radius:50%}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:11px}
+  .card.pad0{padding:0;overflow:hidden}
+  .kv{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0}
+  .kv .k{color:var(--muted)} .kv .v{font-weight:600}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .att{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;min-height:84px}
+  .att .ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .att .nm{font-size:13px;font-weight:600}
+  .att .sb{font-size:10.5px;color:var(--muted)}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:10px;font-size:14px;font-weight:600;border:1px solid transparent}
+  .btn.primary{background:var(--accent);color:#06101f}
+  .btn.stop{background:var(--danger);color:#fff}
+  .btn.ghost{background:transparent;border-color:var(--border);color:var(--text)}
+  .btn.block{width:100%}
+  .sec{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:14px 2px 8px;font-weight:600}
+  .list .li{display:flex;align-items:center;gap:11px;padding:11px 13px;border-bottom:1px solid var(--border)}
+  .list .li:last-child{border-bottom:0}
+  .li .nm{font-size:13px;font-weight:600}
+  .li .sb{font-size:11px;color:var(--muted)}
+  .cb{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0}
+  .cb.on{background:var(--accent);border-color:var(--accent)}
+  .tabbar{height:56px;flex-shrink:0;border-top:1px solid var(--border);background:var(--surface);display:flex}
+  .tabbar .tb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--muted)}
+  .tabbar .tb.on{color:var(--accent)}
+  .tabbar .tb .ti{font-size:16px}
+  .bigstat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 0 10px}
+  .ring{width:120px;height:120px;border-radius:50%;border:6px solid var(--danger);display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 0 30px rgba(248,81,73,.25)}
+  .ring .big{font-size:15px;font-weight:700;color:var(--danger)}
+  .ring .sm{font-size:10px;color:var(--muted)}
+  .switch{width:38px;height:22px;border-radius:12px;background:var(--card2);position:relative;flex-shrink:0}
+  .switch.on{background:var(--accent)}
+  .switch i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+  .switch.on i{left:18px}
+  .seg{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden}
+  .seg span{flex:1;text-align:center;font-size:11px;padding:7px 0;color:var(--muted)}
+  .seg span.on{background:var(--accent);color:#06101f;font-weight:600}
+  .barwrap{height:7px;background:var(--surface);border-radius:4px;overflow:hidden;margin-top:7px}
+  .bar{height:100%;background:var(--accent)}
+  .hubrow{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:9px}
+  .hubrow .ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .hubrow .chev{margin-left:auto;color:var(--muted);font-size:16px}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>nRF24 Jammer — App điều khiển (wireframe)</h1>
+  <p class="lead">RN · dark · flat · transport Wi-Fi HTTP · số liệu là giả. Chọn 1 trong 2 hướng bên dưới.</p>
+
+  <!-- ============ HƯỚNG A ============ -->
+  <div class="dir">
+    <h2>Hướng A — Tabs + lưới tấn công</h2>
+    <p>Thanh tab dưới (Trang chủ · WiFi · Cài đặt). Trang chủ = thẻ trạng thái thiết bị + lưới 2×3 các loại tấn công. App-like, dễ dùng một tay, hợp người không rành kỹ thuật.</p>
+    <div class="row">
+
+      <!-- A1 Disconnected -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  100%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">nRF24 Jammer</span><span class="gear">⚙</span></div>
+          <div class="card" style="text-align:center;padding:22px 14px">
+            <div style="font-size:30px;margin-bottom:8px">📡</div>
+            <div style="font-weight:600;margin-bottom:4px">Chưa kết nối thiết bị</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px">Kết nối Wi-Fi <b style="color:var(--text)">jammer</b> rồi bấm nút dưới</div>
+            <div class="btn primary block">Kết nối tới ESP</div>
+          </div>
+          <div class="pill"><span class="dot" style="background:var(--danger)"></span>Offline · 192.168.4.1</div>
+        </div>
+        <div class="tabbar"><div class="tb on"><span class="ti">⌂</span>Trang chủ</div><div class="tb"><span class="ti">📶</span>WiFi</div><div class="tb"><span class="ti">⚙</span>Cài đặt</div></div>
+      </div></div><div class="cap">A1 · Chưa kết nối</div></div>
+
+      <!-- A2 Home connected + grid -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  100%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">nRF24 Jammer</span><span class="gear">⚙</span></div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span class="pill"><span class="dot" style="background:var(--ok)"></span>Đã kết nối</span>
+              <span style="font-size:11px;color:var(--muted)">v3.5.0</span>
+            </div>
+            <div class="kv"><span class="k">Module nRF24</span><span class="v">2 module</span></div>
+            <div class="kv"><span class="k">Mức công suất (PA)</span><span class="v">MAX</span></div>
+          </div>
+          <div class="sec">Chọn tấn công</div>
+          <div class="grid">
+            <div class="att"><div class="ic" style="background:#1f6feb33;color:#58a6ff">📶</div><div class="nm">WiFi</div><div class="sb">Jam / Deauth</div></div>
+            <div class="att"><div class="ic" style="background:#8957e533;color:#d2a8ff">🔵</div><div class="nm">Bluetooth</div><div class="sb">Jam BT</div></div>
+            <div class="att"><div class="ic" style="background:#2ea04333;color:#3fb950">📱</div><div class="nm">BLE</div><div class="sb">Adv / Data</div></div>
+            <div class="att"><div class="ic" style="background:#db6d2833;color:#f0883e">🚁</div><div class="nm">Drone</div><div class="sb">2.4G</div></div>
+            <div class="att"><div class="ic" style="background:#1f6feb33;color:#58a6ff">📡</div><div class="nm">Zigbee</div><div class="sb">Jam</div></div>
+            <div class="att"><div class="ic" style="background:#6e768166;color:#8b949e">⋯</div><div class="nm">Misc</div><div class="sb">Dải kênh</div></div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tb on"><span class="ti">⌂</span>Trang chủ</div><div class="tb"><span class="ti">📶</span>WiFi</div><div class="tb"><span class="ti">⚙</span>Cài đặt</div></div>
+      </div></div><div class="cap">A2 · Trang chủ (đã nối)</div></div>
+
+      <!-- A3 Active -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  99%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">← WiFi Jam</span><span class="pill"><span class="dot" style="background:var(--danger)"></span>Đang chạy</span></div>
+          <div class="bigstat">
+            <div class="ring"><div class="big">ĐANG JAM</div><div class="sm">00:42</div></div>
+          </div>
+          <div class="card">
+            <div class="kv"><span class="k">Phương pháp</span><span class="v">Full channel</span></div>
+            <div class="kv"><span class="k">Kênh</span><span class="v">1 → 13</span></div>
+            <div class="kv"><span class="k">Module dùng</span><span class="v">2 / 2</span></div>
+          </div>
+          <div class="btn stop block">■  DỪNG</div>
+        </div>
+        <div class="tabbar"><div class="tb on"><span class="ti">⌂</span>Trang chủ</div><div class="tb"><span class="ti">📶</span>WiFi</div><div class="tb"><span class="ti">⚙</span>Cài đặt</div></div>
+      </div></div><div class="cap">A3 · Đang tấn công</div></div>
+
+      <!-- A4 WiFi tools -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  99%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">WiFi</span><span class="gear">⟳</span></div>
+          <div class="seg" style="margin-bottom:12px"><span class="on">Quét AP</span><span>Beacon spam</span></div>
+          <div class="card pad0 list">
+            <div class="li"><div class="cb on"></div><div><div class="nm">Phòng khách 5G</div><div class="sb">ch 6 · -42 dBm</div></div></div>
+            <div class="li"><div class="cb on"></div><div><div class="nm" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">NguyenVanA_Home_2.4GHz_Extender</div><div class="sb">ch 1 · -67 dBm</div></div></div>
+            <div class="li"><div class="cb"></div><div><div class="nm">TP-Link_8822</div><div class="sb">ch 11 · -78 dBm</div></div></div>
+            <div class="li"><div class="cb"></div><div><div class="nm">(ẩn SSID)</div><div class="sb">ch 3 · -81 dBm</div></div></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin:10px 2px">Đã chọn 2 AP</div>
+          <div class="btn primary block" style="margin-bottom:9px">Jam các AP đã chọn</div>
+          <div class="btn ghost block" style="color:var(--danger);border-color:#f8514955">Deauth các AP đã chọn</div>
+        </div>
+        <div class="tabbar"><div class="tb"><span class="ti">⌂</span>Trang chủ</div><div class="tb on"><span class="ti">📶</span>WiFi</div><div class="tb"><span class="ti">⚙</span>Cài đặt</div></div>
+      </div></div><div class="cap">A4 · WiFi tools</div></div>
+
+      <!-- A5 Settings -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  99%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">Cài đặt</span></div>
+          <div class="sec">Phát sóng</div>
+          <div class="card pad0 list">
+            <div class="li"><div style="flex:1"><div class="nm">Mức công suất (PA)</div><div class="sb">MAX</div></div><span style="color:var(--muted)">›</span></div>
+            <div class="li"><div style="flex:1"><div class="nm">Jam delay</div><div class="sb">0 µs</div></div><span style="color:var(--muted)">›</span></div>
+            <div class="li"><div style="flex:1"><div class="nm">Tách / gộp module</div></div><div class="switch on"><i></i></div></div>
+          </div>
+          <div class="sec">Phần cứng nRF24</div>
+          <div class="card pad0 list">
+            <div class="li"><div style="flex:1"><div class="nm">Chân CE / CSN</div><div class="sb">Tự dò · 2 module</div></div><span style="color:var(--muted)">›</span></div>
+            <div class="li"><div style="flex:1"><div class="nm">Quét lại module</div></div><span style="color:var(--muted)">⟳</span></div>
+          </div>
+          <div class="sec">Kết nối</div>
+          <div class="card pad0 list">
+            <div class="li"><div style="flex:1"><div class="nm">Wi-Fi AP</div><div class="sb">jammer</div></div><span style="color:var(--muted)">›</span></div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tb"><span class="ti">⌂</span>Trang chủ</div><div class="tb"><span class="ti">📶</span>WiFi</div><div class="tb on"><span class="ti">⚙</span>Cài đặt</div></div>
+      </div></div><div class="cap">A5 · Cài đặt</div></div>
+
+    </div>
+  </div>
+
+  <!-- ============ HƯỚNG B ============ -->
+  <div class="dir">
+    <h2>Hướng B — Dark console (danh sách dọc, dày)</h2>
+    <p>Không tab dưới. Một màn hub: header trạng thái lớn + danh sách dọc các loại tấn công (kiểu bảng điều khiển/console). Dày thông tin hơn, cảm giác "công cụ kỹ thuật", vào cài đặt qua bánh răng góc trên.</p>
+    <div class="row">
+
+      <!-- B1 Hub -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  100%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">JAMMER</span><span class="gear">⚙</span></div>
+          <div class="card" style="background:linear-gradient(180deg,#161b22,#11151b)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="pill"><span class="dot" style="background:var(--ok)"></span>Online</span>
+              <span style="font-size:11px;color:var(--muted)">v3.5.0 · 2×nRF24 · PA MAX</span>
+            </div>
+          </div>
+          <div class="sec">Tấn công</div>
+          <div class="hubrow"><div class="ic" style="background:#1f6feb33;color:#58a6ff">📶</div><div><div class="nm" style="font-size:13px;font-weight:600">WiFi</div><div class="sb" style="font-size:11px;color:var(--muted)">Jam · Deauth · Beacon</div></div><span class="chev">›</span></div>
+          <div class="hubrow"><div class="ic" style="background:#8957e533;color:#d2a8ff">🔵</div><div><div class="nm" style="font-size:13px;font-weight:600">Bluetooth</div><div class="sb" style="font-size:11px;color:var(--muted)">Jam BT classic</div></div><span class="chev">›</span></div>
+          <div class="hubrow"><div class="ic" style="background:#2ea04333;color:#3fb950">📱</div><div><div class="nm" style="font-size:13px;font-weight:600">BLE</div><div class="sb" style="font-size:11px;color:var(--muted)">Advertising · Data</div></div><span class="chev">›</span></div>
+          <div class="hubrow"><div class="ic" style="background:#db6d2833;color:#f0883e">🚁</div><div><div class="nm" style="font-size:13px;font-weight:600">Drone</div><div class="sb" style="font-size:11px;color:var(--muted)">2.4GHz control</div></div><span class="chev">›</span></div>
+          <div class="hubrow"><div class="ic" style="background:#1f6feb33;color:#58a6ff">📡</div><div><div class="nm" style="font-size:13px;font-weight:600">Zigbee</div><div class="sb" style="font-size:11px;color:var(--muted)">Jam</div></div><span class="chev">›</span></div>
+          <div class="hubrow"><div class="ic" style="background:#6e768166;color:#8b949e">⋯</div><div><div class="nm" style="font-size:13px;font-weight:600">Misc</div><div class="sb" style="font-size:11px;color:var(--muted)">Dải kênh tuỳ chọn</div></div><span class="chev">›</span></div>
+        </div>
+      </div></div><div class="cap">B1 · Hub (một màn)</div></div>
+
+      <!-- B2 Active -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  99%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">← Bluetooth</span></div>
+          <div class="card" style="border-color:#f8514955;background:#f851490d">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <span class="dot" style="background:var(--danger);width:10px;height:10px;box-shadow:0 0 10px var(--danger)"></span>
+              <span style="font-weight:700;color:var(--danger)">ĐANG PHÁT NHIỄU</span>
+              <span style="margin-left:auto;font-size:12px;color:var(--muted)">01:17</span>
+            </div>
+            <div class="kv"><span class="k">Phương pháp</span><span class="v">Hopping</span></div>
+            <div class="kv"><span class="k">Kênh BT</span><span class="v">21 kênh</span></div>
+          </div>
+          <div class="sec">Phương pháp</div>
+          <div class="seg" style="margin-bottom:14px"><span>Full</span><span class="on">Hopping</span><span>Random</span></div>
+          <div class="btn stop block">■  DỪNG PHÁT</div>
+        </div>
+      </div></div><div class="cap">B2 · Đang tấn công (chọn method ngay)</div></div>
+
+      <!-- B3 WiFi list dense -->
+      <div class="frameWrap"><div class="phone"><div class="notch"></div><div class="scr">
+        <div class="stat"><span>9:41</span><span>▮▮▮ ·  99%</span></div>
+        <div class="body">
+          <div class="topbar"><span class="t">← WiFi</span><span class="gear">⟳</span></div>
+          <div class="seg" style="margin-bottom:10px"><span class="on">Quét AP</span><span>Beacon spam</span></div>
+          <div class="card pad0 list">
+            <div class="li" style="padding:9px 13px"><div class="cb on"></div><div style="flex:1"><div class="nm">Phòng khách 5G</div><div class="sb">ch 6 · -42</div></div><div class="barwrap" style="width:40px;margin:0"><div class="bar" style="width:85%"></div></div></div>
+            <div class="li" style="padding:9px 13px"><div class="cb on"></div><div style="flex:1"><div class="nm" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">NguyenVanA_Extender</div><div class="sb">ch 1 · -67</div></div><div class="barwrap" style="width:40px;margin:0"><div class="bar" style="width:55%"></div></div></div>
+            <div class="li" style="padding:9px 13px"><div class="cb"></div><div style="flex:1"><div class="nm">TP-Link_8822</div><div class="sb">ch 11 · -78</div></div><div class="barwrap" style="width:40px;margin:0"><div class="bar" style="width:30%"></div></div></div>
+            <div class="li" style="padding:9px 13px"><div class="cb"></div><div style="flex:1"><div class="nm">(ẩn SSID)</div><div class="sb">ch 3 · -81</div></div><div class="barwrap" style="width:40px;margin:0"><div class="bar" style="width:20%"></div></div></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <div class="btn primary" style="flex:1">Jam (2)</div>
+            <div class="btn ghost" style="flex:1;color:var(--danger);border-color:#f8514955">Deauth (2)</div>
+          </div>
+        </div>
+      </div></div><div class="cap">B3 · WiFi (dày, có cột sóng)</div></div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Firmware build
+esp/.pio/
+
+# React Native / Node
+app/node_modules/
+app/.expo/
+app/android/
+app/ios/
+app/*.log
+npm-debug.*
+
+# Generated headers (built from html/ and bitmap/)
+esp/include/esp32-s3/html.h
+esp/include/esp32-s3/bitmap.h
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

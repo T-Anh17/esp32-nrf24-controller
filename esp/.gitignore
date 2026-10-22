@@ -1,0 +1,4 @@
+.pio/
+.vscode/
+include/esp32-s3/bitmap.h
+include/esp32-s3/html.h

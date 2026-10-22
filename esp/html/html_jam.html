@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #21262d;
+            --border: #30363d;
+            --text-primary: #ffffff;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        #textElement {
+            position: absolute;
+            font-size: 28px;
+            color: var(--accent);
+            padding: 30px;
+            white-space: nowrap;
+            font-weight: 600;
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="textElement"></div>
+    
+    <script>
+        function resolveJamText() {
+            const path = location.pathname;
+            const params = new URLSearchParams(location.search);
+
+            const explicit = params.get('text');
+            if (explicit) return explicit;
+
+            if (path.includes('bluetooth')) return 'Bluetooth Jamming';
+            if (path.includes('drone'))     return 'Drone Jamming';
+            if (path.includes('zigbee'))    return 'Zigbee Jamming';
+            if (path.includes('ble_'))      return 'BLE Jamming';
+
+            if (path.includes('deauth_all'))  return 'WiFi Deauthing';
+            if (path.includes('deauth_scan')) return 'WiFi Deauthing';
+            if (path.includes('random_spam')) return 'WiFi Beacon Spam';
+            if (path.includes('array_spam'))  return 'WiFi Beacon Spam';
+            if (path.includes('scan_jam'))    return 'WiFi Jamming';
+            if (path.includes('wifi_jam'))    return 'WiFi Jamming';
+
+            const ch = params.get('channel');
+            if (ch) {
+                return path.includes('deauth')
+                    ? 'Attacking ' + ch + ' WiFi Channel'
+                    : 'Jamming ' + ch + ' WiFi Channel';
+            }
+
+            const start = params.get('start');
+            const stop  = params.get('stop');
+            if (start !== null && stop !== null) {
+                return 'Jamming from ' + start + ' to ' + stop;
+            }
+
+            return 'Jamming';
+        }
+
+        const textElement = document.getElementById('textElement');
+        textElement.textContent = resolveJamText();
+        const originalText = textElement.textContent;
+        const specialChars = '*&^%$#@!)(_+-';
+        
+        let posX = 0;
+        let posY = 0;
+        let speedX = 2;
+        let speedY = 1.5;
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+        let elementWidth = textElement.offsetWidth;
+        let elementHeight = textElement.offsetHeight;
+        
+        function updateDimensions() {
+            windowWidth = window.innerWidth;
+            windowHeight = window.innerHeight;
+            elementWidth = textElement.offsetWidth;
+            elementHeight = textElement.offsetHeight;
+        }
+        
+        window.addEventListener('resize', updateDimensions);
+        
+        function moveText() {
+            requestAnimationFrame(moveText);
+            
+            posX += speedX;
+            posY += speedY;
+            
+            if (posX <= 0 || posX >= windowWidth - elementWidth) {
+                speedX = -speedX;
+            }
+            if (posY <= 0 || posY >= windowHeight - elementHeight) {
+                speedY = -speedY;
+            }
+            
+            textElement.style.left = posX + 'px';
+            textElement.style.top = posY + 'px';
+        }
+        
+        setInterval(() => {
+            const words = originalText.split(' ');
+            const randomWordIndex = Math.floor(Math.random() * words.length);
+            const randomWord = words[randomWordIndex];
+
+            if (randomWord) {
+                const randomCharIndex = Math.floor(Math.random() * randomWord.length);
+
+                const randomChar = specialChars[Math.floor(Math.random() * specialChars.length)];
+
+                const modifiedWord = randomWord.split('');
+                modifiedWord[randomCharIndex] = randomChar;
+                words[randomWordIndex] = modifiedWord.join('');
+
+                textElement.textContent = words.join(' ');
+
+                setTimeout(() => {
+                    textElement.textContent = originalText;
+                }, 300);
+            }
+        }, 800);
+        
+        function init() {
+            updateDimensions();
+            posX = Math.random() * (windowWidth - elementWidth);
+            posY = Math.random() * (windowHeight - elementHeight);
+            moveText();
+        }
+        
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
