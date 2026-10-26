@@ -109,6 +109,8 @@ bool CommandsHandler(String command, bool web_command)
   if ( args[0] == "stop" )
   {
     printLine("Stopping all attacks...", response, web_command);
+    // Báo cho vòng lặp jam đang chạy thoát ra (lệnh stop tới qua web trong lúc jam).
+    webStop = true;
     if ( web_command )
       server.send(200, "text/html", response + "ok\n");
     return false;

@@ -91,6 +91,10 @@ inline RF24 *radios[30];
 inline bool webServerStarted = false;
 inline bool dnsServerStarted = false;
 
+// Đặt true khi nhận lệnh "stop" qua web trong lúc đang jam, để vòng lặp jam
+// (jamHandler) thoát ra. Cần cho app điều khiển qua Wi-Fi vì vòng lặp jam chặn loop().
+inline volatile bool webStop = false;
+
 inline char   SSIDs_Array[100][33];
 inline String APs_array[14];
 inline int    WiFiScanChannels[14];

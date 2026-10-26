@@ -597,6 +597,7 @@ bool jamHandler(void (*action)(), String htmlResponse, const unsigned char *bitm
   global_ch1              = ch1;
   global_ch2              = ch2;
   stopJam                 = false;
+  webStop                 = false;
   TaskHandle_t TaskHandle = NULL;
 
   if ( !isMisc )
@@ -650,6 +651,11 @@ bool jamHandler(void (*action)(), String htmlResponse, const unsigned char *bitm
   bool SerialStop = true;
   bool exit       = false;
 
+  // Đóng kết nối của request đã khởi tạo jam (response đã gửi ở trên) để web server
+  // nhả client hiện tại, nhờ đó vòng lặp dưới có thể nhận request mới (vd lệnh "stop").
+  if ( access_point == 0 && webServerStarted )
+    server.client().stop();
+
   while ( !exit && SerialStop )
   {
     randomSeed(esp_random() + millis());
@@ -658,7 +664,17 @@ bool jamHandler(void (*action)(), String htmlResponse, const unsigned char *bitm
     btnPrevious.tick();
     SerialStop = SerialCommands();
 
-    if ( btnOK.isSingle() )
+    // Phục vụ web server/DNS ngay trong vòng lặp jam vì vòng lặp này chặn loop().
+    // Nhờ vậy lệnh "stop" (và các lệnh khác) gửi qua Wi-Fi được xử lý khi đang jam.
+    if ( access_point == 0 )
+    {
+      if ( webServerStarted )
+        server.handleClient();
+      if ( dnsServerStarted )
+        dnsServer.processNextRequest();
+    }
+
+    if ( webStop || btnOK.isSingle() )
     {
       exit = true;
       break;
@@ -668,6 +684,8 @@ bool jamHandler(void (*action)(), String htmlResponse, const unsigned char *bitm
       break;
     delay(1);
   }
+
+  webStop = false;
 
   stopJam = true;
   while ( eTaskGetState(TaskHandle) != eDeleted )
