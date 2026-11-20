@@ -244,6 +244,63 @@
       <li>Cấp điện qua USB-C, mở app → Cài đặt → Kiểm tra, thấy đúng số module nRF24.</li>
     </ul>
   </div>
+
+  <!-- ===== JAM BLE ===== -->
+  <h2>Jam BLE: 2 chế độ &amp; cách dùng</h2>
+  <p class="sub">BLE nằm trong băng 2.4GHz, chia 40 kênh (cách nhau 2MHz). Firmware đã có sẵn 2 chế độ nhắm riêng cho BLE — không cần sửa code.</p>
+
+  <div class="card scroll">
+    <table>
+      <tr><th>Chế độ</th><th>Hàm firmware</th><th>Kênh nRF24</th><th>Tác dụng</th></tr>
+      <tr>
+        <td><b>BLE Advertising</b></td>
+        <td><code>ble_advertising_jam()</code></td>
+        <td><b>2, 26, 80</b><br><span class="note">= BLE 37/38/39</span></td>
+        <td><b>Ngăn thiết bị bị phát hiện &amp; không cho kết nối mới.</b> Chỉ dồn vào 3 kênh quảng bá nên nhiễu dày, hiệu quả nhất và tốn ít công suất. <span class="warn">Dùng cái này để chặn kết nối.</span></td>
+      </tr>
+      <tr>
+        <td><b>BLE Data</b></td>
+        <td><code>ble_data_jam()</code></td>
+        <td><b>2 → 80</b> (bước 2)<br><span class="note">40 kênh data</span></td>
+        <td>Rải nhiễu khắp 40 kênh dữ liệu để phá <b>kết nối đang chạy</b>. Loãng hơn vì phủ rộng; sau khi đã kết nối, thiết bị nhảy tần nên khó chặn hết.</td>
+      </tr>
+    </table>
+    <p class="note">3 kênh advertising được định nghĩa trong <code>config.h</code>: <code>ble_channels[] = {2, 26, 80}</code> — khớp đúng BLE 37 (2402MHz), 38 (2426MHz), 39 (2480MHz).</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>① Cách gọi</h3>
+      <p class="note" style="margin-top:0">Board phát Wi-Fi AP <code>nRF24-Tool</code> (mật khẩu <code>123456788</code>). Kết nối vào rồi gọi theo một trong các cách:</p>
+      <table>
+        <tr><th>Cách</th><th>Advertising</th><th>Data</th></tr>
+        <tr><td><b>App</b></td><td colspan="2">Chọn mục <b>BLE</b> → chọn chế độ Advertising / Data</td></tr>
+        <tr><td><b>HTTP route</b></td><td><code>GET /ble_advertising_jam</code></td><td><code>GET /ble_data_jam</code></td></tr>
+        <tr><td><b>WebCommand</b></td><td><code>/WebCommand?command=jam ble ad</code></td><td><code>/WebCommand?command=jam ble data</code></td></tr>
+        <tr><td><b>Dừng</b></td><td colspan="2"><code>/WebCommand?command=stop</code> (hoặc nút OK trên board)</td></tr>
+      </table>
+      <p class="note">IP board ở chế độ AP mặc định là <code>192.168.4.1</code> — có thể gõ thẳng route trên trình duyệt để thử.</p>
+    </div>
+
+    <div class="card">
+      <h3>② Chỉnh cho mạnh hơn</h3>
+      <p class="note" style="margin-top:0">Các tham số đặt trong Cài đặt của app (lưu EEPROM), áp dụng cho mọi chế độ jam:</p>
+      <table>
+        <tr><th>Tham số</th><th>Nên đặt</th><th>Ý nghĩa</th></tr>
+        <tr><td><b>PA</b> (<code>pa</code>)</td><td><b>0 = MAX</b></td><td>Công suất phát lớn nhất → tầm xa nhất</td></tr>
+        <tr><td><b>Delay</b> (<code>delay</code>)</td><td>Nhỏ</td><td>Nhảy kênh nhanh → nhiễu dày hơn</td></tr>
+        <tr><td><b>Sweep</b> (<code>sweep</code>)</td><td>Theo số module</td><td>Nhiều module: mỗi module giữ 1 kênh adv (2/26/80) cố định → chặn chắc hơn</td></tr>
+      </table>
+      <p class="note"><b>Mạnh nhất để chặn BLE:</b> dùng <b>Advertising jam</b>, PA = MAX, và <b>3 module</b> (mỗi cái 1 kênh 2/26/80). Kèm anten gain cao + nguồn 3.3V riêng + tụ như phần trên.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p style="margin:0"><span class="warn">⚠️ Giới hạn &amp; lưu ý pháp lý.</span>
+      nRF24 jam BLE bằng cách bơm nhiễu thô vào đúng kênh — nó <b>không ngắt chọn lọc một kết nối cụ thể</b> mà làm nhiễu cả vùng 2.4GHz quanh đó (thiết bị BLE/Wi-Fi khác gần đó cũng bị ảnh hưởng).
+      Chặn lúc <b>advertising</b> (ngăn kết nối mới) luôn dễ và chắc hơn phá kết nối đã có.
+      Gây nhiễu sóng vô tuyến là <b>bất hợp pháp</b> ở hầu hết các nước — chỉ thử trên thiết bị của chính bạn, trong môi trường kín/được cấp phép.</p>
+  </div>
 </main>
 </body>
 </html>

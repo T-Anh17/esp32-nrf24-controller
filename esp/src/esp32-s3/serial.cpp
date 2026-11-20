@@ -1,5 +1,7 @@
 #include "serial.h"
 
+#include <SPI.h>
+
 #define COL_WIDTH 22
 
 void printCmd(const char *cmd, const char *desc, String &response, bool web)
@@ -95,6 +97,7 @@ bool CommandsHandler(String command, bool web_command)
     printCmd("jam", "Start jamming", response, web_command);
     printCmd("attack", "Start attacks", response, web_command);
     printCmd("stop", "Stop current jam/attack", response, web_command);
+    printCmd("detect", "SPI self-test of nRF24 modules", response, web_command);
     printCmd("scan", "Start scanning", response, web_command);
     printCmd("set", "Configure device", response, web_command);
     printCmd("info", "System information", response, web_command);
@@ -123,6 +126,100 @@ bool CommandsHandler(String command, bool web_command)
       server.send(200, "text/html", response + "ok\n");
     delay(100);
     ESP.restart();
+    return true;
+  }
+
+  if ( args[0] == "detect" )
+  {
+    // Kiểm THẬT từng module đang cấu hình có trả lời SPI không (ghi/đọc thanh ghi
+    // RF_CH). Firmware không tự dò khi đã có config, nên dùng lệnh này để biết chắc
+    // module có "nói chuyện" với ESP hay không, trước khi nghi phần cứng phát.
+    SPIClass *sp = new SPIClass(HSPI);
+    sp->begin(12, 13, 11, -1); // T-Display-S3: SCK=12, MISO=13, MOSI=11
+    sp->setFrequency(1000000);
+    sp->setBitOrder(MSBFIRST);
+    sp->setDataMode(SPI_MODE0);
+
+    auto rd = [&](int csn, uint8_t reg) -> uint8_t {
+      sp->beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+      digitalWrite(csn, LOW);
+      sp->transfer(0x00 | reg);
+      uint8_t v = sp->transfer(0xFF);
+      digitalWrite(csn, HIGH);
+      sp->endTransaction();
+      return v;
+    };
+    auto wr = [&](int csn, uint8_t reg, uint8_t val) {
+      sp->beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+      digitalWrite(csn, LOW);
+      sp->transfer(0x20 | reg);
+      sp->transfer(val);
+      digitalWrite(csn, HIGH);
+      sp->endTransaction();
+    };
+
+    printLine("", response, web_command);
+    printLine("nRF24 SPI self-test:", response, web_command);
+    for ( int i = 0; i < nrf24_count; i++ )
+    {
+      int ce  = ce_pins[i];
+      int csn = csn_pins[i];
+      pinMode(ce, OUTPUT);
+      pinMode(csn, OUTPUT);
+      digitalWrite(ce, LOW);
+      digitalWrite(csn, HIGH);
+
+      wr(csn, 0x05, 0x33);
+      uint8_t a = rd(csn, 0x05);
+      wr(csn, 0x05, 0x44);
+      uint8_t b = rd(csn, 0x05);
+      bool spiOk = ( a == 0x33 && b == 0x44 );
+
+      printLine("  Module " + String(i) + " CE=" + String(ce) + " CSN=" + String(csn) + ": SPI " + ( spiOk ? "OK - chip responds" : "FAIL - no response" ), response, web_command);
+      if ( spiOk )
+      {
+        uint8_t cfg = rd(csn, 0x00);
+        uint8_t st  = rd(csn, 0x07);
+        printLine("    CONFIG=0x" + String(cfg, HEX) + " STATUS=0x" + String(st, HEX), response, web_command);
+
+        // Test TX: nạp payload, kích CE, xem chip báo TX_DS (đã phát) chưa.
+        // Phân biệt lỗi dây CE / tầng TX  vs  anten/PA (chip phát OK nhưng không ra sóng).
+        wr(csn, 0x01, 0x00); // EN_AA off
+        wr(csn, 0x00, 0x0E); // CONFIG: PWR_UP, PTX, EN_CRC
+        delay(5);
+        wr(csn, 0x07, 0x70); // clear TX_DS/RX_DR/MAX_RT
+        sp->beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+        digitalWrite(csn, LOW);
+        sp->transfer(0xE1); // FLUSH_TX
+        digitalWrite(csn, HIGH);
+        sp->endTransaction();
+        sp->beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+        digitalWrite(csn, LOW);
+        sp->transfer(0xA0); // W_TX_PAYLOAD
+        sp->transfer(0x55);
+        digitalWrite(csn, HIGH);
+        sp->endTransaction();
+        digitalWrite(ce, HIGH); // kích phát
+        delayMicroseconds(50);
+        digitalWrite(ce, LOW);
+        delay(5);
+        uint8_t st2  = rd(csn, 0x07);
+        bool    txOk = ( st2 & 0x20 );
+        printLine(String("    TX test: ") + ( txOk ? "OK - TX_DS set (CE + TX hoat dong)" : "FAIL - no TX_DS (kiem day CE / TX chet)" ) + " STATUS=0x" + String(st2, HEX), response, web_command);
+        wr(csn, 0x07, 0x70); // clear
+      }
+      else
+      {
+        printLine("    -> Check CSN/SCK/MOSI/MISO wiring, shared GND, 3.3V power, or module is dead.", response, web_command);
+      }
+    }
+    printLine("", response, web_command);
+
+    sp->end();
+    delete sp;
+
+    if ( web_command )
+      server.send(200, "text/html", response + "ok\n");
     return true;
   }
 

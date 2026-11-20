@@ -13,35 +13,34 @@
 #include "esp_task_wdt.h"
 #include "esp_wifi.h"
 
-// No-op display shim for headless builds.
-inline constexpr int BLACK = 0, WHITE = 1, INVERSE = 2;
-inline constexpr int SSD1306_SWITCHCAPVCC = 0x02;
-inline constexpr int SSD1306_DISPLAYOFF = 0xAE, SSD1306_DISPLAYON = 0xAF;
-inline constexpr int SSD1306_SETCOMPINS = 0xDA, SSD1306_SETMULTIPLEX = 0xA8;
-
-struct NullDisplay
-{
-  template <class... A> bool   begin(A...) { return true; }
-  void                         clearDisplay() {}
-  void                         display() {}
-  template <class... A> void   drawBitmap(A...) {}
-  template <class... A> void   drawFastVLine(A...) {}
-  template <class... A> void   fillRect(A...) {}
-  template <class... A> size_t print(A...) { return 0; }
-  template <class... A> size_t println(A...) { return 0; }
-  template <class... A> void   setCursor(A...) {}
-  template <class... A> void   setTextColor(A...) {}
-  template <class... A> void   setTextSize(A...) {}
-  template <class... A> void   ssd1306_command(A...) {}
-};
-
-// Display bitmaps are not compiled in headless builds.
-#define decodeLZSS(x) ((const uint8_t *)nullptr)
-
+// SSD1306 OLED over I2C. ESP32-S3-WROOM-1: SDA=GPIO8, SCL=GPIO9.
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT_MAX 64
-inline int SCREEN_HEIGHT;
 #define OLED_RESET -1
+#define OLED_SDA 8
+#define OLED_SCL 9
+inline int SCREEN_HEIGHT;
+
+#include <Adafruit_SSD1306.h>
+#include <Wire.h>
+
+// drawBitmap is called with decodeLZSS(...), a nullptr stub (the compressed
+// logo/jam-icon assets are not bundled in this repo). Skip the draw when the
+// pointer is null so the text UI still renders without the decorative images.
+class OledDisplay : public Adafruit_SSD1306
+{
+public:
+  OledDisplay() : Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT_MAX, &Wire, OLED_RESET) {}
+  void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color)
+  {
+    if ( bitmap )
+      Adafruit_SSD1306::drawBitmap(x, y, bitmap, w, h, color);
+  }
+};
+
+// Bitmap assets are not bundled; decodeLZSS resolves to nullptr, which the
+// OledDisplay::drawBitmap override above skips.
+#define decodeLZSS(x) ((const uint8_t *)nullptr)
 
 #define default_ssid "nRF24-Tool"
 #define default_password "123456788"
@@ -128,13 +127,13 @@ inline int  flag     = 0;
 inline bool hspi     = false;
 
 inline SPIClass        *hp = nullptr;
-// T-Display-S3 buttons: OK=GPIO0, Next=GPIO14, Previous=GPIO21.
+// ESP32-S3-WROOM-1 buttons: OK=USER/GPIO0, Next=GPIO21, Previous=GPIO47.
 inline GButton          btnOK(0);
-inline GButton          btnNext(14);
-inline GButton          btnPrevious(21);
+inline GButton          btnNext(21);
+inline GButton          btnPrevious(47);
 inline WebServer        server(80);
 inline DNSServer        dnsServer;
-inline NullDisplay      display;
+inline OledDisplay      display;
 inline Preferences      prefs;
 
 #endif

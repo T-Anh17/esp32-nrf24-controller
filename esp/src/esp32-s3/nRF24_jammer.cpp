@@ -164,10 +164,16 @@ void handlenRF24Init()
 {
   if ( !prefs.isKey("nRF24_count") || prefs.getInt("nRF24_count", 0) <= 0 )
   {
-    // Default config for LilyGo T-Display-S3: 1 module, CE=10, CSN=1
-    nrf24_count = 1;
-    ce_pins[0]  = 10;
-    csn_pins[0] = 1;
+    // Default config for ESP32-S3-WROOM-1 board: 3x E01-2G4M27D modules.
+    // M1: CE=16, CSN=15   M2: CE=18, CSN=17   M3: CE=10, CSN=7
+    // (SPI shared SCK=12/MOSI=11/MISO=13)
+    nrf24_count = 3;
+    ce_pins[0]  = 16;
+    csn_pins[0] = 15;
+    ce_pins[1]  = 18;
+    csn_pins[1] = 17;
+    ce_pins[2]  = 10;
+    csn_pins[2] = 7;
     prefs.putInt("nRF24_count", nrf24_count);
     prefs.putBytes("nRF24_ce_pins", ce_pins, sizeof(ce_pins));
     prefs.putBytes("nRF24_csn_pins", csn_pins, sizeof(csn_pins));
@@ -182,7 +188,7 @@ void handlenRF24Init()
   }
   else
   {
-    ce_pins[0] = 10;
+    ce_pins[0] = 16;
     prefs.putBytes("nRF24_ce_pins", ce_pins, sizeof(ce_pins));
   }
 
@@ -192,7 +198,7 @@ void handlenRF24Init()
   }
   else
   {
-    csn_pins[0] = 1;
+    csn_pins[0] = 15;
     prefs.putBytes("nRF24_csn_pins", csn_pins, sizeof(csn_pins));
   }
 }
@@ -201,8 +207,10 @@ void handlenRF24Scan()
 {
   HSPI_init();
 
-  // LilyGo T-Display-S3 safe candidate pins on header (exclude SPI Flash 26-37, USB 19-20, UART 43-44, SPI 11-13, buttons 0/14/21)
-  const int candidate_pins[] = { 1, 3, 10, 16, 17, 18 };
+  // ESP32-S3-WROOM-1 safe candidate pins for CE/CSN (exclude flash 26-32,
+  // octal PSRAM 35-37, USB 19-20, UART 43-44, SPI 11-13, I2C 8-9,
+  // buttons 0/21/47, RGB LED 38)
+  const int candidate_pins[] = { 1, 3, 7, 10, 15, 16, 17, 18 };
   const int candidate_count  = sizeof(candidate_pins) / sizeof(candidate_pins[0]);
 
   auto readReg = [&](int csnPin, uint8_t reg) {
@@ -1957,7 +1965,10 @@ void setup()
   btnNext.setTimeout(600);
   btnPrevious.setTimeout(600);
 
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  Wire.begin(OLED_SDA, OLED_SCL);
+  // periphBegin=false: keep the custom SDA/SCL set above (Adafruit would
+  // otherwise re-run Wire.begin() with the default pins).
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C, true, false);
 
   if ( SCREEN_HEIGHT == 32 )
   {
