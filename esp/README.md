@@ -25,7 +25,7 @@ Hiển thị trạng thái qua màn **OLED SSD1306** (I2C) trên phần cứng E
 
 > Nên gắn tụ ~100µF giữa VCC–GND sát mỗi module để nguồn ổn định khi phát công suất cao. Ba module phát cùng lúc nên dùng nguồn 3V3 riêng ≥2A.
 
-**Màn OLED SSD1306** (I²C, addr 0x3C): SDA=8, SCL=9.
+**Màn OLED SSD1306** (I²C, addr 0x3C): SDA=9, SCL/SCK=46.
 
 **LED RGB:** WS2812 onboard ở GPIO38 (không cần đấu dây).
 
@@ -33,9 +33,9 @@ Hiển thị trạng thái qua màn **OLED SSD1306** (I2C) trên phần cứng E
 
 | Nút | GPIO |
 |-----|------|
-| OK | 0 (chung nút BOOT onboard) |
-| Next | 21 |
-| Previous | 47 |
+| OK | 21 |
+| Next | 20 |
+| Previous | 19 |
 
 Sơ đồ nối dây chi tiết: [`../docs/wiring.html`](../docs/wiring.html) · schematic: [`../docs/schematic.html`](../docs/schematic.html)
 

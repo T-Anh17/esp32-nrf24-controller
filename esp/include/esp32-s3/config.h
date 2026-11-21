@@ -13,12 +13,12 @@
 #include "esp_task_wdt.h"
 #include "esp_wifi.h"
 
-// SSD1306 OLED over I2C. ESP32-S3-WROOM-1: SDA=GPIO8, SCL=GPIO9.
+// SSD1306 OLED over I2C. ESP32-S3-WROOM-1: SDA=GPIO9, SCL/SCK=GPIO46.
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT_MAX 64
 #define OLED_RESET -1
-#define OLED_SDA 8
-#define OLED_SCL 9
+#define OLED_SDA 9
+#define OLED_SCL 46
 inline int SCREEN_HEIGHT;
 
 #include <Adafruit_SSD1306.h>
@@ -127,10 +127,10 @@ inline int  flag     = 0;
 inline bool hspi     = false;
 
 inline SPIClass        *hp = nullptr;
-// ESP32-S3-WROOM-1 buttons: OK=USER/GPIO0, Next=GPIO21, Previous=GPIO47.
-inline GButton          btnOK(0);
-inline GButton          btnNext(21);
-inline GButton          btnPrevious(47);
+// ESP32-S3-WROOM-1 buttons: OK=GPIO21, Next=GPIO20, Previous=GPIO19.
+inline GButton          btnOK(21);
+inline GButton          btnNext(20);
+inline GButton          btnPrevious(19);
 inline WebServer        server(80);
 inline DNSServer        dnsServer;
 inline OledDisplay      display;
