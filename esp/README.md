@@ -1,38 +1,43 @@
-# Firmware nRF24 Jammer — LilyGo T-Display-S3
+# Firmware nRF24 Jammer — ESP32-S3-WROOM-1
 
-Firmware bộ công cụ nghiên cứu RF 2.4GHz, port cho **LilyGo T-Display-S3 (ESP32-S3)** chạy **headless** (không OLED), điều khiển qua **Wi-Fi AP + HTTP API** (dùng với app React Native ở [`../app`](../app)) hoặc qua **Serial**.
+Firmware bộ công cụ nghiên cứu RF 2.4GHz, port cho **ESP32-S3-WROOM-1 (ESP32-S3)**, điều khiển qua **Wi-Fi AP + HTTP API** (dùng với app React Native ở [`../app`](../app)) hoặc qua **Serial**.
 
 > ⚠️ Chỉ dùng cho nghiên cứu/giáo dục trong môi trường được phép. Gây nhiễu sóng vô tuyến là bất hợp pháp ở hầu hết các nước.
 
-Chạy **headless** (không cần màn OLED) trên phần cứng ESP32-S3.
+Hiển thị trạng thái qua màn **OLED SSD1306** (I2C) trên phần cứng ESP32-S3.
 
 ## Phần cứng
 
-**Board:** LilyGo T-Display-S3 (ESP32-S3, USB-C native — không có chip USB-UART riêng).
+**Board:** ESP32-S3-WROOM-1 N8R8 (ESP32-S3-DevKitC-1, USB-C native). Tránh GPIO 35/36/37 (PSRAM octal), 26–32 (flash).
 
-**Module nRF24L01+ (PA/LNA):** chân SPI cố định trong firmware; CE/CSN tự dò lúc boot.
+**3× module nRF24L01+ (PA/LNA):** dùng chung bus SPI (SCK/MOSI/MISO cố định trong firmware), mỗi module có CE/CSN riêng.
 
-| Pin nRF24 | GPIO T-Display-S3 |
-|-----------|-------------------|
-| SCK  | 12 |
-| MISO | 13 |
-| MOSI | 11 |
-| CE   | 10 *(khuyến nghị)* |
-| CSN  | 1  *(khuyến nghị)* |
-| VCC  | 3V3 |
-| GND  | GND |
+| Tín hiệu | GPIO |
+|----------|------|
+| SCK *(chung)*  | 12 |
+| MOSI *(chung)* | 11 |
+| MISO *(chung)* | 13 |
+| #1 CE / CSN | 16 / 15 |
+| #2 CE / CSN | 18 / 17 |
+| #3 CE / CSN | 10 / 7 |
+| VCC | 3V3 |
+| GND | GND |
 
-> Nên gắn tụ ~100µF giữa VCC–GND sát module để nguồn ổn định khi phát công suất cao.
+> Nên gắn tụ ~100µF giữa VCC–GND sát mỗi module để nguồn ổn định khi phát công suất cao. Ba module phát cùng lúc nên dùng nguồn 3V3 riêng ≥2A.
 
-**Nút bấm (tùy chọn — dùng khi không điều khiển bằng app):**
+**Màn OLED SSD1306** (I²C, addr 0x3C): SDA=8, SCL=9.
+
+**LED RGB:** WS2812 onboard ở GPIO38 (không cần đấu dây).
+
+**Nút bấm:**
 
 | Nút | GPIO |
 |-----|------|
-| OK | 0 (BOOT onboard) |
-| Next | 14 (KEY onboard) |
-| Previous | 21 (header, nối xuống GND) |
+| OK | 0 (chung nút BOOT onboard) |
+| Next | 21 |
+| Previous | 47 |
 
-Sơ đồ nối dây chi tiết: [`../docs/wiring.html`](../docs/wiring.html)
+Sơ đồ nối dây chi tiết: [`../docs/wiring.html`](../docs/wiring.html) · schematic: [`../docs/schematic.html`](../docs/schematic.html)
 
 ## Build & nạp
 

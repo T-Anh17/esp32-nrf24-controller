@@ -10,7 +10,7 @@
     --board:#1f2a24; --board-edge:#0f1712; --pin:#d4b25a; --silk:#e9eee9;
     --part:#f1f5f9; --part-edge:#94a3b8; --warn:#ea580c; --ok:#16a34a;
     --w-power:#dc2626; --w-gnd:#27272a; --w-ce:#d4a72c; --w-csn:#e0823d;
-    --w-sck:#2563eb; --w-mosi:#16a34a; --w-miso:#a371f7;
+    --w-sck:#2563eb; --w-mosi:#16a34a; --w-miso:#a371f7; --w-i2c:#db2777; --w-btn:#0891b2;
   }
   @media (prefers-color-scheme: dark){
     :root{
@@ -41,122 +41,140 @@
   ul.check{list-style:none;padding:0;margin:0}
   ul.check li{padding:6px 0 6px 28px;position:relative;border-bottom:1px solid var(--line)}
   ul.check li:last-child{border:0}
-  ul.check li::before{content:"☐";position:absolute;left:4px;top:5px;color:var(--mut)}
+  ul.check li::before{content:"\2610";position:absolute;left:4px;top:5px;color:var(--mut)}
   .warn{color:var(--warn);font-weight:600}
   code{font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px}
   .scroll{overflow-x:auto}
   /* SVG */
-  .board{fill:var(--board);stroke:var(--board-edge);stroke-width:2}
-  .silk{fill:var(--silk);font-size:13px;font-weight:600}
-  .silk-s{fill:var(--silk);font-size:11px;opacity:.75}
-  .pin{fill:var(--pin);stroke:#8a6d1f;stroke-width:1}
-  .pin-used{fill:var(--pin);stroke:var(--fg);stroke-width:2.5}
-  .part{fill:var(--part);stroke:var(--part-edge);stroke-width:1.5}
-  .pad{fill:#d1d5db;stroke:#6b7280;stroke-width:1}
-  .w{fill:none;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
-  .w-power{stroke:var(--w-power)} .w-gnd{stroke:var(--w-gnd)} .w-ce{stroke:var(--w-ce)}
-  .w-csn{stroke:var(--w-csn)} .w-sck{stroke:var(--w-sck)} .w-mosi{stroke:var(--w-mosi)} .w-miso{stroke:var(--w-miso)}
-  .dot{fill:var(--fg)}
-  .lbl{font-size:13px} .lbl-b{font-size:13px;font-weight:700}
-  .lbl-s{font-size:11.5px;fill:var(--mut)!important}
-  .lbl-warn{font-size:12px;font-weight:700;fill:var(--warn)!important}
-  .cap{fill:#1f2937;stroke:#9ca3af;stroke-width:1.5}
-  .cap-band{fill:#d1d5db}
+  .box{fill:var(--part);stroke:var(--part-edge);stroke-width:1.6}
+  .boxt{font-size:13px;font-weight:700;fill:var(--fg)}
+  .boxs{font-size:11px;fill:var(--mut)}
+  .pinl{font-size:11.5px;fill:var(--fg)}
+  .stub{stroke:#8b949e;stroke-width:1.4}
+  .tagt{font-size:11px;font-weight:700;fill:#fff}
+  .t-power{fill:var(--w-power)} .t-gnd{fill:var(--w-gnd)} .t-ce{fill:var(--w-ce)}
+  .t-csn{fill:var(--w-csn)} .t-sck{fill:var(--w-sck)} .t-mosi{fill:var(--w-mosi)}
+  .t-miso{fill:var(--w-miso)} .t-i2c{fill:var(--w-i2c)} .t-btn{fill:var(--w-btn)}
+  .t-ce text,.t-csn text{fill:#161b22}
 </style>
 </head>
 <body>
 <main>
   <h1>nRF24 Jammer: sơ đồ nối dây</h1>
-  <p class="sub">LilyGo T-Display-S3 (ESP32-S3, đã tháo màn hình) · module NRF24L01+PA+LNA · chạy headless, điều khiển bằng app</p>
+  <p class="sub">Board <b>ESP32-S3-WROOM-1 N8R8</b> · <b>3×</b> module NRF24L01+PA/LNA (hoặc E01-2G4M27D) · màn <b>OLED SSD1306 I²C</b> · 3 nút nhấn · LED RGB onboard</p>
 
-  <!-- ===== SƠ ĐỒ TỔNG ===== -->
+  <!-- ===== SƠ ĐỒ TỔNG (net-label) ===== -->
   <div class="card scroll">
-    <svg viewBox="0 0 760 620" role="img" aria-label="Sơ đồ nối nRF24 với ESP32-S3" style="min-width:680px">
-      <!-- Board -->
-      <rect class="board" x="420" y="88" width="160" height="476" rx="10"/>
-      <rect x="455" y="96" width="90" height="34" rx="4" fill="none" stroke="var(--silk)" stroke-opacity=".35" stroke-dasharray="4 3"/>
-      <text class="silk-s" x="500" y="117" text-anchor="middle">anten</text>
-      <text class="lbl-b" x="500" y="78" text-anchor="middle">T-Display-S3 · mặt sau</text>
-      <rect x="478" y="556" width="44" height="20" rx="6" fill="#9ca3af" stroke="#4b5563"/>
-      <text class="lbl-s" x="500" y="590" text-anchor="middle">USB-C</text>
+    <svg viewBox="0 0 820 600" role="img" aria-label="Sơ đồ nối ESP32-S3-WROOM-1 với 3 module nRF24 và OLED" style="min-width:720px">
 
-      <!-- Header trái: 3V 1 2 3 10 11 12 13 NC NC GND 5V -->
-      <circle class="pin-used" cx="440" cy="150" r="7"/><text class="silk" x="455" y="155">3V</text>
-      <circle class="pin-used" cx="440" cy="182" r="7"/><text class="silk" x="455" y="187">1</text>
-      <circle class="pin" cx="440" cy="214" r="7"/><text class="silk" x="455" y="219">2</text>
-      <circle class="pin" cx="440" cy="246" r="7"/><text class="silk" x="455" y="251">3</text>
-      <circle class="pin-used" cx="440" cy="278" r="7"/><text class="silk" x="455" y="283">10</text>
-      <circle class="pin-used" cx="440" cy="310" r="7"/><text class="silk" x="455" y="315">11</text>
-      <circle class="pin-used" cx="440" cy="342" r="7"/><text class="silk" x="455" y="347">12</text>
-      <circle class="pin-used" cx="440" cy="374" r="7"/><text class="silk" x="455" y="379">13</text>
-      <circle class="pin" cx="440" cy="406" r="7"/><text class="silk-s" x="455" y="410">NC</text>
-      <circle class="pin" cx="440" cy="438" r="7"/><text class="silk-s" x="455" y="442">NC</text>
-      <circle class="pin-used" cx="440" cy="470" r="7"/><text class="silk" x="455" y="475">GND</text>
-      <circle class="pin" cx="440" cy="502" r="7"/><text class="silk" x="455" y="507">5V</text>
+      <!-- ESP32-S3 block -->
+      <rect class="box" x="40" y="96" width="210" height="476" rx="8"/>
+      <text class="boxt" x="145" y="120" text-anchor="middle">ESP32-S3-WROOM-1</text>
+      <text class="boxs" x="145" y="135" text-anchor="middle">N8R8 · USB-C native</text>
 
-      <!-- Header phải: GND GND 43 44 18 17 21 16 NC GND GND 3V (không dùng) -->
-      <circle class="pin" cx="560" cy="150" r="7"/><text class="silk" x="545" y="155" text-anchor="end">GND</text>
-      <circle class="pin" cx="560" cy="182" r="7"/><text class="silk" x="545" y="187" text-anchor="end">GND</text>
-      <circle class="pin" cx="560" cy="214" r="7"/><text class="silk" x="545" y="219" text-anchor="end">43</text>
-      <circle class="pin" cx="560" cy="246" r="7"/><text class="silk" x="545" y="251" text-anchor="end">44</text>
-      <circle class="pin" cx="560" cy="278" r="7"/><text class="silk" x="545" y="283" text-anchor="end">18</text>
-      <circle class="pin" cx="560" cy="310" r="7"/><text class="silk" x="545" y="315" text-anchor="end">17</text>
-      <circle class="pin" cx="560" cy="342" r="7"/><text class="silk" x="545" y="347" text-anchor="end">21</text>
-      <circle class="pin" cx="560" cy="374" r="7"/><text class="silk" x="545" y="379" text-anchor="end">16</text>
-      <circle class="pin" cx="560" cy="406" r="7"/><text class="silk-s" x="545" y="410" text-anchor="end">NC</text>
-      <circle class="pin" cx="560" cy="438" r="7"/><text class="silk" x="545" y="443" text-anchor="end">GND</text>
-      <circle class="pin" cx="560" cy="470" r="7"/><text class="silk" x="545" y="475" text-anchor="end">GND</text>
-      <circle class="pin" cx="560" cy="502" r="7"/><text class="silk" x="545" y="507" text-anchor="end">3V</text>
+      <!-- helper: pin label at x=44 (left, in-box), stub 250->288, tag x=290 w=86 -->
+      <g>
+        <!-- 3V3 -->
+        <text class="pinl" x="52" y="166">3V3</text><line class="stub" x1="250" y1="162" x2="288" y2="162"/>
+        <rect class="t-power" x="290" y="152" width="86" height="20" rx="4"/><text class="tagt" x="333" y="166" text-anchor="middle">3V3 (OLED)</text>
+        <!-- GND -->
+        <text class="pinl" x="52" y="196">GND</text><line class="stub" x1="250" y1="192" x2="288" y2="192"/>
+        <rect class="t-gnd" x="290" y="182" width="86" height="20" rx="4"/><text class="tagt" x="333" y="196" text-anchor="middle">GND</text>
+        <!-- SCK -->
+        <text class="pinl" x="52" y="234">GPIO12</text><line class="stub" x1="250" y1="230" x2="288" y2="230"/>
+        <rect class="t-sck" x="290" y="220" width="86" height="20" rx="4"/><text class="tagt" x="333" y="234" text-anchor="middle">SCK</text>
+        <!-- MOSI -->
+        <text class="pinl" x="52" y="264">GPIO11</text><line class="stub" x1="250" y1="260" x2="288" y2="260"/>
+        <rect class="t-mosi" x="290" y="250" width="86" height="20" rx="4"/><text class="tagt" x="333" y="264" text-anchor="middle">MOSI</text>
+        <!-- MISO -->
+        <text class="pinl" x="52" y="294">GPIO13</text><line class="stub" x1="250" y1="290" x2="288" y2="290"/>
+        <rect class="t-miso" x="290" y="280" width="86" height="20" rx="4"/><text class="tagt" x="333" y="294" text-anchor="middle">MISO</text>
+        <!-- CE1 -->
+        <text class="pinl" x="52" y="332">GPIO16</text><line class="stub" x1="250" y1="328" x2="288" y2="328"/>
+        <rect class="t-ce" x="290" y="318" width="86" height="20" rx="4"/><text class="tagt" x="333" y="332" text-anchor="middle" style="fill:#161b22">CE1</text>
+        <!-- CSN1 -->
+        <text class="pinl" x="52" y="362">GPIO15</text><line class="stub" x1="250" y1="358" x2="288" y2="358"/>
+        <rect class="t-csn" x="290" y="348" width="86" height="20" rx="4"/><text class="tagt" x="333" y="362" text-anchor="middle">CSN1</text>
+        <!-- CE2 -->
+        <text class="pinl" x="52" y="392">GPIO18</text><line class="stub" x1="250" y1="388" x2="288" y2="388"/>
+        <rect class="t-ce" x="290" y="378" width="86" height="20" rx="4"/><text class="tagt" x="333" y="392" text-anchor="middle" style="fill:#161b22">CE2</text>
+        <!-- CSN2 -->
+        <text class="pinl" x="52" y="422">GPIO17</text><line class="stub" x1="250" y1="418" x2="288" y2="418"/>
+        <rect class="t-csn" x="290" y="408" width="86" height="20" rx="4"/><text class="tagt" x="333" y="422" text-anchor="middle">CSN2</text>
+        <!-- CE3 -->
+        <text class="pinl" x="52" y="452">GPIO10</text><line class="stub" x1="250" y1="448" x2="288" y2="448"/>
+        <rect class="t-ce" x="290" y="438" width="86" height="20" rx="4"/><text class="tagt" x="333" y="452" text-anchor="middle" style="fill:#161b22">CE3</text>
+        <!-- CSN3 -->
+        <text class="pinl" x="52" y="482">GPIO7</text><line class="stub" x1="250" y1="478" x2="288" y2="478"/>
+        <rect class="t-csn" x="290" y="468" width="86" height="20" rx="4"/><text class="tagt" x="333" y="482" text-anchor="middle">CSN3</text>
+        <!-- SDA -->
+        <text class="pinl" x="52" y="520">GPIO8</text><line class="stub" x1="250" y1="516" x2="288" y2="516"/>
+        <rect class="t-i2c" x="290" y="506" width="86" height="20" rx="4"/><text class="tagt" x="333" y="520" text-anchor="middle">SDA</text>
+        <!-- SCL -->
+        <text class="pinl" x="52" y="550">GPIO9</text><line class="stub" x1="250" y1="546" x2="288" y2="546"/>
+        <rect class="t-i2c" x="290" y="536" width="86" height="20" rx="4"/><text class="tagt" x="333" y="550" text-anchor="middle">SCL</text>
+      </g>
 
-      <!-- nRF24 module: header 2x4 + nhãn màu 2 bên (như ảnh thật) -->
-      <text class="lbl-b" x="178" y="166" text-anchor="middle">NRF24L01+ PA/LNA</text>
-      <!-- connector 2x4 -->
-      <rect x="150" y="178" width="56" height="156" rx="8" fill="#15181d" stroke="#3a3f47" stroke-width="2"/>
-      <rect x="161" y="199" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="199" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
-      <rect x="161" y="239" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="239" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
-      <rect x="161" y="279" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="279" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
-      <rect x="161" y="319" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="183" y="319" width="12" height="12" rx="2" fill="#c9d1d9" stroke="#656c76"/>
-      <!-- stub pad<->nhãn -->
-      <path d="M122 205H161" stroke="#8b949e" stroke-width="2"/><path d="M122 245H161" stroke="#d4a72c" stroke-width="2"/>
-      <path d="M122 285H161" stroke="#2f81f7" stroke-width="2"/><path d="M122 325H161" stroke="#a371f7" stroke-width="2"/>
-      <path d="M195 205H234" stroke="#da3633" stroke-width="2"/><path d="M195 245H234" stroke="#e0823d" stroke-width="2"/>
-      <path d="M195 285H234" stroke="#2ea043" stroke-width="2"/><path d="M195 325H234" stroke="#8b949e" stroke-width="2"/>
-      <!-- nhãn trái -->
-      <rect x="36" y="193" width="86" height="24" rx="5" fill="#161b22" stroke="#30363d"/><text x="79" y="209" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">GND</text>
-      <rect x="36" y="233" width="86" height="24" rx="5" fill="#d4a72c"/><text x="79" y="249" text-anchor="middle" style="fill:#161b22;font-size:12px;font-weight:700">CE</text>
-      <rect x="36" y="273" width="86" height="24" rx="5" fill="#2f81f7"/><text x="79" y="289" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">SCK</text>
-      <rect x="36" y="313" width="86" height="24" rx="5" fill="#a371f7"/><text x="79" y="329" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">MISO</text>
-      <!-- nhãn phải -->
-      <rect x="234" y="193" width="86" height="24" rx="5" fill="#da3633"/><text x="277" y="209" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">VCC</text>
-      <rect x="234" y="233" width="86" height="24" rx="5" fill="#e0823d"/><text x="277" y="249" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">CSN</text>
-      <rect x="234" y="273" width="86" height="24" rx="5" fill="#2ea043"/><text x="277" y="289" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">MOSI</text>
-      <rect x="234" y="313" width="86" height="24" rx="5" fill="#8b949e"/><text x="277" y="329" text-anchor="middle" style="fill:#161b22;font-size:12px;font-weight:700">IRQ</text>
-      <text class="lbl-s" x="277" y="352" text-anchor="middle">không nối</text>
-      <text class="lbl-s" x="178" y="420" text-anchor="middle">module 2 hàng × 4 chân — nhãn 2 bên</text>
+      <!-- Module 1 -->
+      <rect class="box" x="560" y="112" width="210" height="116" rx="8"/>
+      <text class="boxt" x="665" y="134" text-anchor="middle">nRF24 #1</text>
+      <rect class="t-power" x="572" y="146" width="56" height="18" rx="4"/><text class="tagt" x="600" y="159" text-anchor="middle">VCC</text>
+      <rect class="t-gnd" x="632" y="146" width="48" height="18" rx="4"/><text class="tagt" x="656" y="159" text-anchor="middle">GND</text>
+      <rect class="t-ce" x="684" y="146" width="40" height="18" rx="4"/><text class="tagt" x="704" y="159" text-anchor="middle" style="fill:#161b22">CE1</text>
+      <rect class="t-csn" x="572" y="170" width="52" height="18" rx="4"/><text class="tagt" x="598" y="183" text-anchor="middle">CSN1</text>
+      <rect class="t-sck" x="628" y="170" width="44" height="18" rx="4"/><text class="tagt" x="650" y="183" text-anchor="middle">SCK</text>
+      <rect class="t-mosi" x="676" y="170" width="52" height="18" rx="4"/><text class="tagt" x="702" y="183" text-anchor="middle">MOSI</text>
+      <rect class="t-miso" x="572" y="194" width="52" height="18" rx="4"/><text class="tagt" x="598" y="207" text-anchor="middle">MISO</text>
+      <text class="boxs" x="636" y="207">IRQ → không nối</text>
 
-      <!-- dây sang board: phải đi thẳng, trái vòng xuống dưới -->
-      <path class="w w-power" d="M320 205 H356 V150 H433"/>
-      <path class="w w-csn"   d="M320 245 H338 V182 H433"/>
-      <path class="w w-mosi"  d="M320 285 H378 V310 H433"/>
-      <path class="w w-gnd"   d="M36 205 H18 V392 H408 V470 H433"/>
-      <path class="w w-ce"    d="M36 245 H22 V368 H402 V278 H433"/>
-      <path class="w w-sck"   d="M36 285 H26 V380 H396 V342 H433"/>
-      <path class="w w-miso"  d="M36 325 H30 V356 H390 V374 H433"/>
+      <!-- Module 2 -->
+      <rect class="box" x="560" y="244" width="210" height="116" rx="8"/>
+      <text class="boxt" x="665" y="266" text-anchor="middle">nRF24 #2</text>
+      <rect class="t-power" x="572" y="278" width="56" height="18" rx="4"/><text class="tagt" x="600" y="291" text-anchor="middle">VCC</text>
+      <rect class="t-gnd" x="632" y="278" width="48" height="18" rx="4"/><text class="tagt" x="656" y="291" text-anchor="middle">GND</text>
+      <rect class="t-ce" x="684" y="278" width="40" height="18" rx="4"/><text class="tagt" x="704" y="291" text-anchor="middle" style="fill:#161b22">CE2</text>
+      <rect class="t-csn" x="572" y="302" width="52" height="18" rx="4"/><text class="tagt" x="598" y="315" text-anchor="middle">CSN2</text>
+      <rect class="t-sck" x="628" y="302" width="44" height="18" rx="4"/><text class="tagt" x="650" y="315" text-anchor="middle">SCK</text>
+      <rect class="t-mosi" x="676" y="302" width="52" height="18" rx="4"/><text class="tagt" x="702" y="315" text-anchor="middle">MOSI</text>
+      <rect class="t-miso" x="572" y="326" width="52" height="18" rx="4"/><text class="tagt" x="598" y="339" text-anchor="middle">MISO</text>
+      <text class="boxs" x="636" y="339">IRQ → không nối</text>
+
+      <!-- Module 3 -->
+      <rect class="box" x="560" y="376" width="210" height="116" rx="8"/>
+      <text class="boxt" x="665" y="398" text-anchor="middle">nRF24 #3</text>
+      <rect class="t-power" x="572" y="410" width="56" height="18" rx="4"/><text class="tagt" x="600" y="423" text-anchor="middle">VCC</text>
+      <rect class="t-gnd" x="632" y="410" width="48" height="18" rx="4"/><text class="tagt" x="656" y="423" text-anchor="middle">GND</text>
+      <rect class="t-ce" x="684" y="410" width="40" height="18" rx="4"/><text class="tagt" x="704" y="423" text-anchor="middle" style="fill:#161b22">CE3</text>
+      <rect class="t-csn" x="572" y="434" width="52" height="18" rx="4"/><text class="tagt" x="598" y="447" text-anchor="middle">CSN3</text>
+      <rect class="t-sck" x="628" y="434" width="44" height="18" rx="4"/><text class="tagt" x="650" y="447" text-anchor="middle">SCK</text>
+      <rect class="t-mosi" x="676" y="434" width="52" height="18" rx="4"/><text class="tagt" x="702" y="447" text-anchor="middle">MOSI</text>
+      <rect class="t-miso" x="572" y="458" width="52" height="18" rx="4"/><text class="tagt" x="598" y="471" text-anchor="middle">MISO</text>
+      <text class="boxs" x="636" y="471">IRQ → không nối</text>
+
+      <!-- OLED -->
+      <rect class="box" x="560" y="508" width="210" height="64" rx="8"/>
+      <text class="boxt" x="665" y="530" text-anchor="middle">OLED SSD1306</text>
+      <rect class="t-power" x="572" y="542" width="44" height="18" rx="4"/><text class="tagt" x="594" y="555" text-anchor="middle">VDD</text>
+      <rect class="t-gnd" x="620" y="542" width="44" height="18" rx="4"/><text class="tagt" x="642" y="555" text-anchor="middle">GND</text>
+      <rect class="t-i2c" x="668" y="542" width="44" height="18" rx="4"/><text class="tagt" x="690" y="555" text-anchor="middle">SDA</text>
+      <rect class="t-i2c" x="716" y="542" width="44" height="18" rx="4"/><text class="tagt" x="738" y="555" text-anchor="middle">SCL</text>
+
+      <text class="boxs" x="405" y="586" text-anchor="middle">Nhãn cùng tên (cùng màu) = nối với nhau — kiểu net-label</text>
     </svg>
     <div class="legend">
       <span><i class="sw" style="background:var(--w-power)"></i>VCC (3V3)</span>
       <span><i class="sw" style="background:var(--w-gnd)"></i>GND</span>
-      <span><i class="sw" style="background:var(--w-ce)"></i>CE</span>
-      <span><i class="sw" style="background:var(--w-csn)"></i>CSN</span>
-      <span><i class="sw" style="background:var(--w-sck)"></i>SCK</span>
-      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI</span>
-      <span><i class="sw" style="background:var(--w-miso)"></i>MISO</span>
-      <span>● = điểm nối · chân tô viền đậm trên board = chân đang dùng</span>
+      <span><i class="sw" style="background:var(--w-sck)"></i>SCK (chung)</span>
+      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI (chung)</span>
+      <span><i class="sw" style="background:var(--w-miso)"></i>MISO (chung)</span>
+      <span><i class="sw" style="background:var(--w-ce)"></i>CE (riêng)</span>
+      <span><i class="sw" style="background:var(--w-csn)"></i>CSN (riêng)</span>
+      <span><i class="sw" style="background:var(--w-i2c)"></i>I²C (OLED)</span>
     </div>
     <p class="note">
-      Board vẽ <b>nhìn từ mặt sau</b> (mặt có chip, anten ở trên, USB-C ở dưới), theo sơ đồ chân chính thức của LilyGo.
-      Lật sang mặt trước thì 2 hàng chân đổi bên, nên <b>luôn làm theo số in trên board</b>.
-      Toàn bộ 7 dây gom về <b>hàng chân trái</b> cho gọn; hàng phải để trống.
+      3 chân SPI <b>SCK/MOSI/MISO dùng chung</b> cho cả 3 module (nối song song). Mỗi module có <b>CE và CSN riêng</b>.
+      OLED đi bus I²C riêng (SDA/SCL). Chân <b>IRQ</b> của nRF24 không dùng, để trống.
+      LED RGB nằm sẵn trên board (GPIO38) — không cần đấu dây.
     </p>
   </div>
 
@@ -164,15 +182,23 @@
   <h2>Bảng nối dây</h2>
   <div class="card scroll">
     <table>
-      <tr><th>#</th><th>nRF24</th><th>Board (GPIO)</th><th>Dây</th><th>Ghi chú</th></tr>
-      <tr><td>1</td><td><b>GND</b></td><td><b>GND</b></td><td><i class="sw" style="background:var(--w-gnd)"></i></td><td>Mát chung</td></tr>
-      <tr><td>2</td><td><b>VCC</b></td><td><b>3V</b> (3.3V)</td><td><i class="sw" style="background:var(--w-power)"></i></td><td><span class="warn">Chỉ 3.3V</span> — cắm 5V vào VCC là chết module</td></tr>
-      <tr><td>3</td><td><b>CE</b></td><td><b>10</b></td><td><i class="sw" style="background:var(--w-ce)"></i></td><td>Khuyến nghị · đặt runtime (app / auto-dò)</td></tr>
-      <tr><td>4</td><td><b>CSN</b></td><td><b>1</b></td><td><i class="sw" style="background:var(--w-csn)"></i></td><td>Khuyến nghị · đặt runtime</td></tr>
-      <tr><td>5</td><td><b>SCK</b></td><td><b>12</b></td><td><i class="sw" style="background:var(--w-sck)"></i></td><td><b>Cố định</b> trong firmware (<code>HSPI_init</code>)</td></tr>
-      <tr><td>6</td><td><b>MOSI</b></td><td><b>11</b></td><td><i class="sw" style="background:var(--w-mosi)"></i></td><td><b>Cố định</b></td></tr>
-      <tr><td>7</td><td><b>MISO</b></td><td><b>13</b></td><td><i class="sw" style="background:var(--w-miso)"></i></td><td><b>Cố định</b></td></tr>
-      <tr><td>–</td><td><b>IRQ</b></td><td colspan="3">Không nối</td></tr>
+      <tr><th>Tín hiệu</th><th>GPIO ESP32-S3</th><th>Nối tới</th><th>Dây</th><th>Ghi chú</th></tr>
+      <tr><td><b>SCK</b></td><td><b>12</b></td><td>SCK · cả 3 module</td><td><i class="sw" style="background:var(--w-sck)"></i></td><td><b>Cố định</b> firmware (<code>HSPI</code>) · dùng chung</td></tr>
+      <tr><td><b>MOSI</b></td><td><b>11</b></td><td>MOSI · cả 3 module</td><td><i class="sw" style="background:var(--w-mosi)"></i></td><td><b>Cố định</b> · dùng chung</td></tr>
+      <tr><td><b>MISO</b></td><td><b>13</b></td><td>MISO · cả 3 module</td><td><i class="sw" style="background:var(--w-miso)"></i></td><td><b>Cố định</b> · dùng chung</td></tr>
+      <tr><td><b>CE1 / CSN1</b></td><td><b>16 / 15</b></td><td>module #1 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #1</td></tr>
+      <tr><td><b>CE2 / CSN2</b></td><td><b>18 / 17</b></td><td>module #2 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #2</td></tr>
+      <tr><td><b>CE3 / CSN3</b></td><td><b>10 / 7</b></td><td>module #3 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #3</td></tr>
+      <tr><td><b>SDA</b></td><td><b>8</b></td><td>OLED SDA</td><td><i class="sw" style="background:var(--w-i2c)"></i></td><td>I²C · địa chỉ 0x3C</td></tr>
+      <tr><td><b>SCL</b></td><td><b>9</b></td><td>OLED SCK/SCL</td><td><i class="sw" style="background:var(--w-i2c)"></i></td><td>I²C</td></tr>
+      <tr><td><b>VCC module</b></td><td>3V3</td><td>VCC · cả 3 module</td><td><i class="sw" style="background:var(--w-power)"></i></td><td><span class="warn">Chỉ 3.3V.</span> Bản PA/LNA nên cấp 3V3 riêng (xem bên dưới)</td></tr>
+      <tr><td><b>VDD OLED</b></td><td>3V3</td><td>OLED VDD</td><td><i class="sw" style="background:var(--w-power)"></i></td><td>Lấy 3V3 của board (dòng nhỏ)</td></tr>
+      <tr><td><b>GND</b></td><td>GND</td><td>mọi module · OLED · nút</td><td><i class="sw" style="background:var(--w-gnd)"></i></td><td>Mát chung</td></tr>
+      <tr><td><b>Nút OK</b></td><td><b>0</b></td><td>SW1 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Dùng chung nút BOOT onboard (GPIO0)</td></tr>
+      <tr><td><b>Nút Next</b></td><td><b>21</b></td><td>SW2 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Nút rời</td></tr>
+      <tr><td><b>Nút Previous</b></td><td><b>47</b></td><td>SW3 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Nút rời</td></tr>
+      <tr><td><b>LED RGB</b></td><td><b>38</b></td><td>onboard WS2812</td><td>–</td><td>Có sẵn trên board, <b>không đấu dây</b></td></tr>
+      <tr><td><b>IRQ</b></td><td>–</td><td colspan="2">Không nối (cả 3 module)</td></tr>
     </table>
   </div>
 
@@ -185,7 +211,6 @@
         <text x="180" y="16" text-anchor="middle" style="fill:var(--mut);font-size:11px">NRF24L01+ PA/LNA · nhìn từ trên</text>
         <!-- connector 2x4 -->
         <rect x="150" y="30" width="60" height="160" rx="8" fill="#15181d" stroke="#3a3f47" stroke-width="2"/>
-        <!-- hàng: 46 / 86 / 126 / 166 ; cột trái x=168, phải x=192 -->
         <g>
           <rect x="161" y="39" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="185" y="39" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/>
           <rect x="161" y="79" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/><rect x="185" y="79" width="14" height="14" rx="2" fill="#c9d1d9" stroke="#656c76"/>
@@ -214,20 +239,20 @@
     <div class="card">
       <h3>② Nguồn cho bản PA+LNA</h3>
       <svg viewBox="0 0 300 150" role="img" aria-label="Tụ lọc nguồn nRF24">
-        <rect class="part" x="30" y="56" width="150" height="40" rx="6"/>
-        <text class="lbl-b" x="105" y="80" text-anchor="middle">nRF24 VCC/GND</text>
-        <path class="w w-power" d="M180 66 H250"/>
-        <path class="w w-gnd" d="M180 86 H250"/>
-        <text class="lbl-s" x="258" y="70">3V3</text>
-        <text class="lbl-s" x="258" y="90">GND</text>
+        <rect class="box" x="30" y="56" width="150" height="40" rx="6"/>
+        <text class="boxt" x="105" y="80" text-anchor="middle">nRF24 VCC/GND</text>
+        <path d="M180 66 H250" stroke="var(--w-power)" stroke-width="3" fill="none"/>
+        <path d="M180 86 H250" stroke="var(--w-gnd)" stroke-width="3" fill="none"/>
+        <text class="boxs" x="258" y="70">3V3</text>
+        <text class="boxs" x="258" y="90">GND</text>
         <path d="M200 60 H208 M224 60 H232" stroke="var(--fg)" stroke-width="2"/>
-        <rect class="cap" x="208" y="54" width="16" height="12" rx="3"/>
-        <rect class="cap-band" x="210" y="55" width="3" height="10"/>
-        <circle class="dot" cx="200" cy="60" r="3.5"/><circle class="dot" cx="232" cy="60" r="3.5"/>
-        <text class="lbl-s" x="216" y="44" text-anchor="middle">tụ 10–100µF</text>
+        <rect x="208" y="54" width="16" height="12" rx="3" fill="#1f2937" stroke="#9ca3af" stroke-width="1.5"/>
+        <rect x="210" y="55" width="3" height="10" fill="#d1d5db"/>
+        <circle cx="200" cy="60" r="3.5" fill="var(--fg)"/><circle cx="232" cy="60" r="3.5" fill="var(--fg)"/>
+        <text class="boxs" x="216" y="44" text-anchor="middle">tụ 10–100µF</text>
       </svg>
-      <p class="note">Bản <b>PA+LNA</b> ăn dòng lớn lúc phát. Hàn tụ <b>10–100µF</b> sát chân VCC–GND của module.
-        Nếu board sụt áp/khởi động lại khi phát, cấp <b>3.3V riêng</b> cho module thay vì lấy 3V3 của board.</p>
+      <p class="note">Bản <b>PA+LNA</b> ăn dòng lớn lúc phát. Hàn tụ <b>10–100µF</b> sát chân VCC–GND mỗi module.
+        Ba module phát cùng lúc rất dễ làm tụt áp — nên cấp <b>3.3V riêng</b> (nguồn ≥2A) cho cụm module thay vì lấy 3V3 của board.</p>
     </div>
   </div>
 
@@ -235,13 +260,15 @@
   <h2>Kiểm tra trước khi cấp điện</h2>
   <div class="card">
     <ul class="check">
-      <li>VCC vào đúng <b>3V3</b>, <span class="warn">không phải 5V</span>.</li>
-      <li>SCK=<b>12</b>, MOSI=<b>11</b>, MISO=<b>13</b> nối đúng (các chân này cố định trong firmware).</li>
-      <li>CE, CSN nối tới chân đã đặt ở app (khuyến nghị <b>10</b> và <b>1</b>), hoặc để firmware tự dò.</li>
-      <li>Có tụ <b>10–100µF</b> sát VCC–GND của module.</li>
-      <li>Không dùng <b>GPIO14</b> (nút KEY onboard) và <b>GPIO0</b> (BOOT) cho nRF24.</li>
+      <li>VCC mọi module + OLED vào đúng <b>3V3</b>, <span class="warn">không phải 5V</span>.</li>
+      <li>SCK=<b>12</b>, MOSI=<b>11</b>, MISO=<b>13</b> nối chung đúng cho cả 3 module (các chân này cố định firmware).</li>
+      <li>CE/CSN đúng từng module: #1 = <b>16/15</b>, #2 = <b>18/17</b>, #3 = <b>10/7</b>.</li>
+      <li>OLED: SDA=<b>8</b>, SCL=<b>9</b> (chân SCK trên bo OLED chính là SCL).</li>
+      <li>Nút: OK=<b>0</b>, Next=<b>21</b>, Previous=<b>47</b> — mỗi nút nối chân kia về <b>GND</b>.</li>
+      <li>Có tụ <b>10–100µF</b> sát VCC–GND mỗi module.</li>
+      <li><span class="warn">Tránh</span> GPIO <b>35/36/37</b> (PSRAM octal của N8R8) và <b>26–32</b> (flash) — không dùng cho dây nào.</li>
       <li>Đo thang Ω: giữa 3V3 và GND <b>không chập</b>.</li>
-      <li>Cấp điện qua USB-C, mở app → Cài đặt → Kiểm tra, thấy đúng số module nRF24.</li>
+      <li>Cấp điện qua USB-C, mở monitor COM → gõ <code>info</code> xem đúng 3 module, gõ <code>detect</code> để self-test SPI từng module.</li>
     </ul>
   </div>
 

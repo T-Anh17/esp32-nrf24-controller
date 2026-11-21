@@ -53,186 +53,451 @@
 </head>
 <body>
 <main>
-  <h1>nRF24 Jammer — Schematic (E01-2G4M27D ×2 + T-Display-S3)</h1>
-  <p class="sub">Vẽ kiểu <b>net-label</b>: hai chân có <b>cùng tên net</b> (cùng nhãn màu) là nối với nhau — không cần kéo dây. Trong EasyEDA dùng <code>Place → Net Label</code> gán đúng tên này lên từng chân.</p>
+  <h1>nRF24 Jammer — Schematic (ESP32-S3-WROOM-1 + nRF24 ×3)</h1>
+  <p class="sub">Vẽ theo đúng linh kiện thực tế: 3 module nRF24 (header 2×4, chân 1–8), OLED SSD1306 4 chân (<code>GND VCC SCL SDA</code>), 3 nút nhấn và board ESP32-S3-WROOM-1 (2 cổng USB-C). Dây được tô màu theo tín hiệu.</p>
 
+  <h2>Sơ đồ đi dây thực tế</h2>
   <div class="card scroll">
-    <svg viewBox="0 0 1180 820" role="img" aria-label="Schematic net-label">
+    <svg viewBox="0 0 1240 900" role="img" aria-label="Sơ đồ đi dây thực tế">
+      <style>
+        .wire{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
+        .w-pwr{stroke:#dc2626}.w-gnd{stroke:#64748b}.w-sck{stroke:#2563eb}.w-mosi{stroke:#16a34a}
+        .w-miso{stroke:#9333ea}.w-ce{stroke:#0891b2}.w-csn{stroke:#ea8a3d}.w-i2c{stroke:#db2777}
+        .jn{fill:#111}
+        .mod{fill:#15181d;stroke:#3a3f47;stroke-width:1.6}
+        .scr{fill:#2b2f36}
+        .pind{fill:#c9d1d9;stroke:#656c76;stroke-width:1}
+        .pinn{font-size:10px;font-weight:700;fill:#161b22}
+        .plbl{font-size:8.5px;fill:#aab2bd;font-weight:700}
+        .brd{fill:#141a16;stroke:#2f5a42;stroke-width:2}
+        .bpin{fill:#d4b25a;stroke:#8a6d1f}
+        .bt{font-size:10px;fill:#e9eee9;font-weight:700}
+        .ttl{font-size:12px;font-weight:700;fill:#e9eee9}
+        .gtag{fill:#64748b}.gtagt{font-size:9px;font-weight:700;fill:#fff}
+      </style>
 
-      <!-- ===== U1 ESP32-S3 ===== -->
-      <rect class="box" x="70" y="140" width="230" height="435" rx="8"/>
-      <text class="boxt" x="185" y="162" text-anchor="middle">U1 · T-Display-S3</text>
-      <text class="boxs" x="185" y="177" text-anchor="middle">(ESP32-S3, cắm qua header)</text>
+      <!-- ======= MODULES (3 across top) ======= -->
+      <!-- M1 -->
+      <rect class="mod" x="30" y="20" width="250" height="150" rx="8"/>
+      <rect x="146" y="6" width="18" height="16" rx="2" fill="#3a3f47"/>
+      <text class="ttl" x="155" y="42" text-anchor="middle">nRF24 #1</text>
+      <rect class="scr" x="48" y="50" width="214" height="44" rx="3"/>
+      <text class="plbl" x="75" y="80" text-anchor="middle">VCC</text><text class="plbl" x="133" y="80" text-anchor="middle">CSN</text><text class="plbl" x="191" y="80" text-anchor="middle">MOSI</text><text class="plbl" x="246" y="80" text-anchor="middle">IRQ</text>
+      <circle class="pind" cx="75" cy="112" r="11"/><text class="pinn" x="75" y="116" text-anchor="middle">2</text>
+      <circle class="pind" cx="133" cy="112" r="11"/><text class="pinn" x="133" y="116" text-anchor="middle">4</text>
+      <circle class="pind" cx="191" cy="112" r="11"/><text class="pinn" x="191" y="116" text-anchor="middle">6</text>
+      <circle class="pind" cx="246" cy="112" r="11"/><text class="pinn" x="246" y="116" text-anchor="middle">8</text>
+      <circle class="pind" cx="75" cy="148" r="11"/><text class="pinn" x="75" y="152" text-anchor="middle">1</text>
+      <circle class="pind" cx="133" cy="148" r="11"/><text class="pinn" x="133" y="152" text-anchor="middle">3</text>
+      <circle class="pind" cx="191" cy="148" r="11"/><text class="pinn" x="191" y="152" text-anchor="middle">5</text>
+      <circle class="pind" cx="246" cy="148" r="11"/><text class="pinn" x="246" y="152" text-anchor="middle">7</text>
+      <text class="plbl" x="75" y="169" text-anchor="middle">GND</text><text class="plbl" x="133" y="169" text-anchor="middle">CE</text><text class="plbl" x="191" y="169" text-anchor="middle">SCK</text><text class="plbl" x="246" y="169" text-anchor="middle">MISO</text>
 
-      <!-- U1 pins (right side) : y, inner label, net class, net name -->
-      <!-- row helper: stub x=300->335 ; tag x=338..430 -->
+      <!-- M2 -->
+      <rect class="mod" x="320" y="20" width="250" height="150" rx="8"/>
+      <rect x="436" y="6" width="18" height="16" rx="2" fill="#3a3f47"/>
+      <text class="ttl" x="445" y="42" text-anchor="middle">nRF24 #2</text>
+      <rect class="scr" x="338" y="50" width="214" height="44" rx="3"/>
+      <text class="plbl" x="365" y="80" text-anchor="middle">VCC</text><text class="plbl" x="423" y="80" text-anchor="middle">CSN</text><text class="plbl" x="481" y="80" text-anchor="middle">MOSI</text><text class="plbl" x="536" y="80" text-anchor="middle">IRQ</text>
+      <circle class="pind" cx="365" cy="112" r="11"/><text class="pinn" x="365" y="116" text-anchor="middle">2</text>
+      <circle class="pind" cx="423" cy="112" r="11"/><text class="pinn" x="423" y="116" text-anchor="middle">4</text>
+      <circle class="pind" cx="481" cy="112" r="11"/><text class="pinn" x="481" y="116" text-anchor="middle">6</text>
+      <circle class="pind" cx="536" cy="112" r="11"/><text class="pinn" x="536" y="116" text-anchor="middle">8</text>
+      <circle class="pind" cx="365" cy="148" r="11"/><text class="pinn" x="365" y="152" text-anchor="middle">1</text>
+      <circle class="pind" cx="423" cy="148" r="11"/><text class="pinn" x="423" y="152" text-anchor="middle">3</text>
+      <circle class="pind" cx="481" cy="148" r="11"/><text class="pinn" x="481" y="152" text-anchor="middle">5</text>
+      <circle class="pind" cx="536" cy="148" r="11"/><text class="pinn" x="536" y="152" text-anchor="middle">7</text>
+      <text class="plbl" x="365" y="169" text-anchor="middle">GND</text><text class="plbl" x="423" y="169" text-anchor="middle">CE</text><text class="plbl" x="481" y="169" text-anchor="middle">SCK</text><text class="plbl" x="536" y="169" text-anchor="middle">MISO</text>
+
+      <!-- M3 -->
+      <rect class="mod" x="610" y="20" width="250" height="150" rx="8"/>
+      <rect x="726" y="6" width="18" height="16" rx="2" fill="#3a3f47"/>
+      <text class="ttl" x="735" y="42" text-anchor="middle">nRF24 #3</text>
+      <rect class="scr" x="628" y="50" width="214" height="44" rx="3"/>
+      <text class="plbl" x="655" y="80" text-anchor="middle">VCC</text><text class="plbl" x="713" y="80" text-anchor="middle">CSN</text><text class="plbl" x="771" y="80" text-anchor="middle">MOSI</text><text class="plbl" x="826" y="80" text-anchor="middle">IRQ</text>
+      <circle class="pind" cx="655" cy="112" r="11"/><text class="pinn" x="655" y="116" text-anchor="middle">2</text>
+      <circle class="pind" cx="713" cy="112" r="11"/><text class="pinn" x="713" y="116" text-anchor="middle">4</text>
+      <circle class="pind" cx="771" cy="112" r="11"/><text class="pinn" x="771" y="116" text-anchor="middle">6</text>
+      <circle class="pind" cx="826" cy="112" r="11"/><text class="pinn" x="826" y="116" text-anchor="middle">8</text>
+      <circle class="pind" cx="655" cy="148" r="11"/><text class="pinn" x="655" y="152" text-anchor="middle">1</text>
+      <circle class="pind" cx="713" cy="148" r="11"/><text class="pinn" x="713" y="152" text-anchor="middle">3</text>
+      <circle class="pind" cx="771" cy="148" r="11"/><text class="pinn" x="771" y="152" text-anchor="middle">5</text>
+      <circle class="pind" cx="826" cy="148" r="11"/><text class="pinn" x="826" y="152" text-anchor="middle">7</text>
+      <text class="plbl" x="655" y="169" text-anchor="middle">GND</text><text class="plbl" x="713" y="169" text-anchor="middle">CE</text><text class="plbl" x="771" y="169" text-anchor="middle">SCK</text><text class="plbl" x="826" y="169" text-anchor="middle">MISO</text>
+
+      <!-- ======= SHARED BUSES (drops first, then rails on top) ======= -->
+      <!-- VCC drops (top pins, kink left 8) -->
+      <path class="wire w-pwr" d="M75 112 V104 H67 V250"/>
+      <path class="wire w-pwr" d="M365 112 V104 H357 V250"/>
+      <path class="wire w-pwr" d="M655 112 V104 H647 V250"/>
+      <!-- GND drops (bottom pins) -->
+      <path class="wire w-gnd" d="M75 148 V272"/>
+      <path class="wire w-gnd" d="M365 148 V272"/>
+      <path class="wire w-gnd" d="M655 148 V272"/>
+      <!-- SCK drops (bottom) -->
+      <path class="wire w-sck" d="M191 148 V300"/>
+      <path class="wire w-sck" d="M481 148 V300"/>
+      <path class="wire w-sck" d="M771 148 V300"/>
+      <!-- MOSI drops (top, kink) -->
+      <path class="wire w-mosi" d="M191 112 V104 H183 V320"/>
+      <path class="wire w-mosi" d="M481 112 V104 H473 V320"/>
+      <path class="wire w-mosi" d="M771 112 V104 H763 V320"/>
+      <!-- MISO drops (bottom) -->
+      <path class="wire w-miso" d="M246 148 V340"/>
+      <path class="wire w-miso" d="M536 148 V340"/>
+      <path class="wire w-miso" d="M826 148 V340"/>
+
+      <!-- OLED power up to rails -->
+      <path class="wire w-gnd" d="M70 410 V272"/>
+      <path class="wire w-pwr" d="M118 410 V250"/>
+
+      <!-- Rails + to board -->
+      <path class="wire w-pwr"  d="M25 250 H952 V410 H956"/>
+      <path class="wire w-gnd"  d="M25 272 H948 V430 H956"/>
+      <path class="wire w-sck"  d="M25 300 H944 V462 H956"/>
+      <path class="wire w-mosi" d="M25 320 H940 V482 H956"/>
+      <path class="wire w-miso" d="M25 340 H936 V502 H956"/>
+      <!-- junctions on rails -->
+      <circle class="jn" cx="67" cy="250" r="3"/><circle class="jn" cx="357" cy="250" r="3"/><circle class="jn" cx="647" cy="250" r="3"/><circle class="jn" cx="118" cy="250" r="3"/>
+      <circle class="jn" cx="75" cy="272" r="3"/><circle class="jn" cx="365" cy="272" r="3"/><circle class="jn" cx="655" cy="272" r="3"/><circle class="jn" cx="70" cy="272" r="3"/>
+      <circle class="jn" cx="191" cy="300" r="3"/><circle class="jn" cx="481" cy="300" r="3"/><circle class="jn" cx="771" cy="300" r="3"/>
+      <circle class="jn" cx="183" cy="320" r="3"/><circle class="jn" cx="473" cy="320" r="3"/><circle class="jn" cx="763" cy="320" r="3"/>
+      <circle class="jn" cx="246" cy="340" r="3"/><circle class="jn" cx="536" cy="340" r="3"/><circle class="jn" cx="826" cy="340" r="3"/>
+
+      <!-- ======= CE / CSN individual wires ======= -->
+      <path class="wire w-ce"  d="M133 148 V362 H930 V532 H956"/>
+      <path class="wire w-csn" d="M133 112 V100 H141 V376 H926 V552 H956"/>
+      <path class="wire w-ce"  d="M423 148 V392 H922 V580 H956"/>
+      <path class="wire w-csn" d="M423 112 V100 H431 V406 H918 V600 H956"/>
+      <path class="wire w-ce"  d="M713 148 V422 H914 V628 H956"/>
+      <path class="wire w-csn" d="M713 112 V100 H721 V436 H910 V648 H956"/>
+
+      <!-- ======= OLED ======= -->
+      <rect class="mod" x="30" y="410" width="230" height="110" rx="8"/>
+      <text class="ttl" x="145" y="446" text-anchor="middle">OLED SSD1306</text>
+      <rect x="44" y="456" width="202" height="52" rx="3" fill="#0b2a3a"/>
+      <circle class="pind" cx="70" cy="410" r="10"/><text class="pinn" x="70" y="414" text-anchor="middle">1</text>
+      <circle class="pind" cx="118" cy="410" r="10"/><text class="pinn" x="118" y="414" text-anchor="middle">2</text>
+      <circle class="pind" cx="166" cy="410" r="10"/><text class="pinn" x="166" y="414" text-anchor="middle">3</text>
+      <circle class="pind" cx="214" cy="410" r="10"/><text class="pinn" x="214" y="414" text-anchor="middle">4</text>
+      <text class="plbl" x="70" y="434" text-anchor="middle">GND</text><text class="plbl" x="118" y="434" text-anchor="middle">VCC</text><text class="plbl" x="166" y="434" text-anchor="middle">SCL</text><text class="plbl" x="214" y="434" text-anchor="middle">SDA</text>
+      <!-- OLED SCL/SDA to board -->
+      <path class="wire w-i2c" d="M166 400 V392 H906 V700 H956"/>
+      <path class="wire w-i2c" d="M214 400 V384 H902 V680 H956"/>
+
+      <!-- ======= BUTTONS ======= -->
+      <text class="ttl" x="30" y="556" fill="#555">Nút nhấn</text>
+      <!-- OK -->
+      <rect x="40" y="566" width="44" height="34" rx="4" fill="#23232a" stroke="#55556a"/>
+      <circle cx="62" cy="583" r="6" fill="none" stroke="#9aa0ad" stroke-width="1.4"/>
+      <text class="plbl" x="62" y="614" text-anchor="middle" fill="#777">OK</text>
+      <path class="wire w-gnd" d="M40 583 H26 V272"/>
+      <circle class="jn" cx="26" cy="272" r="3"/>
+      <path class="wire w-ce" style="stroke:#0ea5e9" d="M84 583 H896 V732 H956"/>
+      <!-- Next -->
+      <rect x="140" y="566" width="44" height="34" rx="4" fill="#23232a" stroke="#55556a"/>
+      <circle cx="162" cy="583" r="6" fill="none" stroke="#9aa0ad" stroke-width="1.4"/>
+      <text class="plbl" x="162" y="614" text-anchor="middle" fill="#777">Next</text>
+      <rect class="gtag" x="104" y="574" width="34" height="18" rx="4"/><text class="gtagt" x="121" y="587" text-anchor="middle">GND</text>
+      <path class="wire w-gnd" d="M140 583 H138"/>
+      <path class="wire w-ce" style="stroke:#0ea5e9" d="M184 583 H892 V752 H956"/>
+      <!-- Prev -->
+      <rect x="240" y="566" width="44" height="34" rx="4" fill="#23232a" stroke="#55556a"/>
+      <circle cx="262" cy="583" r="6" fill="none" stroke="#9aa0ad" stroke-width="1.4"/>
+      <text class="plbl" x="262" y="614" text-anchor="middle" fill="#777">Prev</text>
+      <rect class="gtag" x="204" y="574" width="34" height="18" rx="4"/><text class="gtagt" x="221" y="587" text-anchor="middle">GND</text>
+      <path class="wire w-gnd" d="M240 583 H238"/>
+      <path class="wire w-ce" style="stroke:#0ea5e9" d="M284 583 H888 V772 H956"/>
+
+      <!-- ======= BOARD ESP32-S3 ======= -->
+      <rect class="brd" x="956" y="90" width="256" height="770" rx="10"/>
+      <rect x="1030" y="104" width="108" height="70" rx="4" fill="#b9a07a" stroke="#6b5a3a"/>
+      <text class="ttl" x="1084" y="196" text-anchor="middle">ESP32-S3-WROOM-1</text>
+      <text class="plbl" x="1084" y="212" text-anchor="middle" fill="#9aa0ad">N8R8 · 2× USB-C</text>
+      <!-- onboard refs -->
+      <rect x="1026" y="300" width="14" height="14" rx="3" fill="#2a2f36" stroke="#55556a"/><text class="plbl" x="1046" y="311" fill="#9aa0ad">USER (IO0)</text>
+      <rect x="1140" y="300" width="14" height="14" rx="3" fill="#2a2f36" stroke="#55556a"/><text class="plbl" x="1134" y="311" text-anchor="end" fill="#9aa0ad">RST</text>
+      <rect x="1077" y="250" width="14" height="14" rx="3" fill="#e0823d" stroke="#8a5a1f"/><text class="plbl" x="1097" y="261" fill="#9aa0ad">RGB IO38</text>
+      <!-- left-edge pins (wires arrive at x=956) -->
+      <g>
+        <circle class="bpin" cx="960" cy="410" r="4"/><text class="bt" x="974" y="414">3V3</text>
+        <circle class="bpin" cx="960" cy="430" r="4"/><text class="bt" x="974" y="434">GND</text>
+        <circle class="bpin" cx="960" cy="462" r="4"/><text class="bt" x="974" y="466">IO12 · SCK</text>
+        <circle class="bpin" cx="960" cy="482" r="4"/><text class="bt" x="974" y="486">IO11 · MOSI</text>
+        <circle class="bpin" cx="960" cy="502" r="4"/><text class="bt" x="974" y="506">IO13 · MISO</text>
+        <circle class="bpin" cx="960" cy="532" r="4"/><text class="bt" x="974" y="536">IO16 · CE1</text>
+        <circle class="bpin" cx="960" cy="552" r="4"/><text class="bt" x="974" y="556">IO15 · CSN1</text>
+        <circle class="bpin" cx="960" cy="580" r="4"/><text class="bt" x="974" y="584">IO18 · CE2</text>
+        <circle class="bpin" cx="960" cy="600" r="4"/><text class="bt" x="974" y="604">IO17 · CSN2</text>
+        <circle class="bpin" cx="960" cy="628" r="4"/><text class="bt" x="974" y="632">IO10 · CE3</text>
+        <circle class="bpin" cx="960" cy="648" r="4"/><text class="bt" x="974" y="652">IO7 · CSN3</text>
+        <circle class="bpin" cx="960" cy="680" r="4"/><text class="bt" x="974" y="684">IO8 · SDA</text>
+        <circle class="bpin" cx="960" cy="700" r="4"/><text class="bt" x="974" y="704">IO9 · SCL</text>
+        <circle class="bpin" cx="960" cy="732" r="4"/><text class="bt" x="974" y="736">IO0 · OK</text>
+        <circle class="bpin" cx="960" cy="752" r="4"/><text class="bt" x="974" y="756">IO21 · Next</text>
+        <circle class="bpin" cx="960" cy="772" r="4"/><text class="bt" x="974" y="776">IO47 · Prev</text>
+      </g>
+      <!-- USB-C -->
+      <rect x="1002" y="820" width="60" height="30" rx="5" fill="#4b5563"/><text class="plbl" x="1032" y="840" text-anchor="middle" fill="#cbd5e1">UART</text>
+      <rect x="1106" y="820" width="60" height="30" rx="5" fill="#4b5563"/><text class="plbl" x="1136" y="840" text-anchor="middle" fill="#cbd5e1">USB</text>
+    </svg>
+    <div class="legend">
+      <span><b style="background:#dc2626"></b>VCC 3V3</span>
+      <span><b style="background:#64748b"></b>GND</span>
+      <span><b style="background:#2563eb"></b>SCK (chung)</span>
+      <span><b style="background:#16a34a"></b>MOSI (chung)</span>
+      <span><b style="background:#9333ea"></b>MISO (chung)</span>
+      <span><b style="background:#0891b2"></b>CE (riêng)</span>
+      <span><b style="background:#ea8a3d"></b>CSN (riêng)</span>
+      <span><b style="background:#db2777"></b>SDA/SCL</span>
+      <span><b style="background:#0ea5e9"></b>Nút → GPIO</span>
+    </div>
+    <p class="note">3 dây <b>SCK/MOSI/MISO</b> là bus dùng chung — cả 3 module chấm vào cùng một đường (điểm ● là mối nối). <b>VCC</b> lấy 3V3, bản PA/LNA nên cấp 3V3 riêng ≥2A + tụ. Mỗi nút: một chân về GPIO, chân kia về <b>GND</b>. Chân <b>IRQ (8)</b> của nRF24 bỏ trống.</p>
+  </div>
+
+  <!-- ===== Bảng dây theo số chân ===== -->
+  <h2>Bảng dây theo số chân linh kiện</h2>
+  <div class="card scroll">
+    <table>
+      <tr><th>Linh kiện</th><th>Chân (số · tên)</th><th>→ Board ESP32-S3</th></tr>
+      <tr><td rowspan="7"><b>nRF24 #1</b></td><td>1 · GND</td><td>GND</td></tr>
+      <tr><td>2 · VCC</td><td>3V3</td></tr>
+      <tr><td>3 · CE</td><td><b>GPIO16</b></td></tr>
+      <tr><td>4 · CSN</td><td><b>GPIO15</b></td></tr>
+      <tr><td>5 · SCK</td><td>GPIO12</td></tr>
+      <tr><td>6 · MOSI</td><td>GPIO11</td></tr>
+      <tr><td>7 · MISO</td><td>GPIO13</td></tr>
+      <tr><td rowspan="7"><b>nRF24 #2</b></td><td>1 · GND</td><td>GND</td></tr>
+      <tr><td>2 · VCC</td><td>3V3</td></tr>
+      <tr><td>3 · CE</td><td><b>GPIO18</b></td></tr>
+      <tr><td>4 · CSN</td><td><b>GPIO17</b></td></tr>
+      <tr><td>5 · SCK</td><td>GPIO12</td></tr>
+      <tr><td>6 · MOSI</td><td>GPIO11</td></tr>
+      <tr><td>7 · MISO</td><td>GPIO13</td></tr>
+      <tr><td rowspan="7"><b>nRF24 #3</b></td><td>1 · GND</td><td>GND</td></tr>
+      <tr><td>2 · VCC</td><td>3V3</td></tr>
+      <tr><td>3 · CE</td><td><b>GPIO10</b></td></tr>
+      <tr><td>4 · CSN</td><td><b>GPIO7</b></td></tr>
+      <tr><td>5 · SCK</td><td>GPIO12</td></tr>
+      <tr><td>6 · MOSI</td><td>GPIO11</td></tr>
+      <tr><td>7 · MISO</td><td>GPIO13</td></tr>
+      <tr><td colspan="3" class="note" style="padding-top:10px"><b>Chân 8 · IRQ</b> của cả 3 module: không nối.</td></tr>
+      <tr><td rowspan="4"><b>OLED SSD1306</b></td><td>1 · GND</td><td>GND</td></tr>
+      <tr><td>2 · VCC</td><td>3V3</td></tr>
+      <tr><td>3 · SCL</td><td><b>GPIO9</b></td></tr>
+      <tr><td>4 · SDA</td><td><b>GPIO8</b></td></tr>
+      <tr><td rowspan="3"><b>Nút nhấn</b></td><td>OK (1 chân)</td><td><b>GPIO0</b> · chân kia → GND</td></tr>
+      <tr><td>Next (1 chân)</td><td><b>GPIO21</b> · chân kia → GND</td></tr>
+      <tr><td>Previous (1 chân)</td><td><b>GPIO47</b> · chân kia → GND</td></tr>
+      <tr><td><b>LED RGB</b></td><td>WS2812 onboard</td><td>GPIO38 — không đấu dây</td></tr>
+    </table>
+  </div>
+
+  <h2>Sơ đồ net-label (để dựng trong EasyEDA)</h2>
+  <div class="card scroll">
+    <svg viewBox="0 0 1180 940" role="img" aria-label="Schematic net-label">
+
+      <!-- ===== U1 ESP32-S3-WROOM-1 ===== -->
+      <rect class="box" x="60" y="150" width="240" height="560" rx="8"/>
+      <text class="boxt" x="180" y="174" text-anchor="middle">U1 · ESP32-S3-WROOM-1</text>
+      <text class="boxs" x="180" y="189" text-anchor="middle">N8R8 (8MB flash / 8MB PSRAM octal)</text>
+
+      <!-- pins: stub 300->338 ; pin label x=294 end ; tag x=340 -->
       <g>
         <!-- 3V3 -->
-        <line class="stub" x1="300" y1="210" x2="338" y2="210"/><text class="pinl" x="294" y="214" text-anchor="end">3V3</text>
-        <rect class="tag t-3v3" x="338" y="200" width="78" height="20"/><text class="tagt" x="377" y="214" text-anchor="middle">3V3</text>
-        <!-- VBAT -->
-        <line class="stub" x1="300" y1="234" x2="338" y2="234"/><text class="pinl" x="294" y="238" text-anchor="end">BAT (JST +)</text>
-        <rect class="tag t-vbat" x="338" y="224" width="78" height="20"/><text class="tagt" x="377" y="238" text-anchor="middle">VBAT</text>
+        <line class="stub" x1="300" y1="216" x2="338" y2="216"/><text class="pinl" x="294" y="220" text-anchor="end">3V3</text>
+        <rect class="tag t-3v3" x="340" y="206" width="78" height="20"/><text class="tagt" x="379" y="220" text-anchor="middle">3V3</text>
         <!-- GND -->
-        <line class="stub" x1="300" y1="258" x2="338" y2="258"/><text class="pinl" x="294" y="262" text-anchor="end">GND</text>
-        <rect class="tag t-gnd" x="338" y="248" width="78" height="20"/><text class="tagt" x="377" y="262" text-anchor="middle">GND</text>
+        <line class="stub" x1="300" y1="246" x2="338" y2="246"/><text class="pinl" x="294" y="250" text-anchor="end">GND</text>
+        <rect class="tag t-gnd" x="340" y="236" width="78" height="20"/><text class="tagt" x="379" y="250" text-anchor="middle">GND</text>
         <!-- SCK -->
-        <line class="stub" x1="300" y1="288" x2="338" y2="288"/><text class="pinl" x="294" y="292" text-anchor="end">GPIO12</text>
-        <rect class="tag t-sck" x="338" y="278" width="78" height="20"/><text class="tagt" x="377" y="292" text-anchor="middle">SCK</text>
+        <line class="stub" x1="300" y1="276" x2="338" y2="276"/><text class="pinl" x="294" y="280" text-anchor="end">GPIO12</text>
+        <rect class="tag t-sck" x="340" y="266" width="78" height="20"/><text class="tagt" x="379" y="280" text-anchor="middle">SCK</text>
         <!-- MOSI -->
-        <line class="stub" x1="300" y1="312" x2="338" y2="312"/><text class="pinl" x="294" y="316" text-anchor="end">GPIO11</text>
-        <rect class="tag t-mosi" x="338" y="302" width="78" height="20"/><text class="tagt" x="377" y="316" text-anchor="middle">MOSI</text>
+        <line class="stub" x1="300" y1="306" x2="338" y2="306"/><text class="pinl" x="294" y="310" text-anchor="end">GPIO11</text>
+        <rect class="tag t-mosi" x="340" y="296" width="78" height="20"/><text class="tagt" x="379" y="310" text-anchor="middle">MOSI</text>
         <!-- MISO -->
         <line class="stub" x1="300" y1="336" x2="338" y2="336"/><text class="pinl" x="294" y="340" text-anchor="end">GPIO13</text>
-        <rect class="tag t-miso" x="338" y="326" width="78" height="20"/><text class="tagt" x="377" y="340" text-anchor="middle">MISO</text>
+        <rect class="tag t-miso" x="340" y="326" width="78" height="20"/><text class="tagt" x="379" y="340" text-anchor="middle">MISO</text>
         <!-- CE1 -->
-        <line class="stub" x1="300" y1="366" x2="338" y2="366"/><text class="pinl" x="294" y="370" text-anchor="end">GPIO10</text>
-        <rect class="tag t-ctrl" x="338" y="356" width="78" height="20"/><text class="tagt" x="377" y="370" text-anchor="middle">CE1</text>
+        <line class="stub" x1="300" y1="366" x2="338" y2="366"/><text class="pinl" x="294" y="370" text-anchor="end">GPIO16</text>
+        <rect class="tag t-ctrl" x="340" y="356" width="78" height="20"/><text class="tagt" x="379" y="370" text-anchor="middle">CE1</text>
         <!-- CSN1 -->
-        <line class="stub" x1="300" y1="390" x2="338" y2="390"/><text class="pinl" x="294" y="394" text-anchor="end">GPIO1</text>
-        <rect class="tag t-ctrl" x="338" y="380" width="78" height="20"/><text class="tagt" x="377" y="394" text-anchor="middle">CSN1</text>
+        <line class="stub" x1="300" y1="396" x2="338" y2="396"/><text class="pinl" x="294" y="400" text-anchor="end">GPIO15</text>
+        <rect class="tag t-ctrl" x="340" y="386" width="78" height="20"/><text class="tagt" x="379" y="400" text-anchor="middle">CSN1</text>
         <!-- CE2 -->
-        <line class="stub" x1="300" y1="414" x2="338" y2="414"/><text class="pinl" x="294" y="418" text-anchor="end">GPIO2</text>
-        <rect class="tag t-ctrl" x="338" y="404" width="78" height="20"/><text class="tagt" x="377" y="418" text-anchor="middle">CE2</text>
+        <line class="stub" x1="300" y1="426" x2="338" y2="426"/><text class="pinl" x="294" y="430" text-anchor="end">GPIO18</text>
+        <rect class="tag t-ctrl" x="340" y="416" width="78" height="20"/><text class="tagt" x="379" y="430" text-anchor="middle">CE2</text>
         <!-- CSN2 -->
-        <line class="stub" x1="300" y1="438" x2="338" y2="438"/><text class="pinl" x="294" y="442" text-anchor="end">GPIO3</text>
-        <rect class="tag t-ctrl" x="338" y="428" width="78" height="20"/><text class="tagt" x="377" y="442" text-anchor="middle">CSN2</text>
+        <line class="stub" x1="300" y1="456" x2="338" y2="456"/><text class="pinl" x="294" y="460" text-anchor="end">GPIO17</text>
+        <rect class="tag t-ctrl" x="340" y="446" width="78" height="20"/><text class="tagt" x="379" y="460" text-anchor="middle">CSN2</text>
+        <!-- CE3 -->
+        <line class="stub" x1="300" y1="486" x2="338" y2="486"/><text class="pinl" x="294" y="490" text-anchor="end">GPIO10</text>
+        <rect class="tag t-ctrl" x="340" y="476" width="78" height="20"/><text class="tagt" x="379" y="490" text-anchor="middle">CE3</text>
+        <!-- CSN3 -->
+        <line class="stub" x1="300" y1="516" x2="338" y2="516"/><text class="pinl" x="294" y="520" text-anchor="end">GPIO7</text>
+        <rect class="tag t-ctrl" x="340" y="506" width="78" height="20"/><text class="tagt" x="379" y="520" text-anchor="middle">CSN3</text>
         <!-- SDA -->
-        <line class="stub" x1="300" y1="468" x2="338" y2="468"/><text class="pinl" x="294" y="472" text-anchor="end">GPIO18</text>
-        <rect class="tag t-i2c" x="338" y="458" width="78" height="20"/><text class="tagt" x="377" y="472" text-anchor="middle">SDA</text>
+        <line class="stub" x1="300" y1="546" x2="338" y2="546"/><text class="pinl" x="294" y="550" text-anchor="end">GPIO8</text>
+        <rect class="tag t-i2c" x="340" y="536" width="78" height="20"/><text class="tagt" x="379" y="550" text-anchor="middle">SDA</text>
         <!-- SCL -->
-        <line class="stub" x1="300" y1="492" x2="338" y2="492"/><text class="pinl" x="294" y="496" text-anchor="end">GPIO17</text>
-        <rect class="tag t-i2c" x="338" y="482" width="78" height="20"/><text class="tagt" x="377" y="496" text-anchor="middle">SCL</text>
+        <line class="stub" x1="300" y1="576" x2="338" y2="576"/><text class="pinl" x="294" y="580" text-anchor="end">GPIO9</text>
+        <rect class="tag t-i2c" x="340" y="566" width="78" height="20"/><text class="tagt" x="379" y="580" text-anchor="middle">SCL</text>
         <!-- BTN_OK -->
-        <line class="stub" x1="300" y1="522" x2="338" y2="522"/><text class="pinl" x="294" y="526" text-anchor="end">GPIO0</text>
-        <rect class="tag t-btn" x="338" y="512" width="78" height="20"/><text class="tagt" x="377" y="526" text-anchor="middle">BTN_OK</text>
+        <line class="stub" x1="300" y1="606" x2="338" y2="606"/><text class="pinl" x="294" y="610" text-anchor="end">GPIO0</text>
+        <rect class="tag t-btn" x="340" y="596" width="86" height="20"/><text class="tagt" x="383" y="610" text-anchor="middle">BTN_OK</text>
         <!-- BTN_NEXT -->
-        <line class="stub" x1="300" y1="546" x2="338" y2="546"/><text class="pinl" x="294" y="550" text-anchor="end">GPIO14</text>
-        <rect class="tag t-btn" x="338" y="536" width="86" height="20"/><text class="tagt" x="381" y="550" text-anchor="middle">BTN_NEXT</text>
+        <line class="stub" x1="300" y1="636" x2="338" y2="636"/><text class="pinl" x="294" y="640" text-anchor="end">GPIO21</text>
+        <rect class="tag t-btn" x="340" y="626" width="92" height="20"/><text class="tagt" x="386" y="640" text-anchor="middle">BTN_NEXT</text>
         <!-- BTN_PREV -->
-        <line class="stub" x1="300" y1="570" x2="338" y2="570"/><text class="pinl" x="294" y="574" text-anchor="end">GPIO21</text>
-        <rect class="tag t-btn" x="338" y="560" width="86" height="20"/><text class="tagt" x="381" y="574" text-anchor="middle">BTN_PREV</text>
+        <line class="stub" x1="300" y1="666" x2="338" y2="666"/><text class="pinl" x="294" y="670" text-anchor="end">GPIO47</text>
+        <rect class="tag t-btn" x="340" y="656" width="92" height="20"/><text class="tagt" x="386" y="670" text-anchor="middle">BTN_PREV</text>
+        <!-- RGB onboard -->
+        <line class="stub" x1="300" y1="696" x2="338" y2="696"/><text class="pinl" x="294" y="700" text-anchor="end">GPIO38</text>
+        <rect class="tag t-nc" x="340" y="686" width="118" height="20"/><text class="tagt" x="399" y="700" text-anchor="middle">LED RGB (onboard)</text>
       </g>
 
-      <!-- ===== M1 E01 #1 ===== -->
-      <rect class="box" x="640" y="130" width="230" height="200" rx="8"/>
-      <text class="boxt" x="755" y="152" text-anchor="middle">M1 · E01-2G4M27D #1</text>
-      <text class="boxs" x="755" y="167" text-anchor="middle">nRF24L01P+PA/LNA · anten SMA</text>
+      <!-- ===== M1 ===== -->
+      <rect class="box" x="640" y="150" width="230" height="180" rx="8"/>
+      <text class="boxt" x="755" y="172" text-anchor="middle">M1 · nRF24 #1</text>
+      <text class="boxs" x="755" y="187" text-anchor="middle">NRF24L01+PA/LNA (hoặc E01-2G4M27D)</text>
       <g>
-        <!-- left pins: stub 640->605 ; tag x=505..600 right-aligned end 600 -->
-        <line class="stub" x1="640" y1="190" x2="605" y2="190"/><text class="pinl" x="648" y="194">VCC</text>
-        <rect class="tag t-rf" x="512" y="180" width="88" height="20"/><text class="tagt" x="556" y="194" text-anchor="middle">+3V3_RF</text>
-        <line class="stub" x1="640" y1="212" x2="605" y2="212"/><text class="pinl" x="648" y="216">GND</text>
-        <rect class="tag t-gnd" x="540" y="202" width="60" height="20"/><text class="tagt" x="570" y="216" text-anchor="middle">GND</text>
-        <line class="stub" x1="640" y1="234" x2="605" y2="234"/><text class="pinl" x="648" y="238">CE</text>
-        <rect class="tag t-ctrl" x="540" y="224" width="60" height="20"/><text class="tagt" x="570" y="238" text-anchor="middle">CE1</text>
-        <line class="stub" x1="640" y1="256" x2="605" y2="256"/><text class="pinl" x="648" y="260">CSN</text>
-        <rect class="tag t-ctrl" x="534" y="246" width="66" height="20"/><text class="tagt" x="567" y="260" text-anchor="middle">CSN1</text>
-        <line class="stub" x1="640" y1="278" x2="605" y2="278"/><text class="pinl" x="648" y="282">SCK</text>
-        <rect class="tag t-sck" x="540" y="268" width="60" height="20"/><text class="tagt" x="570" y="282" text-anchor="middle">SCK</text>
-        <line class="stub" x1="640" y1="300" x2="605" y2="300"/><text class="pinl" x="648" y="304">MOSI</text>
-        <rect class="tag t-mosi" x="534" y="290" width="66" height="20"/><text class="tagt" x="567" y="304" text-anchor="middle">MOSI</text>
-        <!-- MISO + IRQ compact on right side -->
-        <line class="stub" x1="870" y1="234" x2="905" y2="234"/><text class="pinl" x="862" y="238" text-anchor="end">MISO</text>
-        <rect class="tag t-miso" x="905" y="224" width="66" height="20"/><text class="tagt" x="938" y="238" text-anchor="middle">MISO</text>
-        <line class="stub" x1="870" y1="278" x2="905" y2="278"/><text class="pinl" x="862" y="282" text-anchor="end">IRQ</text>
-        <rect class="tag t-nc" x="905" y="268" width="50" height="20"/><text class="tagt" x="930" y="282" text-anchor="middle">NC</text>
+        <line class="stub" x1="640" y1="212" x2="605" y2="212"/><text class="pinl" x="648" y="216">VCC</text>
+        <rect class="tag t-rf" x="512" y="202" width="88" height="20"/><text class="tagt" x="556" y="216" text-anchor="middle">+3V3_RF</text>
+        <line class="stub" x1="640" y1="234" x2="605" y2="234"/><text class="pinl" x="648" y="238">GND</text>
+        <rect class="tag t-gnd" x="540" y="224" width="60" height="20"/><text class="tagt" x="570" y="238" text-anchor="middle">GND</text>
+        <line class="stub" x1="640" y1="256" x2="605" y2="256"/><text class="pinl" x="648" y="260">CE</text>
+        <rect class="tag t-ctrl" x="540" y="246" width="60" height="20"/><text class="tagt" x="570" y="260" text-anchor="middle">CE1</text>
+        <line class="stub" x1="640" y1="278" x2="605" y2="278"/><text class="pinl" x="648" y="282">CSN</text>
+        <rect class="tag t-ctrl" x="534" y="268" width="66" height="20"/><text class="tagt" x="567" y="282" text-anchor="middle">CSN1</text>
+        <line class="stub" x1="640" y1="300" x2="605" y2="300"/><text class="pinl" x="648" y="304">SCK</text>
+        <rect class="tag t-sck" x="540" y="290" width="60" height="20"/><text class="tagt" x="570" y="304" text-anchor="middle">SCK</text>
+        <line class="stub" x1="640" y1="322" x2="605" y2="322"/><text class="pinl" x="648" y="326">MOSI</text>
+        <rect class="tag t-mosi" x="534" y="312" width="66" height="20"/><text class="tagt" x="567" y="326" text-anchor="middle">MOSI</text>
+        <line class="stub" x1="870" y1="256" x2="905" y2="256"/><text class="pinl" x="862" y="260" text-anchor="end">MISO</text>
+        <rect class="tag t-miso" x="905" y="246" width="66" height="20"/><text class="tagt" x="938" y="260" text-anchor="middle">MISO</text>
+        <line class="stub" x1="870" y1="300" x2="905" y2="300"/><text class="pinl" x="862" y="304" text-anchor="end">IRQ</text>
+        <rect class="tag t-nc" x="905" y="290" width="50" height="20"/><text class="tagt" x="930" y="304" text-anchor="middle">NC</text>
       </g>
-      <text class="boxs" x="755" y="320" text-anchor="middle">+ tụ 100µF &amp; 0.1µF sát VCC–GND</text>
 
-      <!-- ===== M2 E01 #2 ===== -->
-      <rect class="box" x="640" y="400" width="230" height="200" rx="8"/>
-      <text class="boxt" x="755" y="422" text-anchor="middle">M2 · E01-2G4M27D #2</text>
-      <text class="boxs" x="755" y="437" text-anchor="middle">nRF24L01P+PA/LNA · anten SMA</text>
+      <!-- ===== M2 ===== -->
+      <rect class="box" x="640" y="360" width="230" height="180" rx="8"/>
+      <text class="boxt" x="755" y="382" text-anchor="middle">M2 · nRF24 #2</text>
+      <text class="boxs" x="755" y="397" text-anchor="middle">NRF24L01+PA/LNA (hoặc E01-2G4M27D)</text>
       <g>
-        <line class="stub" x1="640" y1="460" x2="605" y2="460"/><text class="pinl" x="648" y="464">VCC</text>
-        <rect class="tag t-rf" x="512" y="450" width="88" height="20"/><text class="tagt" x="556" y="464" text-anchor="middle">+3V3_RF</text>
-        <line class="stub" x1="640" y1="482" x2="605" y2="482"/><text class="pinl" x="648" y="486">GND</text>
-        <rect class="tag t-gnd" x="540" y="472" width="60" height="20"/><text class="tagt" x="570" y="486" text-anchor="middle">GND</text>
-        <line class="stub" x1="640" y1="504" x2="605" y2="504"/><text class="pinl" x="648" y="508">CE</text>
-        <rect class="tag t-ctrl" x="540" y="494" width="60" height="20"/><text class="tagt" x="570" y="508" text-anchor="middle">CE2</text>
-        <line class="stub" x1="640" y1="526" x2="605" y2="526"/><text class="pinl" x="648" y="530">CSN</text>
-        <rect class="tag t-ctrl" x="534" y="516" width="66" height="20"/><text class="tagt" x="567" y="530" text-anchor="middle">CSN2</text>
-        <line class="stub" x1="640" y1="548" x2="605" y2="548"/><text class="pinl" x="648" y="552">SCK</text>
-        <rect class="tag t-sck" x="540" y="538" width="60" height="20"/><text class="tagt" x="570" y="552" text-anchor="middle">SCK</text>
-        <line class="stub" x1="640" y1="570" x2="605" y2="570"/><text class="pinl" x="648" y="574">MOSI</text>
-        <rect class="tag t-mosi" x="534" y="560" width="66" height="20"/><text class="tagt" x="567" y="574" text-anchor="middle">MOSI</text>
-        <line class="stub" x1="870" y1="504" x2="905" y2="504"/><text class="pinl" x="862" y="508" text-anchor="end">MISO</text>
-        <rect class="tag t-miso" x="905" y="494" width="66" height="20"/><text class="tagt" x="938" y="508" text-anchor="middle">MISO</text>
-        <line class="stub" x1="870" y1="548" x2="905" y2="548"/><text class="pinl" x="862" y="552" text-anchor="end">IRQ</text>
-        <rect class="tag t-nc" x="905" y="538" width="50" height="20"/><text class="tagt" x="930" y="552" text-anchor="middle">NC</text>
+        <line class="stub" x1="640" y1="422" x2="605" y2="422"/><text class="pinl" x="648" y="426">VCC</text>
+        <rect class="tag t-rf" x="512" y="412" width="88" height="20"/><text class="tagt" x="556" y="426" text-anchor="middle">+3V3_RF</text>
+        <line class="stub" x1="640" y1="444" x2="605" y2="444"/><text class="pinl" x="648" y="448">GND</text>
+        <rect class="tag t-gnd" x="540" y="434" width="60" height="20"/><text class="tagt" x="570" y="448" text-anchor="middle">GND</text>
+        <line class="stub" x1="640" y1="466" x2="605" y2="466"/><text class="pinl" x="648" y="470">CE</text>
+        <rect class="tag t-ctrl" x="540" y="456" width="60" height="20"/><text class="tagt" x="570" y="470" text-anchor="middle">CE2</text>
+        <line class="stub" x1="640" y1="488" x2="605" y2="488"/><text class="pinl" x="648" y="492">CSN</text>
+        <rect class="tag t-ctrl" x="534" y="478" width="66" height="20"/><text class="tagt" x="567" y="492" text-anchor="middle">CSN2</text>
+        <line class="stub" x1="640" y1="510" x2="605" y2="510"/><text class="pinl" x="648" y="514">SCK</text>
+        <rect class="tag t-sck" x="540" y="500" width="60" height="20"/><text class="tagt" x="570" y="514" text-anchor="middle">SCK</text>
+        <line class="stub" x1="640" y1="532" x2="605" y2="532"/><text class="pinl" x="648" y="536">MOSI</text>
+        <rect class="tag t-mosi" x="534" y="522" width="66" height="20"/><text class="tagt" x="567" y="536" text-anchor="middle">MOSI</text>
+        <line class="stub" x1="870" y1="466" x2="905" y2="466"/><text class="pinl" x="862" y="470" text-anchor="end">MISO</text>
+        <rect class="tag t-miso" x="905" y="456" width="66" height="20"/><text class="tagt" x="938" y="470" text-anchor="middle">MISO</text>
+        <line class="stub" x1="870" y1="510" x2="905" y2="510"/><text class="pinl" x="862" y="514" text-anchor="end">IRQ</text>
+        <rect class="tag t-nc" x="905" y="500" width="50" height="20"/><text class="tagt" x="930" y="514" text-anchor="middle">NC</text>
       </g>
-      <text class="boxs" x="755" y="590" text-anchor="middle">+ tụ 100µF &amp; 0.1µF sát VCC–GND</text>
+
+      <!-- ===== M3 ===== -->
+      <rect class="box" x="640" y="570" width="230" height="180" rx="8"/>
+      <text class="boxt" x="755" y="592" text-anchor="middle">M3 · nRF24 #3</text>
+      <text class="boxs" x="755" y="607" text-anchor="middle">NRF24L01+PA/LNA (hoặc E01-2G4M27D)</text>
+      <g>
+        <line class="stub" x1="640" y1="632" x2="605" y2="632"/><text class="pinl" x="648" y="636">VCC</text>
+        <rect class="tag t-rf" x="512" y="622" width="88" height="20"/><text class="tagt" x="556" y="636" text-anchor="middle">+3V3_RF</text>
+        <line class="stub" x1="640" y1="654" x2="605" y2="654"/><text class="pinl" x="648" y="658">GND</text>
+        <rect class="tag t-gnd" x="540" y="644" width="60" height="20"/><text class="tagt" x="570" y="658" text-anchor="middle">GND</text>
+        <line class="stub" x1="640" y1="676" x2="605" y2="676"/><text class="pinl" x="648" y="680">CE</text>
+        <rect class="tag t-ctrl" x="540" y="666" width="60" height="20"/><text class="tagt" x="570" y="680" text-anchor="middle">CE3</text>
+        <line class="stub" x1="640" y1="698" x2="605" y2="698"/><text class="pinl" x="648" y="702">CSN</text>
+        <rect class="tag t-ctrl" x="534" y="688" width="66" height="20"/><text class="tagt" x="567" y="702" text-anchor="middle">CSN3</text>
+        <line class="stub" x1="640" y1="720" x2="605" y2="720"/><text class="pinl" x="648" y="724">SCK</text>
+        <rect class="tag t-sck" x="540" y="710" width="60" height="20"/><text class="tagt" x="570" y="724" text-anchor="middle">SCK</text>
+        <line class="stub" x1="640" y1="742" x2="605" y2="742"/><text class="pinl" x="648" y="746">MOSI</text>
+        <rect class="tag t-mosi" x="534" y="732" width="66" height="20"/><text class="tagt" x="567" y="746" text-anchor="middle">MOSI</text>
+        <line class="stub" x1="870" y1="676" x2="905" y2="676"/><text class="pinl" x="862" y="680" text-anchor="end">MISO</text>
+        <rect class="tag t-miso" x="905" y="666" width="66" height="20"/><text class="tagt" x="938" y="680" text-anchor="middle">MISO</text>
+        <line class="stub" x1="870" y1="720" x2="905" y2="720"/><text class="pinl" x="862" y="724" text-anchor="end">IRQ</text>
+        <rect class="tag t-nc" x="905" y="710" width="50" height="20"/><text class="tagt" x="930" y="724" text-anchor="middle">NC</text>
+      </g>
+      <text class="boxs" x="755" y="772" text-anchor="middle">Mỗi module: tụ 100µF &amp; 0.1µF sát VCC–GND</text>
 
       <!-- ===== OLED ===== -->
-      <rect class="box" x="640" y="660" width="210" height="130" rx="8"/>
-      <text class="boxt" x="745" y="682" text-anchor="middle">OLED1 · SSD1306</text>
-      <text class="boxs" x="745" y="697" text-anchor="middle">I²C 128×64 (0.96")</text>
+      <rect class="box" x="640" y="800" width="230" height="120" rx="8"/>
+      <text class="boxt" x="755" y="822" text-anchor="middle">OLED1 · SSD1306</text>
+      <text class="boxs" x="755" y="837" text-anchor="middle">I²C 128×64 (0.96") · addr 0x3C</text>
       <g>
-        <line class="stub" x1="640" y1="720" x2="605" y2="720"/><text class="pinl" x="648" y="724">VCC</text>
-        <rect class="tag t-3v3" x="540" y="710" width="60" height="20"/><text class="tagt" x="570" y="724" text-anchor="middle">3V3</text>
-        <line class="stub" x1="640" y1="742" x2="605" y2="742"/><text class="pinl" x="648" y="746">GND</text>
-        <rect class="tag t-gnd" x="540" y="732" width="60" height="20"/><text class="tagt" x="570" y="746" text-anchor="middle">GND</text>
-        <line class="stub" x1="850" y1="720" x2="885" y2="720"/><text class="pinl" x="842" y="724" text-anchor="end">SDA</text>
-        <rect class="tag t-i2c" x="885" y="710" width="56" height="20"/><text class="tagt" x="913" y="724" text-anchor="middle">SDA</text>
-        <line class="stub" x1="850" y1="742" x2="885" y2="742"/><text class="pinl" x="842" y="746" text-anchor="end">SCL</text>
-        <rect class="tag t-i2c" x="885" y="732" width="56" height="20"/><text class="tagt" x="913" y="746" text-anchor="middle">SCL</text>
+        <line class="stub" x1="640" y1="868" x2="605" y2="868"/><text class="pinl" x="648" y="872">VDD</text>
+        <rect class="tag t-3v3" x="540" y="858" width="60" height="20"/><text class="tagt" x="570" y="872" text-anchor="middle">3V3</text>
+        <line class="stub" x1="640" y1="892" x2="605" y2="892"/><text class="pinl" x="648" y="896">GND</text>
+        <rect class="tag t-gnd" x="540" y="882" width="60" height="20"/><text class="tagt" x="570" y="896" text-anchor="middle">GND</text>
+        <line class="stub" x1="870" y1="868" x2="905" y2="868"/><text class="pinl" x="862" y="872" text-anchor="end">SDA</text>
+        <rect class="tag t-i2c" x="905" y="858" width="56" height="20"/><text class="tagt" x="933" y="872" text-anchor="middle">SDA</text>
+        <line class="stub" x1="870" y1="892" x2="905" y2="892"/><text class="pinl" x="862" y="896" text-anchor="end">SCK/SCL</text>
+        <rect class="tag t-i2c" x="905" y="882" width="56" height="20"/><text class="tagt" x="933" y="896" text-anchor="middle">SCL</text>
       </g>
 
       <!-- ===== Buck-Boost ===== -->
-      <rect class="box" x="990" y="150" width="170" height="150" rx="8"/>
-      <text class="boxt" x="1075" y="172" text-anchor="middle">PS1 · Buck-Boost</text>
-      <text class="boxs" x="1075" y="187" text-anchor="middle">LiPo → 3.3V ≥2A</text>
+      <rect class="box" x="1000" y="150" width="160" height="150" rx="8"/>
+      <text class="boxt" x="1080" y="172" text-anchor="middle">PS1 · Buck-Boost</text>
+      <text class="boxs" x="1080" y="187" text-anchor="middle">LiPo → 3.3V ≥2A</text>
       <g>
-        <line class="stub" x1="990" y1="215" x2="955" y2="215"/><text class="pinl" x="998" y="219">IN+</text>
-        <rect class="tag t-vbat" x="880" y="205" width="70" height="20"/><text class="tagt" x="915" y="219" text-anchor="middle">VBAT</text>
-        <line class="stub" x1="990" y1="237" x2="955" y2="237"/><text class="pinl" x="998" y="241">IN−</text>
-        <rect class="tag t-gnd" x="890" y="227" width="60" height="20"/><text class="tagt" x="920" y="241" text-anchor="middle">GND</text>
-        <line class="stub" x1="990" y1="263" x2="955" y2="263"/><text class="pinl" x="998" y="267">OUT+</text>
-        <rect class="tag t-rf" x="862" y="253" width="88" height="20"/><text class="tagt" x="906" y="267" text-anchor="middle">+3V3_RF</text>
-        <line class="stub" x1="990" y1="285" x2="955" y2="285"/><text class="pinl" x="998" y="289">OUT−</text>
-        <rect class="tag t-gnd" x="890" y="275" width="60" height="20"/><text class="tagt" x="920" y="289" text-anchor="middle">GND</text>
+        <line class="stub" x1="1000" y1="215" x2="965" y2="215"/><text class="pinl" x="1008" y="219">IN+</text>
+        <rect class="tag t-vbat" x="890" y="205" width="70" height="20"/><text class="tagt" x="925" y="219" text-anchor="middle">VBAT</text>
+        <line class="stub" x1="1000" y1="237" x2="965" y2="237"/><text class="pinl" x="1008" y="241">IN−</text>
+        <rect class="tag t-gnd" x="900" y="227" width="60" height="20"/><text class="tagt" x="930" y="241" text-anchor="middle">GND</text>
+        <line class="stub" x1="1000" y1="263" x2="965" y2="263"/><text class="pinl" x="1008" y="267">OUT+</text>
+        <rect class="tag t-rf" x="872" y="253" width="88" height="20"/><text class="tagt" x="916" y="267" text-anchor="middle">+3V3_RF</text>
+        <line class="stub" x1="1000" y1="285" x2="965" y2="285"/><text class="pinl" x="1008" y="289">OUT−</text>
+        <rect class="tag t-gnd" x="900" y="275" width="60" height="20"/><text class="tagt" x="930" y="289" text-anchor="middle">GND</text>
       </g>
-      <text class="boxs" x="1075" y="293" text-anchor="middle">tụ 100µF ngõ ra</text>
+      <text class="boxs" x="1080" y="293" text-anchor="middle">tụ 100µF ngõ ra</text>
 
       <!-- ===== Battery ===== -->
-      <rect class="box" x="990" y="370" width="170" height="120" rx="8"/>
-      <text class="boxt" x="1075" y="392" text-anchor="middle">BT1 · LiPo 1S</text>
-      <text class="boxs" x="1075" y="407" text-anchor="middle">3.7V 3700mAh + BMS</text>
+      <rect class="box" x="1000" y="360" width="160" height="120" rx="8"/>
+      <text class="boxt" x="1080" y="382" text-anchor="middle">BT1 · LiPo 1S</text>
+      <text class="boxs" x="1080" y="397" text-anchor="middle">3.7V + BMS</text>
       <g>
-        <line class="stub" x1="990" y1="440" x2="955" y2="440"/><text class="pinl" x="998" y="444">+</text>
-        <rect class="tag t-vbat" x="880" y="430" width="70" height="20"/><text class="tagt" x="915" y="444" text-anchor="middle">VBAT</text>
-        <line class="stub" x1="990" y1="465" x2="955" y2="465"/><text class="pinl" x="998" y="469">−</text>
-        <rect class="tag t-gnd" x="890" y="455" width="60" height="20"/><text class="tagt" x="920" y="469" text-anchor="middle">GND</text>
+        <line class="stub" x1="1000" y1="430" x2="965" y2="430"/><text class="pinl" x="1008" y="434">+</text>
+        <rect class="tag t-vbat" x="890" y="420" width="70" height="20"/><text class="tagt" x="925" y="434" text-anchor="middle">VBAT</text>
+        <line class="stub" x1="1000" y1="455" x2="965" y2="455"/><text class="pinl" x="1008" y="459">−</text>
+        <rect class="tag t-gnd" x="900" y="445" width="60" height="20"/><text class="tagt" x="930" y="459" text-anchor="middle">GND</text>
       </g>
+      <text class="boxs" x="1080" y="505" text-anchor="middle">Tùy chọn — hoặc cấp</text>
+      <text class="boxs" x="1080" y="520" text-anchor="middle">qua USB-C 5V</text>
 
       <!-- ===== Buttons ===== -->
-      <text class="boxt" x="70" y="632">Nút nhấn (chân kia về GND)</text>
+      <text class="boxt" x="60" y="772">Nút nhấn (chân kia về GND)</text>
       <g>
         <!-- SW1 -->
-        <rect class="tag t-btn" x="70" y="650" width="86" height="20"/><text class="tagt" x="113" y="664" text-anchor="middle">BTN_OK</text>
-        <line class="stub" x1="156" y1="660" x2="186" y2="660"/>
-        <circle cx="190" cy="660" r="4" fill="none" stroke="var(--stub)"/><circle cx="210" cy="660" r="4" fill="none" stroke="var(--stub)"/>
-        <line class="stub" x1="208" y1="652" x2="226" y2="646"/>
-        <line class="stub" x1="214" y1="660" x2="244" y2="660"/>
-        <rect class="tag t-gnd" x="244" y="650" width="56" height="20"/><text class="tagt" x="272" y="664" text-anchor="middle">GND</text>
-        <text class="boxs" x="310" y="664">SW1 · OK</text>
+        <rect class="tag t-btn" x="60" y="790" width="86" height="20"/><text class="tagt" x="103" y="804" text-anchor="middle">BTN_OK</text>
+        <line class="stub" x1="146" y1="800" x2="176" y2="800"/>
+        <circle cx="180" cy="800" r="4" fill="none" stroke="var(--stub)"/><circle cx="200" cy="800" r="4" fill="none" stroke="var(--stub)"/>
+        <line class="stub" x1="198" y1="792" x2="216" y2="786"/>
+        <line class="stub" x1="204" y1="800" x2="234" y2="800"/>
+        <rect class="tag t-gnd" x="234" y="790" width="56" height="20"/><text class="tagt" x="262" y="804" text-anchor="middle">GND</text>
+        <text class="boxs" x="300" y="804">SW1 · OK (GPIO0, chung BOOT)</text>
         <!-- SW2 -->
-        <rect class="tag t-btn" x="70" y="692" width="86" height="20"/><text class="tagt" x="113" y="706" text-anchor="middle">BTN_NEXT</text>
-        <line class="stub" x1="156" y1="702" x2="186" y2="702"/>
-        <circle cx="190" cy="702" r="4" fill="none" stroke="var(--stub)"/><circle cx="210" cy="702" r="4" fill="none" stroke="var(--stub)"/>
-        <line class="stub" x1="208" y1="694" x2="226" y2="688"/>
-        <line class="stub" x1="214" y1="702" x2="244" y2="702"/>
-        <rect class="tag t-gnd" x="244" y="692" width="56" height="20"/><text class="tagt" x="272" y="706" text-anchor="middle">GND</text>
-        <text class="boxs" x="310" y="706">SW2 · Next</text>
+        <rect class="tag t-btn" x="60" y="832" width="92" height="20"/><text class="tagt" x="106" y="846" text-anchor="middle">BTN_NEXT</text>
+        <line class="stub" x1="152" y1="842" x2="182" y2="842"/>
+        <circle cx="186" cy="842" r="4" fill="none" stroke="var(--stub)"/><circle cx="206" cy="842" r="4" fill="none" stroke="var(--stub)"/>
+        <line class="stub" x1="204" y1="834" x2="222" y2="828"/>
+        <line class="stub" x1="210" y1="842" x2="240" y2="842"/>
+        <rect class="tag t-gnd" x="240" y="832" width="56" height="20"/><text class="tagt" x="268" y="846" text-anchor="middle">GND</text>
+        <text class="boxs" x="306" y="846">SW2 · Next (GPIO21)</text>
         <!-- SW3 -->
-        <rect class="tag t-btn" x="70" y="734" width="86" height="20"/><text class="tagt" x="113" y="748" text-anchor="middle">BTN_PREV</text>
-        <line class="stub" x1="156" y1="744" x2="186" y2="744"/>
-        <circle cx="190" cy="744" r="4" fill="none" stroke="var(--stub)"/><circle cx="210" cy="744" r="4" fill="none" stroke="var(--stub)"/>
-        <line class="stub" x1="208" y1="736" x2="226" y2="730"/>
-        <line class="stub" x1="214" y1="744" x2="244" y2="744"/>
-        <rect class="tag t-gnd" x="244" y="734" width="56" height="20"/><text class="tagt" x="272" y="748" text-anchor="middle">GND</text>
-        <text class="boxs" x="310" y="748">SW3 · Previous</text>
+        <rect class="tag t-btn" x="60" y="874" width="92" height="20"/><text class="tagt" x="106" y="888" text-anchor="middle">BTN_PREV</text>
+        <line class="stub" x1="152" y1="884" x2="182" y2="884"/>
+        <circle cx="186" cy="884" r="4" fill="none" stroke="var(--stub)"/><circle cx="206" cy="884" r="4" fill="none" stroke="var(--stub)"/>
+        <line class="stub" x1="204" y1="876" x2="222" y2="870"/>
+        <line class="stub" x1="210" y1="884" x2="240" y2="884"/>
+        <rect class="tag t-gnd" x="240" y="874" width="56" height="20"/><text class="tagt" x="268" y="888" text-anchor="middle">GND</text>
+        <text class="boxs" x="306" y="888">SW3 · Previous (GPIO47)</text>
       </g>
     </svg>
 
@@ -255,24 +520,28 @@
   <div class="card scroll">
     <table>
       <tr><th>Net</th><th>Các chân nối chung</th><th>Ghi chú</th></tr>
-      <tr><td><b>VBAT</b></td><td>BT1(+) · PS1 IN+ · U1 BAT(JST +)</td><td>Pin 3.0–4.2V. Qua BMS. Board tự sạc qua USB-C.</td></tr>
-      <tr><td><b>GND</b></td><td>BT1(−) · PS1 IN−/OUT− · U1 GND · M1 GND · M2 GND · OLED GND · 3× nút · (tất cả tụ)</td><td>Mát chung toàn mạch — đổ ground pour.</td></tr>
-      <tr><td><b>+3V3_RF</b></td><td>PS1 OUT+ · M1 VCC · M2 VCC</td><td><span class="warn">3.3V riêng cho 2 module.</span> Tụ 100µF ngõ ra + 100µF/0.1µF mỗi module.</td></tr>
-      <tr><td><b>3V3</b></td><td>U1 3V3 · OLED VCC</td><td>Lấy 3V3 của board cho OLED (dòng nhỏ). <b>Không</b> nối chung +3V3_RF.</td></tr>
-      <tr><td><b>SCK</b></td><td>U1 GPIO12 · M1 SCK · M2 SCK</td><td>SPI dùng chung (cố định firmware)</td></tr>
-      <tr><td><b>MOSI</b></td><td>U1 GPIO11 · M1 MOSI · M2 MOSI</td><td>SPI dùng chung</td></tr>
-      <tr><td><b>MISO</b></td><td>U1 GPIO13 · M1 MISO · M2 MISO</td><td>SPI dùng chung</td></tr>
-      <tr><td><b>CE1</b></td><td>U1 GPIO10 · M1 CE</td><td>Riêng module #1</td></tr>
-      <tr><td><b>CSN1</b></td><td>U1 GPIO1 · M1 CSN</td><td>Riêng module #1</td></tr>
-      <tr><td><b>CE2</b></td><td>U1 GPIO2 · M2 CE</td><td>Riêng module #2</td></tr>
-      <tr><td><b>CSN2</b></td><td>U1 GPIO3 · M2 CSN</td><td>Riêng module #2</td></tr>
-      <tr><td><b>SDA</b></td><td>U1 GPIO18 · OLED SDA</td><td>I²C (pull-up thường có sẵn trên module OLED)</td></tr>
-      <tr><td><b>SCL</b></td><td>U1 GPIO17 · OLED SCL</td><td>I²C</td></tr>
+      <tr><td><b>VBAT</b></td><td>BT1(+) · PS1 IN+</td><td>Pin 3.0–4.2V qua BMS (tùy chọn — có thể cấp thẳng 5V USB qua buck).</td></tr>
+      <tr><td><b>GND</b></td><td>BT1(−) · PS1 IN−/OUT− · U1 GND · M1/M2/M3 GND · OLED GND · 3× nút · (tất cả tụ)</td><td>Mát chung toàn mạch — đổ ground pour.</td></tr>
+      <tr><td><b>+3V3_RF</b></td><td>PS1 OUT+ · M1 VCC · M2 VCC · M3 VCC</td><td><span class="warn">3.3V riêng cho 3 module.</span> Tụ 100µF ngõ ra + 100µF/0.1µF mỗi module.</td></tr>
+      <tr><td><b>3V3</b></td><td>U1 3V3 · OLED VDD</td><td>Lấy 3V3 của board cho OLED (dòng nhỏ). <b>Không</b> nối chung +3V3_RF.</td></tr>
+      <tr><td><b>SCK</b></td><td>U1 GPIO12 · M1/M2/M3 SCK</td><td>SPI dùng chung (cố định firmware)</td></tr>
+      <tr><td><b>MOSI</b></td><td>U1 GPIO11 · M1/M2/M3 MOSI</td><td>SPI dùng chung</td></tr>
+      <tr><td><b>MISO</b></td><td>U1 GPIO13 · M1/M2/M3 MISO</td><td>SPI dùng chung</td></tr>
+      <tr><td><b>CE1</b></td><td>U1 GPIO16 · M1 CE</td><td>Riêng module #1</td></tr>
+      <tr><td><b>CSN1</b></td><td>U1 GPIO15 · M1 CSN</td><td>Riêng module #1</td></tr>
+      <tr><td><b>CE2</b></td><td>U1 GPIO18 · M2 CE</td><td>Riêng module #2</td></tr>
+      <tr><td><b>CSN2</b></td><td>U1 GPIO17 · M2 CSN</td><td>Riêng module #2</td></tr>
+      <tr><td><b>CE3</b></td><td>U1 GPIO10 · M3 CE</td><td>Riêng module #3</td></tr>
+      <tr><td><b>CSN3</b></td><td>U1 GPIO7 · M3 CSN</td><td>Riêng module #3</td></tr>
+      <tr><td><b>SDA</b></td><td>U1 GPIO8 · OLED SDA</td><td>I²C (pull-up thường có sẵn trên module OLED)</td></tr>
+      <tr><td><b>SCL</b></td><td>U1 GPIO9 · OLED SCK/SCL</td><td>I²C</td></tr>
       <tr><td><b>BTN_OK</b></td><td>U1 GPIO0 · SW1</td><td>SW1 → GND. GPIO0 có nút BOOT onboard (song song).</td></tr>
-      <tr><td><b>BTN_NEXT</b></td><td>U1 GPIO14 · SW2</td><td>SW2 → GND. GPIO14 có nút KEY onboard (song song).</td></tr>
-      <tr><td><b>BTN_PREV</b></td><td>U1 GPIO21 · SW3</td><td>SW3 → GND</td></tr>
-      <tr><td><b>NC</b></td><td>M1 IRQ · M2 IRQ</td><td>Không nối (để trống)</td></tr>
+      <tr><td><b>BTN_NEXT</b></td><td>U1 GPIO21 · SW2</td><td>SW2 → GND</td></tr>
+      <tr><td><b>BTN_PREV</b></td><td>U1 GPIO47 · SW3</td><td>SW3 → GND</td></tr>
+      <tr><td><b>LED RGB</b></td><td>U1 GPIO38</td><td>WS2812 onboard — <b>không đấu dây</b>.</td></tr>
+      <tr><td><b>NC</b></td><td>M1/M2/M3 IRQ</td><td>Không nối (để trống)</td></tr>
     </table>
+    <p class="note"><span class="warn">⚠️ Tránh</span> dùng GPIO <b>35/36/37</b> (PSRAM octal của N8R8), <b>26–32</b> (flash), <b>19/20</b> (USB) và <b>43/44</b> (UART0) cho bất kỳ net nào ở trên.</p>
   </div>
 
   <!-- ===== LINH KIEN ===== -->
@@ -280,17 +549,17 @@
   <div class="card scroll">
     <table>
       <tr><th>Ref</th><th>Linh kiện</th><th>SL</th><th>Ghi chú</th></tr>
-      <tr><td>U1</td><td>LilyGo T-Display-S3 (ESP32-S3)</td><td>1</td><td>Cắm qua 2 hàng header</td></tr>
-      <tr><td>M1, M2</td><td>E01-2G4M27D (nRF24L01P+PA/LNA)</td><td>2</td><td>Socket cái 2×4; anten SMA ra mép board</td></tr>
-      <tr><td>PS1</td><td>Buck-Boost 3.3V ≥2A (TPS63020/63070)</td><td>1</td><td>Khu nguồn 3.3V (tự thiết kế)</td></tr>
-      <tr><td>BT1</td><td>LiPo 1S 3.7V 3700mAh + BMS 1S</td><td>1</td><td>Vào JST board + PS1</td></tr>
-      <tr><td>OLED1</td><td>SSD1306 I²C 128×64</td><td>1</td><td>SDA=18, SCL=17</td></tr>
-      <tr><td>SW1–SW3</td><td>Nút tactile 6mm</td><td>3</td><td>OK / Next / Previous</td></tr>
-      <tr><td>C1,C3</td><td>Tụ hóa 100µF/16V</td><td>2</td><td>Sát VCC–GND mỗi module</td></tr>
-      <tr><td>C2,C4</td><td>Tụ gốm 0.1µF (104)</td><td>2</td><td>Sát VCC–GND mỗi module</td></tr>
-      <tr><td>C5</td><td>Tụ hóa 100µF/16V</td><td>1</td><td>Ngõ ra PS1</td></tr>
+      <tr><td>U1</td><td>ESP32-S3-WROOM-1 N8R8 devkit</td><td>1</td><td>USB-C native; 8MB flash / 8MB PSRAM</td></tr>
+      <tr><td>M1–M3</td><td>NRF24L01+PA/LNA (hoặc E01-2G4M27D)</td><td>3</td><td>Socket cái 2×4; anten SMA ra mép board</td></tr>
+      <tr><td>PS1</td><td>Buck-Boost 3.3V ≥2A (TPS63020/63070)</td><td>1</td><td>Khu nguồn 3.3V cho cụm module</td></tr>
+      <tr><td>BT1</td><td>LiPo 1S 3.7V + BMS 1S</td><td>1</td><td>Tùy chọn — hoặc cấp qua USB-C</td></tr>
+      <tr><td>OLED1</td><td>SSD1306 I²C 128×64</td><td>1</td><td>SDA=8, SCL=9, addr 0x3C</td></tr>
+      <tr><td>SW1–SW3</td><td>Nút tactile 6mm</td><td>3</td><td>OK (GPIO0) / Next (GPIO21) / Previous (GPIO47)</td></tr>
+      <tr><td>C1,C3,C5</td><td>Tụ hóa 100µF/16V</td><td>3</td><td>Sát VCC–GND mỗi module</td></tr>
+      <tr><td>C2,C4,C6</td><td>Tụ gốm 0.1µF (104)</td><td>3</td><td>Sát VCC–GND mỗi module</td></tr>
+      <tr><td>C7</td><td>Tụ hóa 100µF/16V</td><td>1</td><td>Ngõ ra PS1</td></tr>
     </table>
-    <p class="note"><span class="warn">⚠️</span> PS1 phải chỉnh ra <b>đúng 3.3V</b> (đo VOM) trước khi cấp cho module — E01 chịu tối đa 3.6V. Chỉ dùng thử trên thiết bị của bạn, môi trường được phép.</p>
+    <p class="note"><span class="warn">⚠️</span> PS1 phải chỉnh ra <b>đúng 3.3V</b> (đo VOM) trước khi cấp cho module — nRF24 chịu tối đa 3.6V. Chỉ dùng thử trên thiết bị của bạn, môi trường được phép.</p>
   </div>
 
   <!-- ===== TPS63020 ===== -->
@@ -356,12 +625,12 @@
       <line x1="666" y1="310" x2="694" y2="310" style="stroke:var(--fg);stroke-width:1.8"/>
       <line class="stub" x1="680" y1="310" x2="680" y2="470"/>
       <text class="boxs" x="702" y="309">Cout 2×22µF</text>
-      <!-- C5 bulk -->
+      <!-- C7 bulk -->
       <line class="stub" x1="720" y1="230" x2="720" y2="360"/>
       <line x1="706" y1="360" x2="734" y2="360" style="stroke:var(--fg);stroke-width:1.8"/>
       <line x1="706" y1="370" x2="734" y2="370" style="stroke:var(--fg);stroke-width:1.8"/>
       <line class="stub" x1="720" y1="370" x2="720" y2="470"/>
-      <text class="boxs" x="742" y="369">C5 100µF</text>
+      <text class="boxs" x="742" y="369">C7 100µF</text>
 
       <!-- Feedback divider R1/R2 -->
       <circle cx="760" cy="230" r="3" style="fill:var(--fg)"/>
@@ -386,7 +655,7 @@
       <tr><td><b>L</b></td><td>1,5µH</td><td>Shielded, Isat ≥3A (vd Coilcraft XFL4020-152 / Würth 744029001)</td><td>Giữa chân L1–L2, đặt sát IC</td></tr>
       <tr><td><b>Cin</b></td><td>10µF</td><td>Gốm X5R/X7R 10V, 0805</td><td>Sát VIN–GND</td></tr>
       <tr><td><b>Cout</b></td><td>2×22µF</td><td>Gốm X5R/X7R 10V, 0805</td><td>Sát VOUT–GND</td></tr>
-      <tr><td><b>C5</b></td><td>100µF</td><td>Tụ hóa/tantali 10V</td><td>Bulk ngõ ra, trước khi chia 2 module</td></tr>
+      <tr><td><b>C7</b></td><td>100µF</td><td>Tụ hóa/tantali 10V</td><td>Bulk ngõ ra, trước khi chia cho 3 module</td></tr>
       <tr><td><b>R1</b></td><td>1,12–1,13MΩ 1%</td><td>0603</td><td>VOUT → FB</td></tr>
       <tr><td><b>R2</b></td><td>200kΩ 1%</td><td>0603</td><td>FB → GND</td></tr>
       <tr><td><i>Cff</i></td><td>(tùy chọn) 10–22pF</td><td>song song R1</td><td>Giúp ổn định vòng hồi tiếp</td></tr>
@@ -398,7 +667,7 @@
   <h2>Dựng nhanh trong EasyEDA Pro</h2>
   <div class="card">
     <ol class="note" style="margin:0;padding-left:20px;line-height:1.9">
-      <li>Đặt các linh kiện (U1, M1, M2, PS1, BT1, OLED1, SW1–3, tụ) ra sheet — tìm trong thư viện LCSC/EasyEDA theo tên ở cột "Linh kiện".</li>
+      <li>Đặt các linh kiện (U1, M1–M3, PS1, BT1, OLED1, SW1–3, tụ) ra sheet — tìm trong thư viện LCSC/EasyEDA theo tên ở cột "Linh kiện".</li>
       <li>Dùng <code>Place → Net Label</code> (phím tắt <b>N</b>) gán tên net ở bảng trên lên từng chân — <b>chân cùng tên net là tự nối với nhau</b>, không cần kéo dây chằng chịt.</li>
       <li>Chân nguồn/mát nên dùng ký hiệu <code>VCC/GND flag</code> cho gọn (VBAT, +3V3_RF, 3V3, GND).</li>
       <li>Chạy <b>DRC</b> kiểm tra net hở trước khi sang PCB.</li>
