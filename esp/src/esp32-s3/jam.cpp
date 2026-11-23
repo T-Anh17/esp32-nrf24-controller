@@ -1,4 +1,5 @@
 #include "jam.h"
+#include "display.h"
 
 int        nrf_pa_level;
 static int global_ch1, global_ch2;
@@ -592,7 +593,7 @@ void misc_jam()
 
 bool jamHandler(void (*action)(), String htmlResponse, const unsigned char *bitmap, bool CW, bool mode, bool isMisc, bool scan, int ch1, int ch2)
 {
-  (void)htmlResponse;
+  (void)bitmap;
 
   global_ch1              = ch1;
   global_ch2              = ch2;
@@ -602,9 +603,7 @@ bool jamHandler(void (*action)(), String htmlResponse, const unsigned char *bitm
 
   if ( !isMisc )
   {
-    display.clearDisplay();
-    display.drawBitmap(0, 0, bitmap, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
-    display.display();
+    uiTitle(htmlResponse, "Press a button to stop");
   }
 
   server.sendHeader("Content-Encoding", "gzip");

@@ -22,6 +22,4 @@ void zigbee_jam();
 void misc_jam();
 bool jamHandler(void (*action)(), String htmlResponse = "", const unsigned char *bitmap = nullptr, bool CW = false, bool mode = false, bool isMisc = false, bool scan = false, int ch1 = 0, int ch2 = 0);
 
-void updateDisplay(int menuNum);
-
 #endif

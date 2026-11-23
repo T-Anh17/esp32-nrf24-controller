@@ -232,10 +232,10 @@
         <circle class="bpin" cx="960" cy="628" r="4"/><text class="bt" x="974" y="632">IO10 · CE3</text>
         <circle class="bpin" cx="960" cy="648" r="4"/><text class="bt" x="974" y="652">IO7 · CSN3</text>
         <circle class="bpin" cx="960" cy="680" r="4"/><text class="bt" x="974" y="684">IO9 · SDA</text>
-        <circle class="bpin" cx="960" cy="700" r="4"/><text class="bt" x="974" y="704">IO46 · SCL</text>
+        <circle class="bpin" cx="960" cy="700" r="4"/><text class="bt" x="974" y="704">IO8 · SCL</text>
         <circle class="bpin" cx="960" cy="732" r="4"/><text class="bt" x="974" y="736">IO21 · OK</text>
-        <circle class="bpin" cx="960" cy="752" r="4"/><text class="bt" x="974" y="756">IO20 · Next</text>
-        <circle class="bpin" cx="960" cy="772" r="4"/><text class="bt" x="974" y="776">IO19 · Prev</text>
+        <circle class="bpin" cx="960" cy="752" r="4"/><text class="bt" x="974" y="756">IO47 · Next</text>
+        <circle class="bpin" cx="960" cy="772" r="4"/><text class="bt" x="974" y="776">IO48 · Prev</text>
       </g>
       <!-- USB-C -->
       <rect x="1002" y="820" width="60" height="30" rx="5" fill="#4b5563"/><text class="plbl" x="1032" y="840" text-anchor="middle" fill="#cbd5e1">UART</text>
@@ -284,11 +284,11 @@
       <tr><td colspan="3" class="note" style="padding-top:10px"><b>Chân 8 · IRQ</b> của cả 3 module: không nối.</td></tr>
       <tr><td rowspan="4"><b>OLED SSD1306</b></td><td>1 · GND</td><td>GND</td></tr>
       <tr><td>2 · VCC</td><td>3V3</td></tr>
-      <tr><td>3 · SCL</td><td><b>GPIO46</b></td></tr>
+      <tr><td>3 · SCL</td><td><b>GPIO8</b></td></tr>
       <tr><td>4 · SDA</td><td><b>GPIO9</b></td></tr>
       <tr><td rowspan="3"><b>Nút nhấn</b></td><td>OK (1 chân)</td><td><b>GPIO21</b> · chân kia → GND</td></tr>
-      <tr><td>Next (1 chân)</td><td><b>GPIO20</b> · chân kia → GND</td></tr>
-      <tr><td>Previous (1 chân)</td><td><b>GPIO19</b> · chân kia → GND</td></tr>
+      <tr><td>Next (1 chân)</td><td><b>GPIO47</b> · chân kia → GND</td></tr>
+      <tr><td>Previous (1 chân)</td><td><b>GPIO48</b> · chân kia → GND</td></tr>
       <tr><td><b>LED RGB</b></td><td>WS2812 onboard</td><td>GPIO38 — không đấu dây</td></tr>
     </table>
   </div>
@@ -341,16 +341,16 @@
         <line class="stub" x1="300" y1="546" x2="338" y2="546"/><text class="pinl" x="294" y="550" text-anchor="end">GPIO9</text>
         <rect class="tag t-i2c" x="340" y="536" width="78" height="20"/><text class="tagt" x="379" y="550" text-anchor="middle">SDA</text>
         <!-- SCL -->
-        <line class="stub" x1="300" y1="576" x2="338" y2="576"/><text class="pinl" x="294" y="580" text-anchor="end">GPIO46</text>
+        <line class="stub" x1="300" y1="576" x2="338" y2="576"/><text class="pinl" x="294" y="580" text-anchor="end">GPIO8</text>
         <rect class="tag t-i2c" x="340" y="566" width="78" height="20"/><text class="tagt" x="379" y="580" text-anchor="middle">SCL</text>
         <!-- BTN_OK -->
         <line class="stub" x1="300" y1="606" x2="338" y2="606"/><text class="pinl" x="294" y="610" text-anchor="end">GPIO21</text>
         <rect class="tag t-btn" x="340" y="596" width="86" height="20"/><text class="tagt" x="383" y="610" text-anchor="middle">BTN_OK</text>
         <!-- BTN_NEXT -->
-        <line class="stub" x1="300" y1="636" x2="338" y2="636"/><text class="pinl" x="294" y="640" text-anchor="end">GPIO20</text>
+        <line class="stub" x1="300" y1="636" x2="338" y2="636"/><text class="pinl" x="294" y="640" text-anchor="end">GPIO47</text>
         <rect class="tag t-btn" x="340" y="626" width="92" height="20"/><text class="tagt" x="386" y="640" text-anchor="middle">BTN_NEXT</text>
         <!-- BTN_PREV -->
-        <line class="stub" x1="300" y1="666" x2="338" y2="666"/><text class="pinl" x="294" y="670" text-anchor="end">GPIO19</text>
+        <line class="stub" x1="300" y1="666" x2="338" y2="666"/><text class="pinl" x="294" y="670" text-anchor="end">GPIO48</text>
         <rect class="tag t-btn" x="340" y="656" width="92" height="20"/><text class="tagt" x="386" y="670" text-anchor="middle">BTN_PREV</text>
         <!-- RGB onboard -->
         <line class="stub" x1="300" y1="696" x2="338" y2="696"/><text class="pinl" x="294" y="700" text-anchor="end">GPIO38</text>
@@ -489,7 +489,7 @@
         <line class="stub" x1="204" y1="834" x2="222" y2="828"/>
         <line class="stub" x1="210" y1="842" x2="240" y2="842"/>
         <rect class="tag t-gnd" x="240" y="832" width="56" height="20"/><text class="tagt" x="268" y="846" text-anchor="middle">GND</text>
-        <text class="boxs" x="306" y="846">SW2 · Next (GPIO20)</text>
+        <text class="boxs" x="306" y="846">SW2 · Next (GPIO47)</text>
         <!-- SW3 -->
         <rect class="tag t-btn" x="60" y="874" width="92" height="20"/><text class="tagt" x="106" y="888" text-anchor="middle">BTN_PREV</text>
         <line class="stub" x1="152" y1="884" x2="182" y2="884"/>
@@ -497,7 +497,7 @@
         <line class="stub" x1="204" y1="876" x2="222" y2="870"/>
         <line class="stub" x1="210" y1="884" x2="240" y2="884"/>
         <rect class="tag t-gnd" x="240" y="874" width="56" height="20"/><text class="tagt" x="268" y="888" text-anchor="middle">GND</text>
-        <text class="boxs" x="306" y="888">SW3 · Previous (GPIO19)</text>
+        <text class="boxs" x="306" y="888">SW3 · Previous (GPIO48)</text>
       </g>
     </svg>
 
@@ -534,14 +534,14 @@
       <tr><td><b>CE3</b></td><td>U1 GPIO10 · M3 CE</td><td>Riêng module #3</td></tr>
       <tr><td><b>CSN3</b></td><td>U1 GPIO7 · M3 CSN</td><td>Riêng module #3</td></tr>
       <tr><td><b>SDA</b></td><td>U1 GPIO9 · OLED SDA</td><td>I²C (pull-up thường có sẵn trên module OLED)</td></tr>
-      <tr><td><b>SCL</b></td><td>U1 GPIO46 · OLED SCK/SCL</td><td>I²C</td></tr>
+      <tr><td><b>SCL</b></td><td>U1 GPIO8 · OLED SCK/SCL</td><td>I²C</td></tr>
       <tr><td><b>BTN_OK</b></td><td>U1 GPIO21 · SW1</td><td>SW1 → GND</td></tr>
-      <tr><td><b>BTN_NEXT</b></td><td>U1 GPIO20 · SW2</td><td>SW2 → GND. GPIO20 = D+ USB native — trùng cổng USB-OTG.</td></tr>
-      <tr><td><b>BTN_PREV</b></td><td>U1 GPIO19 · SW3</td><td>SW3 → GND. GPIO19 = D- USB native — trùng cổng USB-OTG.</td></tr>
+      <tr><td><b>BTN_NEXT</b></td><td>U1 GPIO47 · SW2</td><td>SW2 → GND.</td></tr>
+      <tr><td><b>BTN_PREV</b></td><td>U1 GPIO48 · SW3</td><td>SW3 → GND.</td></tr>
       <tr><td><b>LED RGB</b></td><td>U1 GPIO38</td><td>WS2812 onboard — <b>không đấu dây</b>.</td></tr>
       <tr><td><b>NC</b></td><td>M1/M2/M3 IRQ</td><td>Không nối (để trống)</td></tr>
     </table>
-    <p class="note"><span class="warn">⚠️ Tránh</span> dùng GPIO <b>35/36/37</b> (PSRAM octal của N8R8), <b>26–32</b> (flash) và <b>43/44</b> (UART0) cho bất kỳ net nào ở trên. <b>GPIO19/20</b> là USB native (D-/D+): đã dùng cho nút Previous/Next ⇒ nạp/serial phải qua <b>cổng USB-UART</b>, không dùng cổng USB-OTG.</p>
+    <p class="note"><span class="warn">⚠️ Tránh</span> dùng GPIO <b>35/36/37</b> (PSRAM octal của N8R8), <b>26–32</b> (flash) và <b>43/44</b> (UART0) cho bất kỳ net nào ở trên.</p>
   </div>
 
   <!-- ===== LINH KIEN ===== -->
@@ -553,8 +553,8 @@
       <tr><td>M1–M3</td><td>NRF24L01+PA/LNA (hoặc E01-2G4M27D)</td><td>3</td><td>Socket cái 2×4; anten SMA ra mép board</td></tr>
       <tr><td>PS1</td><td>Buck-Boost 3.3V ≥2A (TPS63020/63070)</td><td>1</td><td>Khu nguồn 3.3V cho cụm module</td></tr>
       <tr><td>BT1</td><td>LiPo 1S 3.7V + BMS 1S</td><td>1</td><td>Tùy chọn — hoặc cấp qua USB-C</td></tr>
-      <tr><td>OLED1</td><td>SSD1306 I²C 128×64</td><td>1</td><td>SDA=9, SCL=46, addr 0x3C</td></tr>
-      <tr><td>SW1–SW3</td><td>Nút tactile 6mm</td><td>3</td><td>OK (GPIO21) / Next (GPIO20) / Previous (GPIO19)</td></tr>
+      <tr><td>OLED1</td><td>SSD1306 I²C 128×64</td><td>1</td><td>SDA=9, SCL=8, addr 0x3C</td></tr>
+      <tr><td>SW1–SW3</td><td>Nút tactile 6mm</td><td>3</td><td>OK (GPIO21) / Next (GPIO47) / Previous (GPIO48)</td></tr>
       <tr><td>C1,C3,C5</td><td>Tụ hóa 100µF/16V</td><td>3</td><td>Sát VCC–GND mỗi module</td></tr>
       <tr><td>C2,C4,C6</td><td>Tụ gốm 0.1µF (104)</td><td>3</td><td>Sát VCC–GND mỗi module</td></tr>
       <tr><td>C7</td><td>Tụ hóa 100µF/16V</td><td>1</td><td>Ngõ ra PS1</td></tr>

@@ -16,10 +16,4 @@ bool        handleSetCommand(String *args, int argCount, bool web_command, Strin
 bool        handleSetNrf24Command(String *args, int argCount, bool web_command, String &response);
 bool        handleSetArray(String *args, int argCount, bool web_command, String &response);
 
-void attackHandler(String htmlResponse, void (*attackFunc)(), const uint8_t *bitmap);
-void attackScanHandler(String htmlResponse, void (*attackFunction)(), const unsigned char *bitmap);
-void storeEEPROMAndSet(const char *index, int value, int &targetVar);
-void updateDisplay(int menuNum);
-void sendHtmlAndExecute(const char *htmlResponse, void (*action)());
-
 #endif

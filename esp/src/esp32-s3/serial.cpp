@@ -1,5 +1,9 @@
 #include "serial.h"
 
+#include "display.h"
+#include "storage.h"
+#include "web.h"
+
 #include <SPI.h>
 
 #define COL_WIDTH 22
@@ -309,7 +313,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
     printLine("Starting Bluetooth jammer...", response, web_command);
     if ( web_command )
       server.send(200, "text/html", response + "ok\n");
-    jamHandler(bluetooth_jam, String("Bluetooth Jamming"), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_bluetooth_jam_64 : bitmap_bluetooth_jam_32), true, false);
+    jamHandler(bluetooth_jam, String("Bluetooth Jamming"), nullptr, true, false);
     return true;
   }
 
@@ -318,7 +322,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
     printLine("Starting Drone jammer...", response, web_command);
     if ( web_command )
       server.send(200, "text/html", response + "ok\n");
-    jamHandler(drone_jam, String("Drone Jamming"), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_drone_jam_64 : bitmap_drone_jam_32), true, false);
+    jamHandler(drone_jam, String("Drone Jamming"), nullptr, true, false);
     return true;
   }
 
@@ -342,7 +346,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
       printLine("Starting WiFi all channels jammer...", response, web_command);
       if ( web_command )
         server.send(200, "text/html", response + "ok\n");
-      jamHandler(wifi_jam, String("WiFi Jamming"), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_wifi_jam_64 : bitmap_wifi_jam_32), false, false);
+      jamHandler(wifi_jam, String("WiFi Jamming"), nullptr, false, false);
       return true;
     }
 
@@ -351,7 +355,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
       printLine("Starting WiFi smart jammer...", response, web_command);
       if ( web_command )
         server.send(200, "text/html", response + "ok\n");
-      jamHandler(wifi_scan_jam, String("WiFi Jamming"), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_wifi_jam_64 : bitmap_wifi_jam_32), false, false);
+      jamHandler(wifi_scan_jam, String("WiFi Jamming"), nullptr, false, false);
       return true;
     }
 
@@ -371,10 +375,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
       printLine("Starting WiFi jammer on channel " + String(ch) + "...", response, web_command);
       if ( web_command )
         server.send(200, "text/html", response + "ok\n");
-      display.clearDisplay();
-      display.drawBitmap(0, 0, decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_wifi_jam_64 : bitmap_wifi_jam_32), SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
-      display.display();
-      jamHandler(wifi_channel, "Jamming WiFi channel", decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_wifi_jam_64 : bitmap_wifi_jam_32), false, false, false, false, ch - 1, 0);
+      jamHandler(wifi_channel, "Jamming WiFi channel", nullptr, false, false, false, false, ch - 1, 0);
       updateDisplay(menu_number);
       return true;
     }
@@ -402,7 +403,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
       printLine("Starting BLE advertising jammer...", response, web_command);
       if ( web_command )
         server.send(200, "text/html", response + "ok\n");
-      jamHandler(ble_advertising_jam, String("BLE Jamming"), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_ble_jam_64 : bitmap_ble_jam_32), false, false);
+      jamHandler(ble_advertising_jam, String("BLE Jamming"), nullptr, false, false);
       return true;
     }
 
@@ -411,7 +412,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
       printLine("Starting BLE data jammer...", response, web_command);
       if ( web_command )
         server.send(200, "text/html", response + "ok\n");
-      jamHandler(ble_data_jam, String("BLE Jamming"), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_ble_jam_64 : bitmap_ble_jam_32), true, false);
+      jamHandler(ble_data_jam, String("BLE Jamming"), nullptr, true, false);
       return true;
     }
 
@@ -424,7 +425,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
     printLine("Starting Zigbee jammer...", response, web_command);
     if ( web_command )
       server.send(200, "text/html", response + "ok\n");
-    jamHandler(zigbee_jam, String("Zigbee Jamming"), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_zigbee_jam_64 : bitmap_zigbee_jam_32), false, false);
+    jamHandler(zigbee_jam, String("Zigbee Jamming"), nullptr, false, false);
     return true;
   }
 
@@ -475,7 +476,7 @@ bool handleJamCommand(String *args, int argCount, bool web_command, String &resp
     display.println("Jamming Started");
     display.display();
 
-    jamHandler(misc_jam, "Jamming from " + String(start) + " to " + String(stop), decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_misc_jammer_64 : bitmap_misc_jammer_32), false, false, true, false, start, stop);
+    jamHandler(misc_jam, "Jamming from " + String(start) + " to " + String(stop), nullptr, false, false, true, false, start, stop);
     updateDisplay(menu_number);
     return true;
   }
@@ -531,7 +532,7 @@ bool handleAttackCommand(String *args, int argCount, bool web_command, String &r
         printLine("Starting WiFi all deauther...", response, web_command);
         if ( web_command )
           server.send(200, "text/html", response + "ok\n");
-        attackHandler(String("WiFi Deauthing"), wifi_deauth_all, decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_wifi_deauth_64 : bitmap_wifi_deauth_32));
+        attackHandler(String("WiFi Deauthing"), wifi_deauth_all, nullptr);
         return true;
       }
 
@@ -545,7 +546,7 @@ bool handleAttackCommand(String *args, int argCount, bool web_command, String &r
         NumberChannels = scan_wifi_APs(WiFiScanChannels, true);
         if ( web_command )
           server.send(200, "text/html", response + "ok\n");
-        attackScanHandler(String("WiFi Deauthing"), wifi_deauth_scan, decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_wifi_deauth_64 : bitmap_wifi_deauth_32));
+        attackScanHandler(String("WiFi Deauthing"), wifi_deauth_scan, nullptr);
         return true;
       }
 
@@ -565,9 +566,7 @@ bool handleAttackCommand(String *args, int argCount, bool web_command, String &r
         printLine("Starting WiFi deauther on channel " + String(ch) + "...", response, web_command);
         if ( web_command )
           server.send(200, "text/html", response + "ok\n");
-        display.clearDisplay();
-        display.drawBitmap(0, 0, decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_wifi_deauth_64 : bitmap_wifi_deauth_32), SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
-        display.display();
+        uiTitle("WiFi Deauth", "ch " + String(ch));
         wifi_deauth_channel(ch);
         updateDisplay(menu_number);
         return true;
@@ -596,7 +595,7 @@ bool handleAttackCommand(String *args, int argCount, bool web_command, String &r
         printLine("Starting random beacon spaming...", response, web_command);
         if ( web_command )
           server.send(200, "text/html", response + "ok\n");
-        attackHandler(String("WiFi Beacon Spaming"), wifi_beacon_spam_random, decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_beacon_spaming_64 : bitmap_beacon_spaming_32));
+        attackHandler(String("WiFi Beacon Spaming"), wifi_beacon_spam_random, nullptr);
         return true;
       }
 
@@ -605,7 +604,7 @@ bool handleAttackCommand(String *args, int argCount, bool web_command, String &r
         printLine("Starting array beacon spaming...", response, web_command);
         if ( web_command )
           server.send(200, "text/html", response + "ok\n");
-        attackHandler(String("WiFi Beacon Spaming"), wifi_beacon_spam_array, decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_beacon_spaming_64 : bitmap_beacon_spaming_32));
+        attackHandler(String("WiFi Beacon Spaming"), wifi_beacon_spam_array, nullptr);
         return true;
       }
 

@@ -111,7 +111,7 @@
         <text class="pinl" x="52" y="520">GPIO9</text><line class="stub" x1="250" y1="516" x2="288" y2="516"/>
         <rect class="t-i2c" x="290" y="506" width="86" height="20" rx="4"/><text class="tagt" x="333" y="520" text-anchor="middle">SDA</text>
         <!-- SCL -->
-        <text class="pinl" x="52" y="550">GPIO46</text><line class="stub" x1="250" y1="546" x2="288" y2="546"/>
+        <text class="pinl" x="52" y="550">GPIO8</text><line class="stub" x1="250" y1="546" x2="288" y2="546"/>
         <rect class="t-i2c" x="290" y="536" width="86" height="20" rx="4"/><text class="tagt" x="333" y="550" text-anchor="middle">SCL</text>
       </g>
 
@@ -190,13 +190,13 @@
       <tr><td><b>CE2 / CSN2</b></td><td><b>18 / 17</b></td><td>module #2 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #2</td></tr>
       <tr><td><b>CE3 / CSN3</b></td><td><b>10 / 7</b></td><td>module #3 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #3</td></tr>
       <tr><td><b>SDA</b></td><td><b>9</b></td><td>OLED SDA</td><td><i class="sw" style="background:var(--w-i2c)"></i></td><td>I²C · địa chỉ 0x3C</td></tr>
-      <tr><td><b>SCL</b></td><td><b>46</b></td><td>OLED SCK/SCL</td><td><i class="sw" style="background:var(--w-i2c)"></i></td><td>I²C</td></tr>
+      <tr><td><b>SCL</b></td><td><b>8</b></td><td>OLED SCK/SCL</td><td><i class="sw" style="background:var(--w-i2c)"></i></td><td>I²C</td></tr>
       <tr><td><b>VCC module</b></td><td>3V3</td><td>VCC · cả 3 module</td><td><i class="sw" style="background:var(--w-power)"></i></td><td><span class="warn">Chỉ 3.3V.</span> Bản PA/LNA nên cấp 3V3 riêng (xem bên dưới)</td></tr>
       <tr><td><b>VDD OLED</b></td><td>3V3</td><td>OLED VDD</td><td><i class="sw" style="background:var(--w-power)"></i></td><td>Lấy 3V3 của board (dòng nhỏ)</td></tr>
       <tr><td><b>GND</b></td><td>GND</td><td>mọi module · OLED · nút</td><td><i class="sw" style="background:var(--w-gnd)"></i></td><td>Mát chung</td></tr>
       <tr><td><b>Nút OK</b></td><td><b>21</b></td><td>SW1 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Nút rời</td></tr>
-      <tr><td><b>Nút Next</b></td><td><b>20</b></td><td>SW2 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Nút rời</td></tr>
-      <tr><td><b>Nút Previous</b></td><td><b>19</b></td><td>SW3 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Nút rời</td></tr>
+      <tr><td><b>Nút Next</b></td><td><b>47</b></td><td>SW2 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Nút rời</td></tr>
+      <tr><td><b>Nút Previous</b></td><td><b>48</b></td><td>SW3 → GND</td><td><i class="sw" style="background:var(--w-btn)"></i></td><td>Nút rời</td></tr>
       <tr><td><b>LED RGB</b></td><td><b>38</b></td><td>onboard WS2812</td><td>–</td><td>Có sẵn trên board, <b>không đấu dây</b></td></tr>
       <tr><td><b>IRQ</b></td><td>–</td><td colspan="2">Không nối (cả 3 module)</td></tr>
     </table>
@@ -263,11 +263,11 @@
       <li>VCC mọi module + OLED vào đúng <b>3V3</b>, <span class="warn">không phải 5V</span>.</li>
       <li>SCK=<b>12</b>, MOSI=<b>11</b>, MISO=<b>13</b> nối chung đúng cho cả 3 module (các chân này cố định firmware).</li>
       <li>CE/CSN đúng từng module: #1 = <b>16/15</b>, #2 = <b>18/17</b>, #3 = <b>10/7</b>.</li>
-      <li>OLED: SDA=<b>9</b>, SCL=<b>46</b> (chân SCK trên bo OLED chính là SCL).</li>
-      <li>Nút: OK=<b>21</b>, Next=<b>20</b>, Previous=<b>19</b> — mỗi nút nối chân kia về <b>GND</b>.</li>
+      <li>OLED: SDA=<b>9</b>, SCL=<b>8</b> (chân SCK trên bo OLED chính là SCL).</li>
+      <li>Nút: OK=<b>21</b>, Next=<b>47</b>, Previous=<b>48</b> — mỗi nút nối chân kia về <b>GND</b>.</li>
       <li>Có tụ <b>10–100µF</b> sát VCC–GND mỗi module.</li>
       <li><span class="warn">Tránh</span> GPIO <b>35/36/37</b> (PSRAM octal của N8R8) và <b>26–32</b> (flash) — không dùng cho dây nào.</li>
-      <li><span class="warn">Lưu ý</span> nút Next/Previous dùng <b>GPIO20/19</b> = USB native (D+/D-): nạp &amp; serial phải qua <b>cổng USB-UART</b>, không dùng cổng USB-OTG.</li>
+
       <li>Đo thang Ω: giữa 3V3 và GND <b>không chập</b>.</li>
       <li>Cấp điện qua USB-C, mở monitor COM → gõ <code>info</code> xem đúng 3 module, gõ <code>detect</code> để self-test SPI từng module.</li>
     </ul>

@@ -154,14 +154,14 @@ inline int  flag     = 0;
 inline bool hspi     = false;
 
 inline SPIClass        *hp = nullptr;
-// ESP32-S3-DevKitC-1 buttons: OK=GPIO47, Next=GPIO48, Previous=GPIO21.
+// ESP32-S3-DevKitC-1 buttons: OK=GPIO21, Next=GPIO47, Previous=GPIO48.
 // Buttons are kept off GPIO19/GPIO20 (native USB D-/D+, USB-CDC on boot), so
 // they can never work as normal GPIO buttons.
 // (GPIO48 is the reference board's onboard RGB, but this board drives RGB on
 // GPIO38, so GPIO48 is free here.)
-inline GButton          btnOK(47);
-inline GButton          btnNext(48);
-inline GButton          btnPrevious(21);
+inline GButton          btnOK(21);
+inline GButton          btnNext(47);
+inline GButton          btnPrevious(48);
 inline WebServer        server(80);
 inline DNSServer        dnsServer;
 inline OledDisplay      display;
