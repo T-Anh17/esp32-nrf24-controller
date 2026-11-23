@@ -209,7 +209,7 @@ void handlenRF24Scan()
 
   // ESP32-S3-WROOM-1 safe candidate pins for CE/CSN (exclude flash 26-32,
   // octal PSRAM 35-37, USB 19-20, UART 43-44, SPI 11-13, I2C 8-9,
-  // buttons 0/21/47, RGB LED 38)
+  // buttons 21/47/48, RGB LED 38)
   const int candidate_pins[] = { 1, 3, 7, 10, 15, 16, 17, 18 };
   const int candidate_count  = sizeof(candidate_pins) / sizeof(candidate_pins[0]);
 
@@ -1818,6 +1818,15 @@ void wifi_select()
 void setup()
 {
   Serial.begin(115200);
+  // ESP32-S3 native USB-CDC: opening the serial monitor resets the board, and
+  // logs printed before the host re-opens the port are lost. Wait (up to 3s)
+  // for the monitor to attach so the full boot/diagnostic log is visible, then
+  // fall through when running without a monitor.
+  unsigned long serialWaitStart = millis();
+  while ( !Serial && millis() - serialWaitStart < 3000 )
+    delay(10);
+  delay(200);
+  Serial.println("\n=== nRF24 Jammer boot ===");
 
   prefs.begin("configs", false);
 
@@ -1828,6 +1837,9 @@ void setup()
   // WDT down entirely instead: the jam loops block the loop task with only
   // delayMicroseconds() (no yield), which would otherwise trip the WDT.
   esp_task_wdt_deinit();
+
+  // Blue: firmware is booting. Proves the RGB LED is alive before anything else.
+  setRGB(0, 0, 30);
 
   pinMode(2, OUTPUT);
   digitalWrite(2, LOW);
@@ -1965,10 +1977,115 @@ void setup()
   btnNext.setTimeout(600);
   btnPrevious.setTimeout(600);
 
-  Wire.begin(OLED_SDA, OLED_SCL);
-  // periphBegin=false: keep the custom SDA/SCL set above (Adafruit would
-  // otherwise re-run Wire.begin() with the default pins).
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C, true, false);
+  // Report the idle state of the two lines with internal pull-ups engaged. Both
+  // should read 1 (high). A 0 means that line is held low (short to GND, wrong
+  // pin, or a slave stuck on the bus) -> every I2C transfer returns
+  // ESP_ERR_INVALID_STATE and nothing on the bus can work.
+  pinMode(OLED_SDA, INPUT_PULLUP);
+  pinMode(OLED_SCL, INPUT_PULLUP);
+  delay(5);
+  int sdaLvl = digitalRead(OLED_SDA);
+  int sclLvl = digitalRead(OLED_SCL);
+  Serial.printf("I2C idle: SDA(GPIO%d)=%d SCL(GPIO%d)=%d  (1=OK, 0=STUCK LOW)\n",
+                OLED_SDA, sdaLvl, OLED_SCL, sclLvl);
+
+  // Bus recovery: if SDA is stuck low, a slave may be mid-transfer. Clock SCL up
+  // to 9 times so it finishes/releases SDA, then send a STOP.
+  if ( sdaLvl == LOW && sclLvl == HIGH )
+  {
+    Serial.println("SDA stuck low: attempting I2C bus recovery...");
+    pinMode(OLED_SCL, OUTPUT);
+    for ( int i = 0; i < 9 && digitalRead(OLED_SDA) == LOW; i++ )
+    {
+      digitalWrite(OLED_SCL, LOW);
+      delayMicroseconds(5);
+      digitalWrite(OLED_SCL, HIGH);
+      delayMicroseconds(5);
+    }
+    pinMode(OLED_SDA, OUTPUT);
+    digitalWrite(OLED_SDA, LOW);
+    delayMicroseconds(5);
+    digitalWrite(OLED_SCL, HIGH);
+    delayMicroseconds(5);
+    digitalWrite(OLED_SDA, HIGH); // SDA low->high while SCL high = STOP
+    delayMicroseconds(5);
+    Serial.printf("After recovery: SDA=%d\n", digitalRead(OLED_SDA));
+  }
+
+  // Scan the bus for the OLED. With native USB-CDC the whole boot log is printed
+  // before the serial monitor attaches, so a single scan at boot is usually
+  // missed and the result can never be seen. Retry for a few seconds, printing
+  // every pass, so: (1) the scan is visible whenever the monitor is opened,
+  // (2) a slow-powering / loose panel still gets picked up on a later pass.
+  // Both SDA/SCL orientations are tried each pass, so the wiring is never guessed.
+  auto scanBus = [](int sda, int scl) -> int {
+    Wire.end();
+    delay(5);
+    Wire.begin(sda, scl);
+    Wire.setClock(100000); // 100 kHz: tolerant of long/loose jumper wiring
+    delay(5);
+    for ( uint8_t addr = 1; addr < 127; addr++ )
+    {
+      Wire.beginTransmission(addr);
+      if ( Wire.endTransmission() == 0 )
+        return addr;
+    }
+    return -1;
+  };
+
+  int       useSda = OLED_SDA, useScl = OLED_SCL;
+  int       foundAddr = -1;
+  const int kScanTries = 20; // ~14 s worst case; stops the instant a panel answers
+  for ( int attempt = 1; attempt <= kScanTries && foundAddr < 0; attempt++ )
+  {
+    Serial.printf("[I2C %2d/%d] SDA=GPIO%d SCL=GPIO%d ... ", attempt, kScanTries, OLED_SDA, OLED_SCL);
+    foundAddr = scanBus(OLED_SDA, OLED_SCL);
+    if ( foundAddr >= 0 )
+    {
+      useSda = OLED_SDA;
+      useScl = OLED_SCL;
+      Serial.printf("device at 0x%02X\n", foundAddr);
+      break;
+    }
+    Serial.printf("none; swapped SDA=GPIO%d SCL=GPIO%d ... ", OLED_SCL, OLED_SDA);
+    foundAddr = scanBus(OLED_SCL, OLED_SDA);
+    if ( foundAddr >= 0 )
+    {
+      useSda = OLED_SCL;
+      useScl = OLED_SDA;
+      Serial.printf("device at 0x%02X (wires SWAPPED vs config)\n", foundAddr);
+      break;
+    }
+    Serial.println("nothing either orientation; retrying...");
+    delay(700);
+  }
+
+  if ( foundAddr >= 0 )
+    Serial.printf(">>> OLED FOUND at 0x%02X  SDA=GPIO%d SCL=GPIO%d\n", foundAddr, useSda, useScl);
+  else
+    Serial.println(">>> OLED NOT FOUND after retries. Check: 3V3 + GND to the panel, "
+                   "SDA/SCL continuity and common ground. (nRF24 SPI is on 11/12/13, "
+                   "CE/CSN on 16/15/18/17/10/7 -- none clash with I2C 9/8.)");
+
+  oledPresent = ( foundAddr >= 0 );
+
+  // ALWAYS call begin() -- even when no panel was found -- because begin() is
+  // what allocates the frame buffer. clearDisplay()/print()/drawBitmap() all
+  // write into that buffer, so skipping begin() leaves it NULL and the first
+  // clearDisplay() does memset(NULL,...) => StoreProhibited crash. When the
+  // panel is absent, oledPresent stays false so the display()/ssd1306_command()
+  // overrides skip the actual I2C; only begin()'s one-time init blips the bus.
+  Wire.end();
+  delay(5);
+  Wire.begin(useSda, useScl);
+  Wire.setClock(100000);
+  display.begin(SSD1306_SWITCHCAPVCC, ( foundAddr >= 0 ) ? foundAddr : 0x3C, true, false);
+
+  if ( !oledPresent )
+  {
+    Serial.println("OLED absent -> display output skipped (RGB = red).");
+    setRGB(30, 0, 0);
+  }
 
   if ( SCREEN_HEIGHT == 32 )
   {
@@ -1987,6 +2104,22 @@ void setup()
 
   display.setTextColor(WHITE);
   display.setTextSize(1);
+
+  // Visible self-test that does NOT depend on the stubbed-out bitmap assets
+  // (decodeLZSS resolves to nullptr, so every drawBitmap draws nothing and the
+  // normal UI leaves the panel black even when the OLED works). If this text
+  // shows up, the OLED + I2C wiring is fine; a blank home screen afterwards is
+  // just the missing bitmaps, not a hardware fault.
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.println("OLED OK");
+  display.print("SDA=");
+  display.print(OLED_SDA);
+  display.print(" SCL=");
+  display.println(OLED_SCL);
+  display.display();
+  delay(2000);
+
   if ( display_setting )
   {
     display.ssd1306_command(SSD1306_DISPLAYOFF);
@@ -2015,6 +2148,9 @@ void setup()
   display.clearDisplay();
   display.drawBitmap(0, 0, decodeLZSS((SCREEN_HEIGHT == 64) ? bitmap_bluetooth_jammer_64 : bitmap_bluetooth_jammer_32), SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
   display.display();
+
+  // Green: setup finished, device is ready.
+  setRGB(0, 30, 0);
 }
 
 void executeAction(int menuNum)
@@ -2102,6 +2238,28 @@ void loop()
   btnOK.tick();
   btnNext.tick();
   btnPrevious.tick();
+
+  // --- Button debug log --- print each button pin level whenever it changes.
+  // GyverButton sets these pins to INPUT_PULLUP, so idle=1 and pressed=0.
+  static int lastOK = -1, lastNext = -1, lastPrev = -1;
+  int okLvl   = digitalRead(21);
+  int nextLvl = digitalRead(47);
+  int prevLvl = digitalRead(48);
+  if ( okLvl != lastOK )
+  {
+    Serial.printf("[BTN] OK  (GPIO21) = %d  (%s)\n", okLvl, okLvl == 0 ? "PRESSED" : "released");
+    lastOK = okLvl;
+  }
+  if ( nextLvl != lastNext )
+  {
+    Serial.printf("[BTN] NEXT(GPIO47) = %d  (%s)\n", nextLvl, nextLvl == 0 ? "PRESSED" : "released");
+    lastNext = nextLvl;
+  }
+  if ( prevLvl != lastPrev )
+  {
+    Serial.printf("[BTN] PREV(GPIO48) = %d  (%s)\n", prevLvl, prevLvl == 0 ? "PRESSED" : "released");
+    lastPrev = prevLvl;
+  }
 
   SerialCommands();
 

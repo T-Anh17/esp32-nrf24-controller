@@ -13,13 +13,23 @@
 #include "esp_task_wdt.h"
 #include "esp_wifi.h"
 
-// SSD1306 OLED over I2C. ESP32-S3-WROOM-1: SDA=GPIO9, SCL/SCK=GPIO46.
+// SSD1306 OLED over I2C. ESP32-S3-WROOM-1 DevKitC wiring: SDA=GPIO9, SCL=GPIO8.
+// (Both GPIO8 and GPIO9 are clean, non-strapping GPIOs; usable as I2C as long as
+// the OLED module provides the SDA/SCL pull-ups. The init below runs a
+// bus-recovery + auto-swap pass, so SDA/SCL never have to be matched by hand.)
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT_MAX 64
 #define OLED_RESET -1
 #define OLED_SDA 9
-#define OLED_SCL 46
+#define OLED_SCL 8
 inline int SCREEN_HEIGHT;
+
+// Onboard addressable RGB LED (WS2812) on GPIO38.
+#define RGB_LED_PIN 38
+inline void setRGB(uint8_t r, uint8_t g, uint8_t b)
+{
+  rgbLedWrite(RGB_LED_PIN, r, g, b);
+}
 
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
@@ -27,6 +37,11 @@ inline int SCREEN_HEIGHT;
 // drawBitmap is called with decodeLZSS(...), a nullptr stub (the compressed
 // logo/jam-icon assets are not bundled in this repo). Skip the draw when the
 // pointer is null so the text UI still renders without the decorative images.
+// Set true only once an SSD1306 is actually found on the I2C bus. While false,
+// every I2C write to the panel is skipped so a missing/broken OLED does not
+// flood the console with i2c_master_transmit ESP_ERR_INVALID_STATE each frame.
+inline bool oledPresent = false;
+
 class OledDisplay : public Adafruit_SSD1306
 {
 public:
@@ -35,6 +50,18 @@ public:
   {
     if ( bitmap )
       Adafruit_SSD1306::drawBitmap(x, y, bitmap, w, h, color);
+  }
+  // These two are the only calls that actually drive the I2C bus from the UI;
+  // skip them when no panel is present to keep the serial console clean.
+  void display()
+  {
+    if ( oledPresent )
+      Adafruit_SSD1306::display();
+  }
+  void ssd1306_command(uint8_t c)
+  {
+    if ( oledPresent )
+      Adafruit_SSD1306::ssd1306_command(c);
   }
 };
 
@@ -127,10 +154,14 @@ inline int  flag     = 0;
 inline bool hspi     = false;
 
 inline SPIClass        *hp = nullptr;
-// ESP32-S3-WROOM-1 buttons: OK=GPIO21, Next=GPIO20, Previous=GPIO19.
-inline GButton          btnOK(21);
-inline GButton          btnNext(20);
-inline GButton          btnPrevious(19);
+// ESP32-S3-DevKitC-1 buttons: OK=GPIO47, Next=GPIO48, Previous=GPIO21.
+// Buttons are kept off GPIO19/GPIO20 (native USB D-/D+, USB-CDC on boot), so
+// they can never work as normal GPIO buttons.
+// (GPIO48 is the reference board's onboard RGB, but this board drives RGB on
+// GPIO38, so GPIO48 is free here.)
+inline GButton          btnOK(47);
+inline GButton          btnNext(48);
+inline GButton          btnPrevious(21);
 inline WebServer        server(80);
 inline DNSServer        dnsServer;
 inline OledDisplay      display;
