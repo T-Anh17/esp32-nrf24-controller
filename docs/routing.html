@@ -191,8 +191,8 @@
         <text x="793" y="1024" fill="var(--w-i2c)">P08 · SCL</text>
         <text x="793" y="1189" fill="var(--w-i2c)">P09 · SDA</text>
         <text x="793" y="1244" fill="var(--mut)" opacity=".7">P10 · trống</text>
-        <text x="793" y="1299" fill="var(--w-mosi)">P11 · MOSI</text>
-        <text x="793" y="1354" fill="var(--w-sck)">P12 · SCK</text>
+        <text x="793" y="1299" fill="var(--w-sck)">P11 · SCK</text>
+        <text x="793" y="1354" fill="var(--w-mosi)">P12 · MOSI</text>
         <text x="793" y="1409" fill="var(--w-miso)">P13 · MISO</text>
         <text x="793" y="1519" fill="var(--w-gnd)">G → rail nguồn</text>
       </g>
@@ -231,10 +231,10 @@
       <line class="pvt" x1="690" y1="136" x2="690" y2="215" stroke="var(--w-miso)"/>
 
       <!-- 3 sợi thả xuống ESP, chỉ từ M2 (gần J1 nhất), mỗi sợi 1 LÀN riêng -->
-      <!-- MOSI drop: khe M2-M3 (x980) -> P11 -->
-      <polyline class="pvt" points="980,22 980,1295 802,1295" stroke="var(--w-mosi)"/>
-      <!-- SCK drop: x766 -> P12 -->
-      <polyline class="pvt" points="766,185 766,1350 802,1350" stroke="var(--w-sck)"/>
+      <!-- MOSI drop: khe M2-M3 (x980) -> P12 -->
+      <polyline class="pvt" points="980,22 980,1350 802,1350" stroke="var(--w-mosi)"/>
+      <!-- SCK drop: x766 -> P11 -->
+      <polyline class="pvt" points="766,185 766,1295 802,1295" stroke="var(--w-sck)"/>
       <!-- MISO drop: x690 -> P13 -->
       <polyline class="pvt" points="690,215 690,1405 802,1405" stroke="var(--w-miso)"/>
 
@@ -270,8 +270,8 @@
     <div class="legend">
       <span><i class="sw" style="background:var(--w-power)"></i>+3V3 bar (trên)</span>
       <span><i class="sw" style="background:var(--w-gnd)"></i>GND bar (dưới)</span>
-      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI · P11 (trên)</span>
-      <span><i class="sw" style="background:var(--w-sck)"></i>SCK · P12 (dưới)</span>
+      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI · P12 (trên)</span>
+      <span><i class="sw" style="background:var(--w-sck)"></i>SCK · P11 (dưới)</span>
       <span><i class="sw" style="background:var(--w-miso)"></i>MISO · P13 (dưới)</span>
       <span><i class="sw" style="background:var(--w-ce)"></i>CE (riêng)</span>
       <span><i class="sw" style="background:var(--w-csn)"></i>CSN (riêng)</span>
@@ -303,10 +303,10 @@
       <tr><th>#</th><th>Từ</th><th>Tới</th><th>Loại</th><th>Ghi chú đường đi</th></tr>
       <tr><td>1</td><td>M1 · SCK (ch5)</td><td>M2 · SCK (ch5)</td><td>SPI chung</td><td>Luồn <b>dưới</b> module, qua khe M1–M2</td></tr>
       <tr><td>2</td><td>M2 · SCK (ch5)</td><td>M3 · SCK (ch5)</td><td>SPI chung</td><td>Luồn dưới, qua khe M2–M3</td></tr>
-      <tr><td>3</td><td>M2 · SCK (ch5)</td><td>ESP · <b>P12</b></td><td>SPI → ESP</td><td>Thả thẳng xuống, 1 làn</td></tr>
+      <tr><td>3</td><td>M2 · SCK (ch5)</td><td>ESP · <b>P11</b></td><td>SPI → ESP</td><td>Thả thẳng xuống, 1 làn</td></tr>
       <tr><td>4</td><td>M1 · MOSI (ch6)</td><td>M2 · MOSI (ch6)</td><td>SPI chung</td><td>Luồn <b>trên đầu</b> module</td></tr>
       <tr><td>5</td><td>M2 · MOSI (ch6)</td><td>M3 · MOSI (ch6)</td><td>SPI chung</td><td>Luồn trên đầu module</td></tr>
-      <tr><td>6</td><td>M2 · MOSI (ch6)</td><td>ESP · <b>P11</b></td><td>SPI → ESP</td><td>Thả xuống ở khe M2–M3 (1 làn riêng)</td></tr>
+      <tr><td>6</td><td>M2 · MOSI (ch6)</td><td>ESP · <b>P12</b></td><td>SPI → ESP</td><td>Thả xuống ở khe M2–M3 (1 làn riêng)</td></tr>
       <tr><td>7</td><td>M1 · MISO (ch7)</td><td>M2 · MISO (ch7)</td><td>SPI chung</td><td>Luồn dưới module (làn thấp hơn SCK)</td></tr>
       <tr><td>8</td><td>M2 · MISO (ch7)</td><td>M3 · MISO (ch7)</td><td>SPI chung</td><td>Luồn dưới module</td></tr>
       <tr><td>9</td><td>M2 · MISO (ch7)</td><td>ESP · <b>P13</b></td><td>SPI → ESP</td><td>Thả xuống, 1 làn riêng</td></tr>
@@ -325,7 +325,7 @@
   <div class="card banner">
     <p style="margin:0 0 6px"><span class="ok">✓ Bản này đã áp dụng remap.</span> Gõ 1 lần qua serial 115200 (hoặc web), nó lưu NVS dùng luôn các lần sau — <b>không cần nạp lại firmware</b>:</p>
     <p style="margin:0 0 6px"><code>set nrf24 1,2 6,7 15,16</code></p>
-    <p class="note" style="margin:0">Nghĩa là: #1 CE/CSN = <b>1/2</b> (J3) · #2 = 6/7 · #3 = <b>15/16</b>. <b>SCK=12 / MOSI=11 / MISO=13 giữ nguyên</b> (cố định firmware, trên J1). Xong gõ <code>info</code> để xem lại, <code>detect</code> để self-test SPI từng module.</p>
+    <p class="note" style="margin:0">Nghĩa là: #1 CE/CSN = <b>1/2</b> (J3) · #2 = 6/7 · #3 = <b>15/16</b>. <b>SCK=11 / MOSI=12 / MISO=13</b> (cố định firmware, trên J1 — đã đổi, cần nạp lại). Xong gõ <code>info</code> để xem lại, <code>detect</code> để self-test SPI từng module.</p>
   </div>
 </main>
 </body>

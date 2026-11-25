@@ -8,7 +8,7 @@ void handlenRF24Init()
   {
     // Default config for ESP32-S3-WROOM-1 board: 3x E01-2G4M27D modules.
     // M1: CE=1, CSN=2 (on J3, short stubs)   M2: CE=18, CSN=17   M3: CE=6, CSN=7
-    // (SPI shared SCK=12/MOSI=11/MISO=13)
+    // (SPI shared SCK=11/MOSI=12/MISO=13)
     nrf24_count = 3;
     ce_pins[0]  = 1;
     csn_pins[0] = 2;

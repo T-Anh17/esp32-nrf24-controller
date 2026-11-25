@@ -222,8 +222,8 @@
       <g>
         <circle class="bpin" cx="960" cy="410" r="4"/><text class="bt" x="974" y="414">3V3</text>
         <circle class="bpin" cx="960" cy="430" r="4"/><text class="bt" x="974" y="434">GND</text>
-        <circle class="bpin" cx="960" cy="462" r="4"/><text class="bt" x="974" y="466">IO12 · SCK</text>
-        <circle class="bpin" cx="960" cy="482" r="4"/><text class="bt" x="974" y="486">IO11 · MOSI</text>
+        <circle class="bpin" cx="960" cy="462" r="4"/><text class="bt" x="974" y="466">IO11 · SCK</text>
+        <circle class="bpin" cx="960" cy="482" r="4"/><text class="bt" x="974" y="486">IO12 · MOSI</text>
         <circle class="bpin" cx="960" cy="502" r="4"/><text class="bt" x="974" y="506">IO13 · MISO</text>
         <circle class="bpin" cx="960" cy="532" r="4"/><text class="bt" x="974" y="536">IO1 · CE1</text>
         <circle class="bpin" cx="960" cy="552" r="4"/><text class="bt" x="974" y="556">IO2 · CSN1</text>
@@ -264,22 +264,22 @@
       <tr><td>2 · VCC</td><td>3V3</td></tr>
       <tr><td>3 · CE</td><td><b>GPIO1</b></td></tr>
       <tr><td>4 · CSN</td><td><b>GPIO2</b></td></tr>
-      <tr><td>5 · SCK</td><td>GPIO12</td></tr>
-      <tr><td>6 · MOSI</td><td>GPIO11</td></tr>
+      <tr><td>5 · SCK</td><td>GPIO11</td></tr>
+      <tr><td>6 · MOSI</td><td>GPIO12</td></tr>
       <tr><td>7 · MISO</td><td>GPIO13</td></tr>
       <tr><td rowspan="7"><b>nRF24 #2</b></td><td>1 · GND</td><td>GND</td></tr>
       <tr><td>2 · VCC</td><td>3V3</td></tr>
       <tr><td>3 · CE</td><td><b>GPIO6</b></td></tr>
       <tr><td>4 · CSN</td><td><b>GPIO7</b></td></tr>
-      <tr><td>5 · SCK</td><td>GPIO12</td></tr>
-      <tr><td>6 · MOSI</td><td>GPIO11</td></tr>
+      <tr><td>5 · SCK</td><td>GPIO11</td></tr>
+      <tr><td>6 · MOSI</td><td>GPIO12</td></tr>
       <tr><td>7 · MISO</td><td>GPIO13</td></tr>
       <tr><td rowspan="7"><b>nRF24 #3</b></td><td>1 · GND</td><td>GND</td></tr>
       <tr><td>2 · VCC</td><td>3V3</td></tr>
       <tr><td>3 · CE</td><td><b>GPIO15</b></td></tr>
       <tr><td>4 · CSN</td><td><b>GPIO16</b></td></tr>
-      <tr><td>5 · SCK</td><td>GPIO12</td></tr>
-      <tr><td>6 · MOSI</td><td>GPIO11</td></tr>
+      <tr><td>5 · SCK</td><td>GPIO11</td></tr>
+      <tr><td>6 · MOSI</td><td>GPIO12</td></tr>
       <tr><td>7 · MISO</td><td>GPIO13</td></tr>
       <tr><td colspan="3" class="note" style="padding-top:10px"><b>Chân 8 · IRQ</b> của cả 3 module: không nối.</td></tr>
       <tr><td rowspan="4"><b>OLED SSD1306</b></td><td>1 · GND</td><td>GND</td></tr>
@@ -311,10 +311,10 @@
         <line class="stub" x1="300" y1="246" x2="338" y2="246"/><text class="pinl" x="294" y="250" text-anchor="end">GND</text>
         <rect class="tag t-gnd" x="340" y="236" width="78" height="20"/><text class="tagt" x="379" y="250" text-anchor="middle">GND</text>
         <!-- SCK -->
-        <line class="stub" x1="300" y1="276" x2="338" y2="276"/><text class="pinl" x="294" y="280" text-anchor="end">GPIO12</text>
+        <line class="stub" x1="300" y1="276" x2="338" y2="276"/><text class="pinl" x="294" y="280" text-anchor="end">GPIO11</text>
         <rect class="tag t-sck" x="340" y="266" width="78" height="20"/><text class="tagt" x="379" y="280" text-anchor="middle">SCK</text>
         <!-- MOSI -->
-        <line class="stub" x1="300" y1="306" x2="338" y2="306"/><text class="pinl" x="294" y="310" text-anchor="end">GPIO11</text>
+        <line class="stub" x1="300" y1="306" x2="338" y2="306"/><text class="pinl" x="294" y="310" text-anchor="end">GPIO12</text>
         <rect class="tag t-mosi" x="340" y="296" width="78" height="20"/><text class="tagt" x="379" y="310" text-anchor="middle">MOSI</text>
         <!-- MISO -->
         <line class="stub" x1="300" y1="336" x2="338" y2="336"/><text class="pinl" x="294" y="340" text-anchor="end">GPIO13</text>
@@ -524,8 +524,8 @@
       <tr><td><b>GND</b></td><td>BT1(−) · PS1 IN−/OUT− · U1 GND · M1/M2/M3 GND · OLED GND · 3× nút · (tất cả tụ)</td><td>Mát chung toàn mạch — đổ ground pour.</td></tr>
       <tr><td><b>+3V3_RF</b></td><td>PS1 OUT+ · M1 VCC · M2 VCC · M3 VCC</td><td><span class="warn">3.3V riêng cho 3 module.</span> Tụ 100µF ngõ ra + 100µF/0.1µF mỗi module.</td></tr>
       <tr><td><b>3V3</b></td><td>U1 3V3 · OLED VDD</td><td>Lấy 3V3 của board cho OLED (dòng nhỏ). <b>Không</b> nối chung +3V3_RF.</td></tr>
-      <tr><td><b>SCK</b></td><td>U1 GPIO12 · M1/M2/M3 SCK</td><td>SPI dùng chung (cố định firmware)</td></tr>
-      <tr><td><b>MOSI</b></td><td>U1 GPIO11 · M1/M2/M3 MOSI</td><td>SPI dùng chung</td></tr>
+      <tr><td><b>SCK</b></td><td>U1 GPIO11 · M1/M2/M3 SCK</td><td>SPI dùng chung (cố định firmware)</td></tr>
+      <tr><td><b>MOSI</b></td><td>U1 GPIO12 · M1/M2/M3 MOSI</td><td>SPI dùng chung</td></tr>
       <tr><td><b>MISO</b></td><td>U1 GPIO13 · M1/M2/M3 MISO</td><td>SPI dùng chung</td></tr>
       <tr><td><b>CE1</b></td><td>U1 GPIO1 · M1 CE</td><td>Riêng module #1</td></tr>
       <tr><td><b>CSN1</b></td><td>U1 GPIO2 · M1 CSN</td><td>Riêng module #1</td></tr>

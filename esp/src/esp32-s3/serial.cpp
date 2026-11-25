@@ -139,7 +139,7 @@ bool CommandsHandler(String command, bool web_command)
     // RF_CH). Firmware không tự dò khi đã có config, nên dùng lệnh này để biết chắc
     // module có "nói chuyện" với ESP hay không, trước khi nghi phần cứng phát.
     SPIClass *sp = new SPIClass(HSPI);
-    sp->begin(12, 13, 11, -1); // ESP32-S3-WROOM-1: SCK=12, MISO=13, MOSI=11
+    sp->begin(11, 13, 12, -1); // ESP32-S3-WROOM-1: SCK=11, MISO=13, MOSI=12
     sp->setFrequency(1000000);
     sp->setBitOrder(MSBFIRST);
     sp->setDataMode(SPI_MODE0);

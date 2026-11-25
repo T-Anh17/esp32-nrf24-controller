@@ -36,8 +36,8 @@ void DeinitRadios(bool stopConstCarrier)
 void HSPI_init()
 {
   hp = new SPIClass(HSPI);
-  // ESP32-S3-WROOM-1 SPI pin map: SCK=12, MISO=13, MOSI=11 (shared by all nRF modules)
-  hp->begin(12, 13, 11, -1);
+  // ESP32-S3-WROOM-1 SPI pin map: SCK=11, MISO=13, MOSI=12 (shared by all nRF modules)
+  hp->begin(11, 13, 12, -1);
   hp->setFrequency(16000000);
   hp->setBitOrder(MSBFIRST);
   hp->setDataMode(SPI_MODE0);
