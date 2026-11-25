@@ -181,7 +181,7 @@
       </g>
       <!-- J1 used-pin labels (to the right of the dots) — đúng silk & hàng thật -->
       <g class="gpio" text-anchor="end">
-        <text x="793" y="474"  fill="var(--w-power)">3V3</text>
+        <text x="793" y="474"  fill="var(--w-power)">3V3 → rail nguồn</text>
         <text x="793" y="694"  fill="var(--w-ce)">P06 · CE3</text>
         <text x="793" y="749"  fill="var(--w-csn)">P07 · CSN3</text>
         <text x="793" y="804"  fill="var(--mut)" opacity=".7">P15 · trống</text>
@@ -194,7 +194,7 @@
         <text x="793" y="1299" fill="var(--w-mosi)">P11 · MOSI</text>
         <text x="793" y="1354" fill="var(--w-sck)">P12 · SCK</text>
         <text x="793" y="1409" fill="var(--w-miso)">P13 · MISO</text>
-        <text x="793" y="1519" fill="var(--w-gnd)">G · GND</text>
+        <text x="793" y="1519" fill="var(--w-gnd)">G → rail nguồn</text>
       </g>
       <!-- row index on the right of J1 dots -->
       <g class="pinno" text-anchor="start">
@@ -217,59 +217,26 @@
         <text class="fnl" x="1200" y="534" text-anchor="middle">GND</text>
       </g>
 
-      <!-- ===================== BUS (5 dây dùng chung) ===================== -->
-      <!-- horizontal rails under modules: 3V3=224 GND=250 SCK=276 MOSI=302 MISO=328 -->
-      <line class="busl" x1="60"  y1="224" x2="1508" y2="224" stroke="var(--w-power)"/>
-      <line class="busl" x1="60"  y1="250" x2="1508" y2="250" stroke="var(--w-gnd)"/>
-      <line class="busl" x1="136" y1="276" x2="1356" y2="276" stroke="var(--w-sck)"/>
-      <line class="busl" x1="136" y1="302" x2="1356" y2="302" stroke="var(--w-mosi)"/>
-      <line class="busl" x1="60"  y1="328" x2="1280" y2="328" stroke="var(--w-miso)"/>
+      <!-- ===================== SPI — DAISY-CHAIN ĐIỂM–ĐIỂM ===================== -->
+      <!-- 3 tín hiệu SPI, mỗi tín hiệu = 1 sợi nối chuyền M1->M2->M3, ở 3 cao độ KHÁC nhau
+           (MOSI trên đầu module, SCK & MISO dưới module) nên không nằm chồng lên nhau. -->
+      <!-- MOSI: đi TRÊN đầu 3 module (y22) -->
+      <polyline class="busl" points="136,60 136,22 1356,22 1356,60" stroke="var(--w-mosi)"/>
+      <line class="pvt" x1="766" y1="60" x2="766" y2="22" stroke="var(--w-mosi)"/>
+      <!-- SCK: đi DƯỚI 3 module (y185) -->
+      <polyline class="busl" points="136,136 136,185 1356,185 1356,136" stroke="var(--w-sck)"/>
+      <line class="pvt" x1="766" y1="136" x2="766" y2="185" stroke="var(--w-sck)"/>
+      <!-- MISO: đi DƯỚI 3 module (y215) -->
+      <polyline class="busl" points="60,136 60,215 1280,215 1280,136" stroke="var(--w-miso)"/>
+      <line class="pvt" x1="690" y1="136" x2="690" y2="215" stroke="var(--w-miso)"/>
 
-      <!-- taps up to module pads -->
-      <g>
-        <!-- 3V3 -> VCC (x 288/918/1508) -->
-        <line class="pvt" x1="288"  y1="224" x2="288"  y2="75" stroke="var(--w-power)"/>
-        <line class="pvt" x1="918"  y1="224" x2="918"  y2="75" stroke="var(--w-power)"/>
-        <line class="pvt" x1="1508" y1="224" x2="1508" y2="75" stroke="var(--w-power)"/>
-        <!-- GND -> GND (x 288/918/1508, bottom pad y136) -->
-        <line class="pvt" x1="300"  y1="250" x2="300"  y2="136" stroke="var(--w-gnd)"/>
-        <line class="pvt" x1="930"  y1="250" x2="930"  y2="136" stroke="var(--w-gnd)"/>
-        <line class="pvt" x1="1520" y1="250" x2="1520" y2="136" stroke="var(--w-gnd)"/>
-        <line class="pvt" x1="300"  y1="136" x2="288"  y2="136" stroke="var(--w-gnd)"/>
-        <line class="pvt" x1="930"  y1="136" x2="918"  y2="136" stroke="var(--w-gnd)"/>
-        <line class="pvt" x1="1520" y1="136" x2="1508" y2="136" stroke="var(--w-gnd)"/>
-        <!-- SCK -> SCK (x 136/766/1356 bottom) -->
-        <line class="pvt" x1="136"  y1="276" x2="136"  y2="136" stroke="var(--w-sck)"/>
-        <line class="pvt" x1="766"  y1="276" x2="766"  y2="136" stroke="var(--w-sck)"/>
-        <line class="pvt" x1="1356" y1="276" x2="1356" y2="136" stroke="var(--w-sck)"/>
-        <!-- MOSI -> MOSI (x 136/766/1356 top) -->
-        <line class="pvt" x1="124"  y1="302" x2="124"  y2="60" stroke="var(--w-mosi)"/>
-        <line class="pvt" x1="754"  y1="302" x2="754"  y2="60" stroke="var(--w-mosi)"/>
-        <line class="pvt" x1="1344" y1="302" x2="1344" y2="60" stroke="var(--w-mosi)"/>
-        <line class="pvt" x1="124"  y1="60"  x2="136"  y2="60" stroke="var(--w-mosi)"/>
-        <line class="pvt" x1="754"  y1="60"  x2="766"  y2="60" stroke="var(--w-mosi)"/>
-        <line class="pvt" x1="1344" y1="60"  x2="1356" y2="60" stroke="var(--w-mosi)"/>
-        <!-- MISO -> MISO (x 60/690/1280 bottom) -->
-        <line class="pvt" x1="60"   y1="328" x2="60"   y2="136" stroke="var(--w-miso)"/>
-        <line class="pvt" x1="690"  y1="328" x2="690"  y2="136" stroke="var(--w-miso)"/>
-        <line class="pvt" x1="1280" y1="328" x2="1280" y2="136" stroke="var(--w-miso)"/>
-      </g>
-
-      <!-- feeders: GOM 1 BÓ sát bên trái cột J1, mỗi sợi chỉ tẽ ngang ngắn vào đúng chân.
-           Thứ tự: sợi tẽ cao nhất (3V3) nằm trong cùng, tẽ thấp nhất (GND) ngoài cùng
-           -> các sợi không cắt nhau khi tẽ vào cột. -->
-      <g>
-        <!-- 3V3 (trong cùng x797) -> 3V3 (h1, y470) -->
-        <polyline class="busl" points="797,224 797,470 802,470" stroke="var(--w-power)"/>
-        <!-- MOSI (x791) -> P11 (h16, y1295) -->
-        <polyline class="busl" points="791,302 791,1295 802,1295" stroke="var(--w-mosi)"/>
-        <!-- SCK (x785) -> P12 (h17, y1350) -->
-        <polyline class="busl" points="785,276 785,1350 802,1350" stroke="var(--w-sck)"/>
-        <!-- MISO (x779) -> P13 (h18, y1405) -->
-        <polyline class="busl" points="779,328 779,1405 802,1405" stroke="var(--w-miso)"/>
-        <!-- GND (ngoài cùng x773) -> G (h20, y1515) -->
-        <polyline class="busl" points="773,250 773,1515 802,1515" stroke="var(--w-gnd)"/>
-      </g>
+      <!-- 3 sợi thả xuống ESP, chỉ từ M2 (gần J1 nhất), mỗi sợi 1 LÀN riêng -->
+      <!-- MOSI drop: khe M2-M3 (x980) -> P11 -->
+      <polyline class="pvt" points="980,22 980,1295 802,1295" stroke="var(--w-mosi)"/>
+      <!-- SCK drop: x766 -> P12 -->
+      <polyline class="pvt" points="766,185 766,1350 802,1350" stroke="var(--w-sck)"/>
+      <!-- MISO drop: x690 -> P13 -->
+      <polyline class="pvt" points="690,215 690,1405 802,1405" stroke="var(--w-miso)"/>
 
       <!-- ===================== CE / CSN (6 dây riêng) ===================== -->
       <g>
@@ -291,30 +258,55 @@
 
     </svg>
     <div class="legend">
-      <span><i class="sw" style="background:var(--w-power)"></i>3V3</span>
-      <span><i class="sw" style="background:var(--w-gnd)"></i>GND</span>
-      <span><i class="sw" style="background:var(--w-sck)"></i>SCK · P12</span>
-      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI · P11</span>
-      <span><i class="sw" style="background:var(--w-miso)"></i>MISO · P13</span>
+      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI · P11 (đi trên)</span>
+      <span><i class="sw" style="background:var(--w-sck)"></i>SCK · P12 (đi dưới)</span>
+      <span><i class="sw" style="background:var(--w-miso)"></i>MISO · P13 (đi dưới)</span>
       <span><i class="sw" style="background:var(--w-ce)"></i>CE (riêng)</span>
       <span><i class="sw" style="background:var(--w-csn)"></i>CSN (riêng)</span>
       <span><i class="sw" style="background:var(--w-i2c)"></i>OLED</span>
       <span><i class="sw" style="background:var(--w-btn)"></i>nút</span>
     </div>
-    <p class="note">Chân module đọc theo số in: <b>1</b>=GND, <b>2</b>=VCC, <b>3</b>=CE, <b>4</b>=CSN, <b>5</b>=SCK, <b>6</b>=MOSI, <b>7</b>=MISO, <b>8</b>=IRQ (để trống). Sơ đồ nhìn mặt sau nên số in 8·6·4·2 (trên) / 7·5·3·1 (dưới) — đúng như ảnh bạn gửi.</p>
+    <p class="note"><b style="color:var(--w-power)">VCC / GND không vẽ ở đây</b> — bạn nối VCC &amp; GND của 3 module vào <b>rail nguồn 3V3 riêng</b> (bạn tự làm), và nối chung <b>3V3 &amp; G của ESP</b> vào rail đó. Tách nguồn ra khỏi sơ đồ tín hiệu cho đỡ rối.</p>
+    <p class="note">Chân module đọc theo số in: <b>1</b>=GND, <b>2</b>=VCC, <b>3</b>=CE, <b>4</b>=CSN, <b>5</b>=SCK, <b>6</b>=MOSI, <b>7</b>=MISO, <b>8</b>=IRQ (để trống). Sơ đồ nhìn mặt sau nên số in 8·6·4·2 (trên) / 7·5·3·1 (dưới).</p>
   </div>
 
-  <!-- ===== cách đọc / thứ tự hàn ===== -->
-  <h2>Cách đi (đúng thứ tự để khỏi đè dây)</h2>
+  <!-- ===== Nguyên tắc câu tay ===== -->
+  <h2>Nguyên tắc câu dây đồng (điểm–điểm, không phải vẽ mạch)</h2>
   <div class="card">
     <ul class="steps">
-      <li><b>Hàn 5 dây bus trước</b> (đường ngang dày: 3V3 đỏ, GND xám, SCK xanh dương, MOSI xanh lá, MISO tím). Mỗi màu <b>một sợi chạy ngang</b> ghé cả 3 module (nối tiếp module này sang module kia), rồi <b>một nhánh thả xuống đúng 1 chân J1</b>. Cả 3 module <b>dùng chung</b> 5 chân này.</li>
-      <li><b>5 nhánh bus gom thành MỘT bó dọc sát bên trái cột J1</b>, chạy thẳng xuống, mỗi sợi chỉ tẽ ngang một đoạn ngắn vào đúng chân (3V3 ở đầu cột, SCK/MOSI/MISO + GND ở cuối cột). Bó đi thẳng một làn nên <b>không cắt chéo nhau</b>; cũng chừa sạch vùng OLED bên phải.</li>
-      <li><b>CE3/CSN3 của M3 đi vòng bên PHẢI OLED</b> (không xuyên qua OLED): chạy ngang phía dưới OLED rồi mới lên module. Nhờ vậy khu OLED chỉ còn dây của chính nó.</li>
-      <li><b>Hàn 6 dây CE/CSN sau</b> (vàng = CE, cam = CSN). <b>M1 lấy CE/CSN ở J3 (cột trái)</b> <code>P01/P02</code> — ngay dưới M1 nên chỉ là 2 cọng ngắn, <b>không còn vòng sang phải</b>. M2 lấy ở J1 ngay trên nó (<code>P18/P17</code>). M3 lấy cụm <code>P06/P07</code> (kề nhau) rồi vòng ngoài phải OLED. Mỗi module chỉ 2 sợi riêng, đều ngắn.</li>
-      <li><b>Tụ 10–100µF</b> sát chân 1–2 (GND–VCC) mỗi module.</li>
+      <li><b>Mỗi sợi là 1 đoạn nối thẳng từ chân A tới chân B</b> — không chạy rail song song dài. Dây đồng có cách điện nên <b>cắt nhau tại 1 điểm thì OK</b>; chỉ tránh 2 sợi <b>nằm đè dọc theo nhau</b>.</li>
+      <li><b>3 tín hiệu SPI nối chuyền (daisy-chain) module này sang module kế bên:</b> SCK: M1→M2→M3 (2 đoạn ngắn qua khe), tương tự MOSI, MISO. <b>Chỉ 1 sợi</b> từ M2 (gần J1 nhất) thả xuống ESP cho mỗi tín hiệu — không kéo riêng từng module về ESP.</li>
+      <li><b>Cho 3 tín hiệu SPI đi 3 cao độ khác nhau:</b> MOSI luồn <b>trên đầu</b> module, SCK &amp; MISO luồn <b>dưới</b> module. Nhờ vậy chúng không đè lên nhau.</li>
+      <li><b>CE/CSN: mỗi module 2 cọng ngắn</b> tới chân gần nhất — M1 xuống J3 <code>P01/P02</code>, M2 xuống J1 <code>P18/P17</code>, M3 sang J1 <code>P06/P07</code> (vòng ngoài phải OLED).</li>
+      <li><b>VCC &amp; GND đi riêng ra rail nguồn của bạn</b> — không vẽ ở đây, để sơ đồ chỉ còn dây tín hiệu cho dễ nhìn. Gắn <b>tụ 10–100µF</b> sát chân 1–2 mỗi module.</li>
     </ul>
-    <p class="note" style="margin-bottom:0"><b>Muốn ngắn gọn hơn nữa:</b> 3 dây SPI bắt buộc ở G11/G12/G13 (cuối cột J1). Nếu dời cụm 3 module xuống <b>sát cuối board (gần USB)</b> thì cả bus lẫn CE/CSN đều ngắn, gần như hết dây dài. Còn để module ở trên như hình thì 3 sợi SPI sẽ là mấy sợi dài nhất — chấp nhận được vì dây đồng có cách điện.</p>
+    <p class="note" style="margin-bottom:0"><b>Lưu ý thật:</b> module đã hàn cố định và 3 chân SPI của ESP nằm cuối cột J1 (gần USB), nên <b>3 sợi SPI thả xuống + 2 sợi CE/CSN của M3 sẽ dài</b> — đây là do vị trí vật lý, không mẹo nào bỏ hẳn được. Cứ cho chúng đi khác làn, cắt nhau tại điểm, là ổn với dây có cách điện.</p>
+  </div>
+
+  <!-- ===== Wire list ===== -->
+  <h2>Bảng dây (câu theo đúng danh sách này)</h2>
+  <div class="card scroll">
+    <table>
+      <tr><th>#</th><th>Từ</th><th>Tới</th><th>Loại</th><th>Ghi chú đường đi</th></tr>
+      <tr><td>1</td><td>M1 · SCK (ch5)</td><td>M2 · SCK (ch5)</td><td>SPI chung</td><td>Luồn <b>dưới</b> module, qua khe M1–M2</td></tr>
+      <tr><td>2</td><td>M2 · SCK (ch5)</td><td>M3 · SCK (ch5)</td><td>SPI chung</td><td>Luồn dưới, qua khe M2–M3</td></tr>
+      <tr><td>3</td><td>M2 · SCK (ch5)</td><td>ESP · <b>P12</b></td><td>SPI → ESP</td><td>Thả thẳng xuống, 1 làn</td></tr>
+      <tr><td>4</td><td>M1 · MOSI (ch6)</td><td>M2 · MOSI (ch6)</td><td>SPI chung</td><td>Luồn <b>trên đầu</b> module</td></tr>
+      <tr><td>5</td><td>M2 · MOSI (ch6)</td><td>M3 · MOSI (ch6)</td><td>SPI chung</td><td>Luồn trên đầu module</td></tr>
+      <tr><td>6</td><td>M2 · MOSI (ch6)</td><td>ESP · <b>P11</b></td><td>SPI → ESP</td><td>Thả xuống ở khe M2–M3 (1 làn riêng)</td></tr>
+      <tr><td>7</td><td>M1 · MISO (ch7)</td><td>M2 · MISO (ch7)</td><td>SPI chung</td><td>Luồn dưới module (làn thấp hơn SCK)</td></tr>
+      <tr><td>8</td><td>M2 · MISO (ch7)</td><td>M3 · MISO (ch7)</td><td>SPI chung</td><td>Luồn dưới module</td></tr>
+      <tr><td>9</td><td>M2 · MISO (ch7)</td><td>ESP · <b>P13</b></td><td>SPI → ESP</td><td>Thả xuống, 1 làn riêng</td></tr>
+      <tr><td>10</td><td>M1 · CE (ch3)</td><td>ESP · <b>P01</b> (J3)</td><td>CE riêng</td><td>Cọng ngắn xuống cột trái</td></tr>
+      <tr><td>11</td><td>M1 · CSN (ch4)</td><td>ESP · <b>P02</b> (J3)</td><td>CSN riêng</td><td>Cọng ngắn xuống cột trái</td></tr>
+      <tr><td>12</td><td>M2 · CE (ch3)</td><td>ESP · <b>P18</b> (J1)</td><td>CE riêng</td><td>Cọng ngắn xuống cột phải</td></tr>
+      <tr><td>13</td><td>M2 · CSN (ch4)</td><td>ESP · <b>P17</b> (J1)</td><td>CSN riêng</td><td>Cọng ngắn xuống cột phải</td></tr>
+      <tr><td>14</td><td>M3 · CE (ch3)</td><td>ESP · <b>P06</b> (J1)</td><td>CE riêng</td><td>Vòng ngoài <b>bên phải</b> OLED</td></tr>
+      <tr><td>15</td><td>M3 · CSN (ch4)</td><td>ESP · <b>P07</b> (J1)</td><td>CSN riêng</td><td>Vòng ngoài bên phải OLED</td></tr>
+      <tr><td>—</td><td>VCC (ch2) ×3 + ESP 3V3</td><td>rail nguồn của bạn</td><td>Nguồn</td><td>Bạn tự đấu — nối chung 1 rail 3V3</td></tr>
+      <tr><td>—</td><td>GND (ch1) ×3 + ESP G</td><td>rail GND của bạn</td><td>Mát</td><td>1 mát chung cho tất cả</td></tr>
+      <tr><td>—</td><td>IRQ (ch8) ×3</td><td>—</td><td>—</td><td>Để trống</td></tr>
+    </table>
   </div>
 
   <div class="card banner">
