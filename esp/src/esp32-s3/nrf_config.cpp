@@ -7,15 +7,17 @@ void handlenRF24Init()
   if ( !prefs.isKey("nRF24_count") || prefs.getInt("nRF24_count", 0) <= 0 )
   {
     // Default config for ESP32-S3-WROOM-1 board: 3x E01-2G4M27D modules.
-    // M1: CE=1, CSN=2 (on J3, short stubs)   M2: CE=18, CSN=17   M3: CE=6, CSN=7
+    // M1: CE=1, CSN=2   M2: CE=6, CSN=7   M3: CE=15, CSN=16
     // (SPI shared SCK=11/MOSI=12/MISO=13)
+    // LƯU Ý: mọi CSN phải được khai báo ở đây. CSN của module không khai báo sẽ
+    // thả nổi -> trôi LOW -> chọn chip ngầm, ghim bus MISO -> cả 3 đọc SPI ra 0x00.
     nrf24_count = 3;
     ce_pins[0]  = 1;
     csn_pins[0] = 2;
-    ce_pins[1]  = 18;
-    csn_pins[1] = 17;
-    ce_pins[2]  = 6;
-    csn_pins[2] = 7;
+    ce_pins[1]  = 6;
+    csn_pins[1] = 7;
+    ce_pins[2]  = 15;
+    csn_pins[2] = 16;
     prefs.putInt("nRF24_count", nrf24_count);
     prefs.putBytes("nRF24_ce_pins", ce_pins, sizeof(ce_pins));
     prefs.putBytes("nRF24_csn_pins", csn_pins, sizeof(csn_pins));

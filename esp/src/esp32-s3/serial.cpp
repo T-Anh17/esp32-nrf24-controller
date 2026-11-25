@@ -138,6 +138,16 @@ bool CommandsHandler(String command, bool web_command)
     // Kiểm THẬT từng module đang cấu hình có trả lời SPI không (ghi/đọc thanh ghi
     // RF_CH). Firmware không tự dò khi đã có config, nên dùng lệnh này để biết chắc
     // module có "nói chuyện" với ESP hay không, trước khi nghi phần cứng phát.
+    // Deselect every radio before the first SPI transfer. Otherwise an uninitialized
+    // CSN can hold MISO low while an earlier module is being tested.
+    for ( int i = 0; i < nrf24_count; i++ )
+    {
+      digitalWrite(csn_pins[i], HIGH);
+      pinMode(csn_pins[i], OUTPUT);
+      digitalWrite(ce_pins[i], LOW);
+      pinMode(ce_pins[i], OUTPUT);
+    }
+
     SPIClass *sp = new SPIClass(HSPI);
     sp->begin(11, 13, 12, -1); // ESP32-S3-WROOM-1: SCK=11, MISO=13, MOSI=12
     sp->setFrequency(1000000);
@@ -168,10 +178,6 @@ bool CommandsHandler(String command, bool web_command)
     {
       int ce  = ce_pins[i];
       int csn = csn_pins[i];
-      pinMode(ce, OUTPUT);
-      pinMode(csn, OUTPUT);
-      digitalWrite(ce, LOW);
-      digitalWrite(csn, HIGH);
 
       wr(csn, 0x05, 0x33);
       uint8_t a = rd(csn, 0x05);
@@ -180,6 +186,7 @@ bool CommandsHandler(String command, bool web_command)
       bool spiOk = ( a == 0x33 && b == 0x44 );
 
       printLine("  Module " + String(i) + " CE=" + String(ce) + " CSN=" + String(csn) + ": SPI " + ( spiOk ? "OK - chip responds" : "FAIL - no response" ), response, web_command);
+      printLine("    raw readback: wrote 0x33 -> read 0x" + String(a, HEX) + ", wrote 0x44 -> read 0x" + String(b, HEX), response, web_command);
       if ( spiOk )
       {
         uint8_t cfg = rd(csn, 0x00);
