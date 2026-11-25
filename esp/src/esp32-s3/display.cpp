@@ -147,7 +147,7 @@ void initOLED()
   else
     Serial.println(">>> OLED NOT FOUND after retries. Check: 3V3 + GND to the panel, "
                    "SDA/SCL continuity and common ground. (nRF24 SPI is on 11/12/13, "
-                   "CE/CSN on 16/15/18/17/6/7 -- none clash with I2C 9/8.)");
+                   "CE/CSN on 1/2/18/17/6/7 -- none clash with I2C 9/8.)");
 
   oledPresent = ( foundAddr >= 0 );
 

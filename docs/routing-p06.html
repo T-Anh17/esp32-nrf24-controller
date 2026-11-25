@@ -53,13 +53,13 @@
 <body>
 <main>
   <h1>Đi dây 3 module nRF24 — bản REMAP P06 (gọn nhất)</h1>
-  <p class="sub">Giống bản gốc nhưng đổi <b>CE3: P10 → P06</b> để cặp CE/CSN của M3 (<code>P06</code>+<code>P07</code>) nằm sát nhau — 6 dây CE/CSN gom liền khối, bỏ được sợi dài. Chạy lệnh: <code>set nrf24 16,15 18,17 6,7</code> (không cần nạp lại).</p>
+  <p class="sub">Bản tối ưu dây: <b>M1 lấy CE/CSN ở J3 bên trái</b> (<code>P01/P02</code>, ngay dưới M1 → 2 cọng ngắn, hết vòng sang phải) và <b>CE3 = P06</b> (cụm M3 gom gọn). Chạy lệnh: <code>set nrf24 1,2 18,17 6,7</code> (không cần nạp lại). <b>SCK/MOSI/MISO vẫn ở J1</b> (cố định firmware).</p>
 
   <div class="card banner">
     <b>✓ Đã khớp đúng silk board bạn.</b> Cột <b>PHẢI = J1</b> (đầu là <code>3V3</code>, rồi <code>P04 P05 P06 P07…</code> — phía gắn hết dây nRF + OLED),
     cột <b>TRÁI = J3</b> (<code>G TX RX P01…</code>, có nút <code>P48/P47/P21</code> đã đấu). Nhãn trên sơ đồ ghi theo <b>đúng ký hiệu <code>P..</code> in trên board</b> (P07 = GPIO7).
     <b>Lưu ý vị trí:</b> board bạn chỉ có <b>1 chân 3V3 ở đầu</b> (hàng 2 là <code>EN</code>), nên các hàng dịch lên 1 so với DevKitC gốc — đặc biệt <b>GND dùng là chân <code>G</code> ở hàng 20</b> (ngay dưới <code>P14</code>), <u>không phải</u> 2 chân G ở đáy.
-    <br><b style="color:var(--ok)">Bản này:</b> CE3 = <code>P06</code> (hàng 5) thay vì <code>P10</code>. Giờ cả 6 chân CE/CSN nằm liền khối <code>P06→P18</code> (hàng 5–10), chân <code>P10</code> để trống.
+    <br><b style="color:var(--ok)">Bản này:</b> M1 dùng <code>P01/P02</code> trên <b>J3 (cột trái)</b> — ngay dưới M1 nên dây CE/CSN rất ngắn, không còn vòng sang phải. M3 dùng CE3 = <code>P06</code>. Các chân J1 cũ <code>P15/P16</code> và <code>P10</code> giờ để trống.
   </div>
 
   <div class="card scroll">
@@ -159,6 +159,8 @@
       </g>
       <!-- J3 labels (only the ones already used) -->
       <g class="gpio" text-anchor="start">
+        <text x="112" y="639" fill="var(--w-ce)">P01 · CE1</text>
+        <text x="112" y="694" fill="var(--w-csn)">P02 · CSN1</text>
         <text x="112" y="1299" fill="var(--w-btn)">P48 · Prev</text>
         <text x="112" y="1354" fill="var(--w-btn)">P47 · Next</text>
         <text x="112" y="1409" fill="var(--w-btn)">P21 · OK</text>
@@ -182,8 +184,8 @@
         <text x="793" y="474"  fill="var(--w-power)">3V3</text>
         <text x="793" y="694"  fill="var(--w-ce)">P06 · CE3</text>
         <text x="793" y="749"  fill="var(--w-csn)">P07 · CSN3</text>
-        <text x="793" y="804"  fill="var(--w-csn)">P15 · CSN1</text>
-        <text x="793" y="859"  fill="var(--w-ce)">P16 · CE1</text>
+        <text x="793" y="804"  fill="var(--mut)" opacity=".7">P15 · trống</text>
+        <text x="793" y="859"  fill="var(--mut)" opacity=".7">P16 · trống</text>
         <text x="793" y="914"  fill="var(--w-csn)">P17 · CSN2</text>
         <text x="793" y="969"  fill="var(--w-ce)">P18 · CE2</text>
         <text x="793" y="1024" fill="var(--w-i2c)">P08 · SCL</text>
@@ -275,10 +277,10 @@
         <!-- M2 CE2 : P18 (815,965 / h10) -> M2 CE (842,136) -->
         <polyline class="pvt" points="802,965 826,965 826,180 842,180 842,136" stroke="var(--w-ce)"/>
 
-        <!-- M1 CSN1: P15 (815,800 / h7) -> M1 CSN (212,60) -->
-        <polyline class="pvt" points="802,800 360,800 360,40 212,40 212,60" stroke="var(--w-csn)"/>
-        <!-- M1 CE1 : P16 (815,855 / h8) -> M1 CE (212,136) -->
-        <polyline class="pvt" points="802,855 338,855 338,186 212,186 212,136" stroke="var(--w-ce)"/>
+        <!-- M1 CE1 : J3 P01 (90,635 / trái) -> M1 CE (212,136) — cọng ngắn bên trái -->
+        <polyline class="pvt" points="103,635 212,635 212,136" stroke="var(--w-ce)"/>
+        <!-- M1 CSN1: J3 P02 (90,690 / trái) -> M1 CSN (212,60) -->
+        <polyline class="pvt" points="103,690 234,690 234,48 212,48 212,60" stroke="var(--w-csn)"/>
 
         <!-- M3 CSN3: P07 (815,745 / h6) -> chạy dưới OLED rồi lên PHẢI OLED (x1410) -> M3 CSN (1432,60) -->
         <polyline class="pvt" points="802,745 1410,745 1410,44 1432,44 1432,60" stroke="var(--w-csn)"/>
@@ -308,7 +310,7 @@
       <li><b>Hàn 5 dây bus trước</b> (đường ngang dày: 3V3 đỏ, GND xám, SCK xanh dương, MOSI xanh lá, MISO tím). Mỗi màu <b>một sợi chạy ngang</b> ghé cả 3 module (nối tiếp module này sang module kia), rồi <b>một nhánh thả xuống đúng 1 chân J1</b>. Cả 3 module <b>dùng chung</b> 5 chân này.</li>
       <li><b>Toàn bộ 5 nhánh bus thả về bên TRÁI cột J1</b> (khe giữa M1–M2): SCK/MOSI/MISO + GND gom thành bó dọc, 3V3 thả sát cột. <b>Chừa sạch vùng OLED bên phải.</b></li>
       <li><b>CE3/CSN3 của M3 đi vòng bên PHẢI OLED</b> (không xuyên qua OLED): chạy ngang phía dưới OLED rồi mới lên module. Nhờ vậy khu OLED chỉ còn dây của chính nó.</li>
-      <li><b>Hàn 6 dây CE/CSN sau</b> (vàng = CE, cam = CSN). <b>Bản P06:</b> 6 chân này gom liền khối <code>P06→P18</code> (hàng 5–10), nên M3 lấy cả CE3+CSN3 từ cụm trên (<code>P06</code>+<code>P07</code> kề nhau) — không còn sợi CE3 kéo từ tận hàng 15 như bản gốc. M2 ngắn nhất, M1 (trái) và M3 (phải) xa hơn nhưng mỗi module chỉ 2 sợi sát nhau.</li>
+      <li><b>Hàn 6 dây CE/CSN sau</b> (vàng = CE, cam = CSN). <b>M1 lấy CE/CSN ở J3 (cột trái)</b> <code>P01/P02</code> — ngay dưới M1 nên chỉ là 2 cọng ngắn, <b>không còn vòng sang phải</b>. M2 lấy ở J1 ngay trên nó (<code>P18/P17</code>). M3 lấy cụm <code>P06/P07</code> (kề nhau) rồi vòng ngoài phải OLED. Mỗi module chỉ 2 sợi riêng, đều ngắn.</li>
       <li><b>Tụ 10–100µF</b> sát chân 1–2 (GND–VCC) mỗi module.</li>
     </ul>
     <p class="note" style="margin-bottom:0"><b>Muốn ngắn gọn hơn nữa:</b> 3 dây SPI bắt buộc ở G11/G12/G13 (cuối cột J1). Nếu dời cụm 3 module xuống <b>sát cuối board (gần USB)</b> thì cả bus lẫn CE/CSN đều ngắn, gần như hết dây dài. Còn để module ở trên như hình thì 3 sợi SPI sẽ là mấy sợi dài nhất — chấp nhận được vì dây đồng có cách điện.</p>
@@ -316,8 +318,8 @@
 
   <div class="card banner">
     <p style="margin:0 0 6px"><span class="ok">✓ Bản này đã áp dụng remap.</span> Gõ 1 lần qua serial 115200 (hoặc web), nó lưu NVS dùng luôn các lần sau — <b>không cần nạp lại firmware</b>:</p>
-    <p style="margin:0 0 6px"><code>set nrf24 16,15 18,17 6,7</code></p>
-    <p class="note" style="margin:0">Nghĩa là: #1 CE/CSN = 16/15 · #2 = 18/17 · #3 = <b>6/7</b> (CE3 chuyển từ P10 → <b>P06</b>). <b>SCK=12 / MOSI=11 / MISO=13 giữ nguyên</b> (cố định firmware). Xong gõ <code>info</code> để xem lại, <code>detect</code> để self-test SPI từng module.</p>
+    <p style="margin:0 0 6px"><code>set nrf24 1,2 18,17 6,7</code></p>
+    <p class="note" style="margin:0">Nghĩa là: #1 CE/CSN = <b>1/2</b> (J3) · #2 = 18/17 · #3 = <b>6/7</b>. <b>SCK=12 / MOSI=11 / MISO=13 giữ nguyên</b> (cố định firmware, trên J1). Xong gõ <code>info</code> để xem lại, <code>detect</code> để self-test SPI từng module.</p>
   </div>
 </main>
 </body>

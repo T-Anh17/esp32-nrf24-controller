@@ -225,8 +225,8 @@
         <circle class="bpin" cx="960" cy="462" r="4"/><text class="bt" x="974" y="466">IO12 · SCK</text>
         <circle class="bpin" cx="960" cy="482" r="4"/><text class="bt" x="974" y="486">IO11 · MOSI</text>
         <circle class="bpin" cx="960" cy="502" r="4"/><text class="bt" x="974" y="506">IO13 · MISO</text>
-        <circle class="bpin" cx="960" cy="532" r="4"/><text class="bt" x="974" y="536">IO16 · CE1</text>
-        <circle class="bpin" cx="960" cy="552" r="4"/><text class="bt" x="974" y="556">IO15 · CSN1</text>
+        <circle class="bpin" cx="960" cy="532" r="4"/><text class="bt" x="974" y="536">IO1 · CE1</text>
+        <circle class="bpin" cx="960" cy="552" r="4"/><text class="bt" x="974" y="556">IO2 · CSN1</text>
         <circle class="bpin" cx="960" cy="580" r="4"/><text class="bt" x="974" y="584">IO18 · CE2</text>
         <circle class="bpin" cx="960" cy="600" r="4"/><text class="bt" x="974" y="604">IO17 · CSN2</text>
         <circle class="bpin" cx="960" cy="628" r="4"/><text class="bt" x="974" y="632">IO10 · CE3</text>
@@ -262,8 +262,8 @@
       <tr><th>Linh kiện</th><th>Chân (số · tên)</th><th>→ Board ESP32-S3</th></tr>
       <tr><td rowspan="7"><b>nRF24 #1</b></td><td>1 · GND</td><td>GND</td></tr>
       <tr><td>2 · VCC</td><td>3V3</td></tr>
-      <tr><td>3 · CE</td><td><b>GPIO16</b></td></tr>
-      <tr><td>4 · CSN</td><td><b>GPIO15</b></td></tr>
+      <tr><td>3 · CE</td><td><b>GPIO1</b></td></tr>
+      <tr><td>4 · CSN</td><td><b>GPIO2</b></td></tr>
       <tr><td>5 · SCK</td><td>GPIO12</td></tr>
       <tr><td>6 · MOSI</td><td>GPIO11</td></tr>
       <tr><td>7 · MISO</td><td>GPIO13</td></tr>
@@ -320,10 +320,10 @@
         <line class="stub" x1="300" y1="336" x2="338" y2="336"/><text class="pinl" x="294" y="340" text-anchor="end">GPIO13</text>
         <rect class="tag t-miso" x="340" y="326" width="78" height="20"/><text class="tagt" x="379" y="340" text-anchor="middle">MISO</text>
         <!-- CE1 -->
-        <line class="stub" x1="300" y1="366" x2="338" y2="366"/><text class="pinl" x="294" y="370" text-anchor="end">GPIO16</text>
+        <line class="stub" x1="300" y1="366" x2="338" y2="366"/><text class="pinl" x="294" y="370" text-anchor="end">GPIO1</text>
         <rect class="tag t-ctrl" x="340" y="356" width="78" height="20"/><text class="tagt" x="379" y="370" text-anchor="middle">CE1</text>
         <!-- CSN1 -->
-        <line class="stub" x1="300" y1="396" x2="338" y2="396"/><text class="pinl" x="294" y="400" text-anchor="end">GPIO15</text>
+        <line class="stub" x1="300" y1="396" x2="338" y2="396"/><text class="pinl" x="294" y="400" text-anchor="end">GPIO2</text>
         <rect class="tag t-ctrl" x="340" y="386" width="78" height="20"/><text class="tagt" x="379" y="400" text-anchor="middle">CSN1</text>
         <!-- CE2 -->
         <line class="stub" x1="300" y1="426" x2="338" y2="426"/><text class="pinl" x="294" y="430" text-anchor="end">GPIO18</text>
@@ -527,8 +527,8 @@
       <tr><td><b>SCK</b></td><td>U1 GPIO12 · M1/M2/M3 SCK</td><td>SPI dùng chung (cố định firmware)</td></tr>
       <tr><td><b>MOSI</b></td><td>U1 GPIO11 · M1/M2/M3 MOSI</td><td>SPI dùng chung</td></tr>
       <tr><td><b>MISO</b></td><td>U1 GPIO13 · M1/M2/M3 MISO</td><td>SPI dùng chung</td></tr>
-      <tr><td><b>CE1</b></td><td>U1 GPIO16 · M1 CE</td><td>Riêng module #1</td></tr>
-      <tr><td><b>CSN1</b></td><td>U1 GPIO15 · M1 CSN</td><td>Riêng module #1</td></tr>
+      <tr><td><b>CE1</b></td><td>U1 GPIO1 · M1 CE</td><td>Riêng module #1</td></tr>
+      <tr><td><b>CSN1</b></td><td>U1 GPIO2 · M1 CSN</td><td>Riêng module #1</td></tr>
       <tr><td><b>CE2</b></td><td>U1 GPIO18 · M2 CE</td><td>Riêng module #2</td></tr>
       <tr><td><b>CSN2</b></td><td>U1 GPIO17 · M2 CSN</td><td>Riêng module #2</td></tr>
       <tr><td><b>CE3</b></td><td>U1 GPIO6 · M3 CE</td><td>Riêng module #3</td></tr>

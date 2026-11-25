@@ -7,11 +7,11 @@ void handlenRF24Init()
   if ( !prefs.isKey("nRF24_count") || prefs.getInt("nRF24_count", 0) <= 0 )
   {
     // Default config for ESP32-S3-WROOM-1 board: 3x E01-2G4M27D modules.
-    // M1: CE=16, CSN=15   M2: CE=18, CSN=17   M3: CE=6, CSN=7
+    // M1: CE=1, CSN=2 (on J3, short stubs)   M2: CE=18, CSN=17   M3: CE=6, CSN=7
     // (SPI shared SCK=12/MOSI=11/MISO=13)
     nrf24_count = 3;
-    ce_pins[0]  = 16;
-    csn_pins[0] = 15;
+    ce_pins[0]  = 1;
+    csn_pins[0] = 2;
     ce_pins[1]  = 18;
     csn_pins[1] = 17;
     ce_pins[2]  = 6;
@@ -30,7 +30,7 @@ void handlenRF24Init()
   }
   else
   {
-    ce_pins[0] = 16;
+    ce_pins[0] = 1;
     prefs.putBytes("nRF24_ce_pins", ce_pins, sizeof(ce_pins));
   }
 
@@ -40,7 +40,7 @@ void handlenRF24Init()
   }
   else
   {
-    csn_pins[0] = 15;
+    csn_pins[0] = 2;
     prefs.putBytes("nRF24_csn_pins", csn_pins, sizeof(csn_pins));
   }
 }
@@ -52,7 +52,7 @@ void handlenRF24Scan()
   // ESP32-S3-WROOM-1 safe candidate pins for CE/CSN (exclude flash 26-32,
   // octal PSRAM 35-37, USB 19-20, UART 43-44, SPI 11-13, I2C 8-9,
   // buttons 21/47/48, RGB LED 38)
-  const int candidate_pins[] = { 1, 3, 6, 7, 10, 15, 16, 17, 18 };
+  const int candidate_pins[] = { 1, 2, 3, 6, 7, 10, 15, 16, 17, 18 };
   const int candidate_count  = sizeof(candidate_pins) / sizeof(candidate_pins[0]);
 
   auto readReg = [&](int csnPin, uint8_t reg) {

@@ -90,10 +90,10 @@
         <text class="pinl" x="52" y="294">GPIO13</text><line class="stub" x1="250" y1="290" x2="288" y2="290"/>
         <rect class="t-miso" x="290" y="280" width="86" height="20" rx="4"/><text class="tagt" x="333" y="294" text-anchor="middle">MISO</text>
         <!-- CE1 -->
-        <text class="pinl" x="52" y="332">GPIO16</text><line class="stub" x1="250" y1="328" x2="288" y2="328"/>
+        <text class="pinl" x="52" y="332">GPIO1</text><line class="stub" x1="250" y1="328" x2="288" y2="328"/>
         <rect class="t-ce" x="290" y="318" width="86" height="20" rx="4"/><text class="tagt" x="333" y="332" text-anchor="middle" style="fill:#161b22">CE1</text>
         <!-- CSN1 -->
-        <text class="pinl" x="52" y="362">GPIO15</text><line class="stub" x1="250" y1="358" x2="288" y2="358"/>
+        <text class="pinl" x="52" y="362">GPIO2</text><line class="stub" x1="250" y1="358" x2="288" y2="358"/>
         <rect class="t-csn" x="290" y="348" width="86" height="20" rx="4"/><text class="tagt" x="333" y="362" text-anchor="middle">CSN1</text>
         <!-- CE2 -->
         <text class="pinl" x="52" y="392">GPIO18</text><line class="stub" x1="250" y1="388" x2="288" y2="388"/>
@@ -186,7 +186,7 @@
       <tr><td><b>SCK</b></td><td><b>12</b></td><td>SCK · cả 3 module</td><td><i class="sw" style="background:var(--w-sck)"></i></td><td><b>Cố định</b> firmware (<code>HSPI</code>) · dùng chung</td></tr>
       <tr><td><b>MOSI</b></td><td><b>11</b></td><td>MOSI · cả 3 module</td><td><i class="sw" style="background:var(--w-mosi)"></i></td><td><b>Cố định</b> · dùng chung</td></tr>
       <tr><td><b>MISO</b></td><td><b>13</b></td><td>MISO · cả 3 module</td><td><i class="sw" style="background:var(--w-miso)"></i></td><td><b>Cố định</b> · dùng chung</td></tr>
-      <tr><td><b>CE1 / CSN1</b></td><td><b>16 / 15</b></td><td>module #1 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #1</td></tr>
+      <tr><td><b>CE1 / CSN1</b></td><td><b>1 / 2</b></td><td>module #1 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #1</td></tr>
       <tr><td><b>CE2 / CSN2</b></td><td><b>18 / 17</b></td><td>module #2 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #2</td></tr>
       <tr><td><b>CE3 / CSN3</b></td><td><b>6 / 7</b></td><td>module #3 CE / CSN</td><td><i class="sw" style="background:var(--w-ce)"></i><i class="sw" style="background:var(--w-csn)"></i></td><td>Riêng module #3</td></tr>
       <tr><td><b>SDA</b></td><td><b>9</b></td><td>OLED SDA</td><td><i class="sw" style="background:var(--w-i2c)"></i></td><td>I²C · địa chỉ 0x3C</td></tr>
@@ -262,7 +262,7 @@
     <ul class="check">
       <li>VCC mọi module + OLED vào đúng <b>3V3</b>, <span class="warn">không phải 5V</span>.</li>
       <li>SCK=<b>12</b>, MOSI=<b>11</b>, MISO=<b>13</b> nối chung đúng cho cả 3 module (các chân này cố định firmware).</li>
-      <li>CE/CSN đúng từng module: #1 = <b>16/15</b>, #2 = <b>18/17</b>, #3 = <b>6/7</b>.</li>
+      <li>CE/CSN đúng từng module: #1 = <b>1/2</b>, #2 = <b>18/17</b>, #3 = <b>6/7</b>.</li>
       <li>OLED: SDA=<b>9</b>, SCL=<b>8</b> (chân SCK trên bo OLED chính là SCL).</li>
       <li>Nút: OK=<b>21</b>, Next=<b>47</b>, Previous=<b>48</b> — mỗi nút nối chân kia về <b>GND</b>.</li>
       <li>Có tụ <b>10–100µF</b> sát VCC–GND mỗi module.</li>

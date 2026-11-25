@@ -17,7 +17,7 @@ Hiển thị trạng thái qua màn **OLED SSD1306** (I2C) trên phần cứng E
 | SCK *(chung)*  | 12 |
 | MOSI *(chung)* | 11 |
 | MISO *(chung)* | 13 |
-| #1 CE / CSN | 16 / 15 |
+| #1 CE / CSN | 1 / 2 |
 | #2 CE / CSN | 18 / 17 |
 | #3 CE / CSN | 6 / 7 |
 | VCC | 3V3 |
