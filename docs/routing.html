@@ -255,19 +255,20 @@
         <line class="pvt" x1="1280" y1="328" x2="1280" y2="136" stroke="var(--w-miso)"/>
       </g>
 
-      <!-- feeders: bus rail -> J1 pad (through the inter-module gaps) -->
-      <!-- TẤT CẢ feeder bus thả về bên TRÁI cột J1 — chừa sạch vùng OLED bên phải -->
+      <!-- feeders: GOM 1 BÓ sát bên trái cột J1, mỗi sợi chỉ tẽ ngang ngắn vào đúng chân.
+           Thứ tự: sợi tẽ cao nhất (3V3) nằm trong cùng, tẽ thấp nhất (GND) ngoài cùng
+           -> các sợi không cắt nhau khi tẽ vào cột. -->
       <g>
-        <!-- 3V3: thả sát trái cột xuống 3V3 (815,470 / h1) -->
-        <polyline class="busl" points="795,224 795,470 802,470" stroke="var(--w-power)"/>
-        <!-- GND: khe trái (x630) xuống G (815,1515 / h20) -->
-        <polyline class="busl" points="630,250 630,1515 802,1515" stroke="var(--w-gnd)"/>
-        <!-- SCK: khe A (x520) xuống P12 (815,1350 / h17) -->
-        <polyline class="busl" points="520,276 520,1350 802,1350" stroke="var(--w-sck)"/>
-        <!-- MOSI: khe A (x470) xuống P11 (815,1295 / h16) -->
-        <polyline class="busl" points="470,302 470,1295 802,1295" stroke="var(--w-mosi)"/>
-        <!-- MISO: khe A (x420) xuống P13 (815,1405 / h18) -->
-        <polyline class="busl" points="420,328 420,1405 802,1405" stroke="var(--w-miso)"/>
+        <!-- 3V3 (trong cùng x797) -> 3V3 (h1, y470) -->
+        <polyline class="busl" points="797,224 797,470 802,470" stroke="var(--w-power)"/>
+        <!-- MOSI (x791) -> P11 (h16, y1295) -->
+        <polyline class="busl" points="791,302 791,1295 802,1295" stroke="var(--w-mosi)"/>
+        <!-- SCK (x785) -> P12 (h17, y1350) -->
+        <polyline class="busl" points="785,276 785,1350 802,1350" stroke="var(--w-sck)"/>
+        <!-- MISO (x779) -> P13 (h18, y1405) -->
+        <polyline class="busl" points="779,328 779,1405 802,1405" stroke="var(--w-miso)"/>
+        <!-- GND (ngoài cùng x773) -> G (h20, y1515) -->
+        <polyline class="busl" points="773,250 773,1515 802,1515" stroke="var(--w-gnd)"/>
       </g>
 
       <!-- ===================== CE / CSN (6 dây riêng) ===================== -->
@@ -308,7 +309,7 @@
   <div class="card">
     <ul class="steps">
       <li><b>Hàn 5 dây bus trước</b> (đường ngang dày: 3V3 đỏ, GND xám, SCK xanh dương, MOSI xanh lá, MISO tím). Mỗi màu <b>một sợi chạy ngang</b> ghé cả 3 module (nối tiếp module này sang module kia), rồi <b>một nhánh thả xuống đúng 1 chân J1</b>. Cả 3 module <b>dùng chung</b> 5 chân này.</li>
-      <li><b>Toàn bộ 5 nhánh bus thả về bên TRÁI cột J1</b> (khe giữa M1–M2): SCK/MOSI/MISO + GND gom thành bó dọc, 3V3 thả sát cột. <b>Chừa sạch vùng OLED bên phải.</b></li>
+      <li><b>5 nhánh bus gom thành MỘT bó dọc sát bên trái cột J1</b>, chạy thẳng xuống, mỗi sợi chỉ tẽ ngang một đoạn ngắn vào đúng chân (3V3 ở đầu cột, SCK/MOSI/MISO + GND ở cuối cột). Bó đi thẳng một làn nên <b>không cắt chéo nhau</b>; cũng chừa sạch vùng OLED bên phải.</li>
       <li><b>CE3/CSN3 của M3 đi vòng bên PHẢI OLED</b> (không xuyên qua OLED): chạy ngang phía dưới OLED rồi mới lên module. Nhờ vậy khu OLED chỉ còn dây của chính nó.</li>
       <li><b>Hàn 6 dây CE/CSN sau</b> (vàng = CE, cam = CSN). <b>M1 lấy CE/CSN ở J3 (cột trái)</b> <code>P01/P02</code> — ngay dưới M1 nên chỉ là 2 cọng ngắn, <b>không còn vòng sang phải</b>. M2 lấy ở J1 ngay trên nó (<code>P18/P17</code>). M3 lấy cụm <code>P06/P07</code> (kề nhau) rồi vòng ngoài phải OLED. Mỗi module chỉ 2 sợi riêng, đều ngắn.</li>
       <li><b>Tụ 10–100µF</b> sát chân 1–2 (GND–VCC) mỗi module.</li>
