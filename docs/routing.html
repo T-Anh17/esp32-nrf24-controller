@@ -238,6 +238,16 @@
       <!-- MISO drop: x690 -> P13 -->
       <polyline class="pvt" points="690,215 690,1405 802,1405" stroke="var(--w-miso)"/>
 
+      <!-- ===================== NGUỒN: 2 bus-bar riêng (bạn tự cấp) ===================== -->
+      <!-- +3V3 bar: trên đầu module (y10), nối 3 chân VCC (col3) -->
+      <polyline class="busl" points="288,60 288,10 1508,10 1508,60" stroke="var(--w-power)"/>
+      <line class="pvt" x1="918" y1="60" x2="918" y2="10" stroke="var(--w-power)"/>
+      <text class="railt" x="296" y="6" fill="var(--w-power)">+3V3 bar → nguồn riêng ≥2A</text>
+      <!-- GND bar: dưới module (y248), nối 3 chân GND (col3) -->
+      <polyline class="busl" points="288,136 288,248 1508,248 1508,136" stroke="var(--w-gnd)"/>
+      <line class="pvt" x1="918" y1="136" x2="918" y2="248" stroke="var(--w-gnd)"/>
+      <text class="railt" x="296" y="266" fill="var(--w-gnd)">GND bar → mát chung (cả ESP + nguồn)</text>
+
       <!-- ===================== CE / CSN (6 dây riêng) ===================== -->
       <g>
         <!-- M2 CSN2: P17 (815,910 / h9) -> M2 CSN (842,60) -->
@@ -258,15 +268,17 @@
 
     </svg>
     <div class="legend">
-      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI · P11 (đi trên)</span>
-      <span><i class="sw" style="background:var(--w-sck)"></i>SCK · P12 (đi dưới)</span>
-      <span><i class="sw" style="background:var(--w-miso)"></i>MISO · P13 (đi dưới)</span>
+      <span><i class="sw" style="background:var(--w-power)"></i>+3V3 bar (trên)</span>
+      <span><i class="sw" style="background:var(--w-gnd)"></i>GND bar (dưới)</span>
+      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI · P11 (trên)</span>
+      <span><i class="sw" style="background:var(--w-sck)"></i>SCK · P12 (dưới)</span>
+      <span><i class="sw" style="background:var(--w-miso)"></i>MISO · P13 (dưới)</span>
       <span><i class="sw" style="background:var(--w-ce)"></i>CE (riêng)</span>
       <span><i class="sw" style="background:var(--w-csn)"></i>CSN (riêng)</span>
       <span><i class="sw" style="background:var(--w-i2c)"></i>OLED</span>
       <span><i class="sw" style="background:var(--w-btn)"></i>nút</span>
     </div>
-    <p class="note"><b style="color:var(--w-power)">VCC / GND không vẽ ở đây</b> — bạn nối VCC &amp; GND của 3 module vào <b>rail nguồn 3V3 riêng</b> (bạn tự làm), và nối chung <b>3V3 &amp; G của ESP</b> vào rail đó. Tách nguồn ra khỏi sơ đồ tín hiệu cho đỡ rối.</p>
+    <p class="note"><b style="color:var(--w-power)">VCC &amp; GND = 2 bus-bar riêng</b>: chạy 1 thanh đồng thẳng (bare) sát hàng module — <b>+3V3 bar luồn trên đầu</b> module, <b>GND bar luồn dưới</b> — mỗi module chỉ châm 1 cọng cực ngắn vào thanh. Cấp từ <b>nguồn 3V3 ≥2A của bạn</b> vào 2 thanh; nối <b>3V3 &amp; G của ESP</b> vào 2 thanh đó luôn (mát phải chung thì SPI mới chạy).</p>
     <p class="note">Chân module đọc theo số in: <b>1</b>=GND, <b>2</b>=VCC, <b>3</b>=CE, <b>4</b>=CSN, <b>5</b>=SCK, <b>6</b>=MOSI, <b>7</b>=MISO, <b>8</b>=IRQ (để trống). Sơ đồ nhìn mặt sau nên số in 8·6·4·2 (trên) / 7·5·3·1 (dưới).</p>
   </div>
 
@@ -278,9 +290,10 @@
       <li><b>3 tín hiệu SPI nối chuyền (daisy-chain) module này sang module kế bên:</b> SCK: M1→M2→M3 (2 đoạn ngắn qua khe), tương tự MOSI, MISO. <b>Chỉ 1 sợi</b> từ M2 (gần J1 nhất) thả xuống ESP cho mỗi tín hiệu — không kéo riêng từng module về ESP.</li>
       <li><b>Cho 3 tín hiệu SPI đi 3 cao độ khác nhau:</b> MOSI luồn <b>trên đầu</b> module, SCK &amp; MISO luồn <b>dưới</b> module. Nhờ vậy chúng không đè lên nhau.</li>
       <li><b>CE/CSN: mỗi module 2 cọng ngắn</b> tới chân gần nhất — M1 xuống J3 <code>P01/P02</code>, M2 xuống J1 <code>P18/P17</code>, M3 sang J1 <code>P06/P07</code> (vòng ngoài phải OLED).</li>
-      <li><b>VCC &amp; GND đi riêng ra rail nguồn của bạn</b> — không vẽ ở đây, để sơ đồ chỉ còn dây tín hiệu cho dễ nhìn. Gắn <b>tụ 10–100µF</b> sát chân 1–2 mỗi module.</li>
+      <li><b>VCC &amp; GND = 2 bus-bar (thanh đồng thẳng):</b> +3V3 bar luồn trên đầu module, GND bar luồn dưới, mỗi module châm 1 cọng cực ngắn. Cấp từ nguồn ≥2A của bạn; nối 3V3 &amp; G của ESP vào 2 thanh đó. Gắn <b>tụ 10–100µF</b> sát chân 1–2 mỗi module.</li>
     </ul>
-    <p class="note" style="margin-bottom:0"><b>Lưu ý thật:</b> module đã hàn cố định và 3 chân SPI của ESP nằm cuối cột J1 (gần USB), nên <b>3 sợi SPI thả xuống + 2 sợi CE/CSN của M3 sẽ dài</b> — đây là do vị trí vật lý, không mẹo nào bỏ hẳn được. Cứ cho chúng đi khác làn, cắt nhau tại điểm, là ổn với dây có cách điện.</p>
+    <p class="note" style="margin-bottom:8px"><b>Nói thẳng về giới hạn:</b> 3 module đã hàn cố định và đặt <b>xa nhau</b>. Mỗi module cần <b>5 dây chung</b> (SCK/MOSI/MISO/VCC/GND) → bắt buộc có <b>5 sợi chạy dài nối xuyên 3 module</b>. Đây là <b>sàn tối thiểu</b>, không mẹo đi dây nào bỏ được. Bản này đã làm sạch nhất trong giới hạn đó: cho 5 sợi đi <b>5 mức khác nhau</b> (2 trên + 3 dưới) để không đè dọc lên nhau, và nguồn đi về rail riêng chứ không dồn về ESP.</p>
+    <p class="note" style="margin-bottom:0"><b>Cách DUY NHẤT để hết dây dài:</b> gỡ 3 module ra xếp <b>sát nhau</b> (cụm cạnh J1) — nhưng bạn đã hàn rồi. Nếu muốn, tôi vẽ thử bản "xếp sát" để bạn cân nhắc có đáng tháo ra hàn lại không.</p>
   </div>
 
   <!-- ===== Wire list ===== -->
@@ -303,8 +316,8 @@
       <tr><td>13</td><td>M2 · CSN (ch4)</td><td>ESP · <b>P17</b> (J1)</td><td>CSN riêng</td><td>Cọng ngắn xuống cột phải</td></tr>
       <tr><td>14</td><td>M3 · CE (ch3)</td><td>ESP · <b>P06</b> (J1)</td><td>CE riêng</td><td>Vòng ngoài <b>bên phải</b> OLED</td></tr>
       <tr><td>15</td><td>M3 · CSN (ch4)</td><td>ESP · <b>P07</b> (J1)</td><td>CSN riêng</td><td>Vòng ngoài bên phải OLED</td></tr>
-      <tr><td>—</td><td>VCC (ch2) ×3 + ESP 3V3</td><td>rail nguồn của bạn</td><td>Nguồn</td><td>Bạn tự đấu — nối chung 1 rail 3V3</td></tr>
-      <tr><td>—</td><td>GND (ch1) ×3 + ESP G</td><td>rail GND của bạn</td><td>Mát</td><td>1 mát chung cho tất cả</td></tr>
+      <tr><td>16</td><td>+3V3 bar</td><td>M1·M2·M3 VCC (ch2) + ESP 3V3 + nguồn+</td><td>Nguồn</td><td>1 thanh đồng thẳng <b>trên đầu</b> module, châm cọng ngắn</td></tr>
+      <tr><td>17</td><td>GND bar</td><td>M1·M2·M3 GND (ch1) + ESP G + nguồn−</td><td>Mát</td><td>1 thanh đồng thẳng <b>dưới</b> module — mát chung</td></tr>
       <tr><td>—</td><td>IRQ (ch8) ×3</td><td>—</td><td>—</td><td>Để trống</td></tr>
     </table>
   </div>
