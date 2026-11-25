@@ -18,4 +18,4 @@
 App kết nối Wi-Fi AP `jammer` → gọi HTTP API firmware. Không dùng browser, không BLE.
 
 ## Chân nRF24 → ESP32-S3-WROOM-1
-SCK=12, MISO=13, MOSI=11 (cố định firmware, dùng chung) · 3 module CE/CSN riêng: #1 16/15, #2 18/17, #3 10/7 · VCC=3V3, GND=GND. OLED SSD1306 SDA=8/SCL=9. Nút OK=0/Next=21/Prev=47. LED RGB GPIO38.
+SCK=12, MISO=13, MOSI=11 (cố định firmware, dùng chung) · 3 module CE/CSN riêng: #1 16/15, #2 18/17, #3 6/7 · VCC=3V3, GND=GND. OLED SSD1306 SDA=8/SCL=9. Nút OK=0/Next=21/Prev=47. LED RGB GPIO38.

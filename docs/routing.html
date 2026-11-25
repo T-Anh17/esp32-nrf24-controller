@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>nRF24 Jammer — đi dây theo board thật (mặt sau)</title>
+<style>
+  :root{
+    --bg:#f6f6f7; --paper:#fff; --fg:#18181b; --mut:#6b6b74; --line:#dedee3;
+    --part:#f1f5f9; --part-edge:#94a3b8; --warn:#ea580c; --ok:#16a34a;
+    --pad:#1b1b1f; --padr:#3a3a42;
+    --w-power:#dc2626; --w-gnd:#6b7280; --w-ce:#d4a72c; --w-csn:#e0823d;
+    --w-sck:#2563eb; --w-mosi:#16a34a; --w-miso:#a371f7; --w-i2c:#db2777; --w-btn:#0891b2;
+    --chan:#eef2f7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0d0d10; --paper:#17171b; --fg:#f1f1f3; --mut:#a0a0aa; --line:#2c2c33;
+      --part:#23232a; --part-edge:#55556a; --chan:#1b1f27; --pad:#e8e8ec; --padr:#b8b8c2;
+      --w-gnd:#9aa0ab; --w-ce:#e3b341; --w-csn:#e0823d; --w-sck:#58a6ff; --w-mosi:#3fb950; --w-miso:#c08cff;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  main{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+  h1{font-size:24px;margin:0 0 4px}
+  h2{font-size:18px;margin:28px 0 10px}
+  .sub{color:var(--mut);margin:0 0 16px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  .banner{background:color-mix(in srgb,var(--warn) 12%,var(--paper));border:1px solid color-mix(in srgb,var(--warn) 45%,var(--line))}
+  svg{width:100%;height:auto;display:block}
+  svg text{fill:var(--fg);font-family:inherit}
+  .note{color:var(--mut);font-size:13px}
+  .warn{color:var(--warn);font-weight:600}
+  code{font-size:13px;background:var(--bg);padding:1px 5px;border-radius:4px}
+  .scroll{overflow-x:auto}
+  .sw{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mut);margin-top:10px}
+  ul.steps{margin:0;padding-left:20px}
+  ul.steps li{margin:6px 0}
+  /* svg bits */
+  .board{fill:var(--part);stroke:var(--part-edge);stroke-width:1.5}
+  .modt{font-size:17px;font-weight:700;fill:var(--fg)}
+  .padc{fill:var(--pad)}
+  .padn{font-size:12px;font-weight:700;fill:var(--bg)}
+  .fnl{font-size:12px;fill:var(--fg)}
+  .gpio{font-size:12.5px;font-weight:700;fill:var(--fg)}
+  .pinno{font-size:11px;fill:var(--mut)}
+  .busl{stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .pvt{stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<main>
+  <h1>Đi dây 3 module nRF24 — theo board thật (nhìn mặt sau)</h1>
+  <p class="sub">Vẽ đè lên đúng footprint bạn gửi: 3 module 2×4 ở trên, 2 hàng chân ESP ở dưới, OLED 4 chân bên phải. <b>Bản này dùng CE3 = P10</b> (map cũ). Firmware hiện mặc định <b>CE3 = P06</b> — xem <a href="routing-p06.html">routing-p06.html</a> cho bản khớp firmware (gọn hơn).</p>
+
+  <div class="card banner">
+    <b>✓ Đã khớp đúng silk board bạn.</b> Cột <b>PHẢI = J1</b> (đầu là <code>3V3</code>, rồi <code>P04 P05 P06 P07…</code> — phía gắn hết dây nRF + OLED),
+    cột <b>TRÁI = J3</b> (<code>G TX RX P01…</code>, có nút <code>P48/P47/P21</code> đã đấu). Nhãn trên sơ đồ ghi theo <b>đúng ký hiệu <code>P..</code> in trên board</b> (P07 = GPIO7).
+    <b>Lưu ý vị trí:</b> board bạn chỉ có <b>1 chân 3V3 ở đầu</b> (hàng 2 là <code>EN</code>), nên các hàng dịch lên 1 so với DevKitC gốc — đặc biệt <b>GND dùng là chân <code>G</code> ở hàng 20</b> (ngay dưới <code>P14</code>), <u>không phải</u> 2 chân G ở đáy.
+  </div>
+
+  <div class="card scroll">
+    <svg viewBox="0 0 1600 1740" role="img" aria-label="Sơ đồ đi dây nRF24 theo board thật">
+
+      <!-- ===================== MODULES ===================== -->
+      <!-- M1 -->
+      <rect class="board" x="40" y="38" width="272" height="124" rx="10"/>
+      <text class="modt" x="176" y="30" text-anchor="middle">nRF24 #1</text>
+      <!-- M2 -->
+      <rect class="board" x="670" y="38" width="272" height="124" rx="10"/>
+      <text class="modt" x="806" y="30" text-anchor="middle">nRF24 #2</text>
+      <!-- M3 -->
+      <rect class="board" x="1260" y="38" width="272" height="124" rx="10"/>
+      <text class="modt" x="1396" y="30" text-anchor="middle">nRF24 #3</text>
+
+      <!-- pad macro: circle + pin number; function label small.
+           top row y=60 : IRQ(8) MOSI(6) CSN(4) VCC(2)
+           bot row y=136: MISO(7) SCK(5) CE(3) GND(1)   -->
+      <!-- ---- M1 pads (x: 60 136 212 288) ---- -->
+      <g>
+        <circle class="padc" cx="60"  cy="60"  r="15"/><text class="padn" x="60"  y="64" text-anchor="middle">8</text>
+        <circle class="padc" cx="136" cy="60"  r="15"/><text class="padn" x="136" y="64" text-anchor="middle">6</text>
+        <circle class="padc" cx="212" cy="60"  r="15"/><text class="padn" x="212" y="64" text-anchor="middle">4</text>
+        <circle class="padc" cx="288" cy="60"  r="15"/><text class="padn" x="288" y="64" text-anchor="middle">2</text>
+        <circle class="padc" cx="60"  cy="136" r="15"/><text class="padn" x="60"  y="140" text-anchor="middle">7</text>
+        <circle class="padc" cx="136" cy="136" r="15"/><text class="padn" x="136" y="140" text-anchor="middle">5</text>
+        <circle class="padc" cx="212" cy="136" r="15"/><text class="padn" x="212" y="140" text-anchor="middle">3</text>
+        <circle class="padc" cx="288" cy="136" r="15"/><text class="padn" x="288" y="140" text-anchor="middle">1</text>
+        <text class="fnl" x="60"  y="92" text-anchor="middle" opacity=".5">IRQ</text>
+        <text class="fnl" x="136" y="92" text-anchor="middle">MOSI</text>
+        <text class="fnl" x="212" y="92" text-anchor="middle">CSN</text>
+        <text class="fnl" x="288" y="92" text-anchor="middle">VCC</text>
+        <text class="fnl" x="60"  y="124" text-anchor="middle">MISO</text>
+        <text class="fnl" x="136" y="124" text-anchor="middle">SCK</text>
+        <text class="fnl" x="212" y="124" text-anchor="middle">CE</text>
+        <text class="fnl" x="288" y="124" text-anchor="middle">GND</text>
+      </g>
+      <!-- ---- M2 pads (x: 690 766 842 918) ---- -->
+      <g>
+        <circle class="padc" cx="690" cy="60"  r="15"/><text class="padn" x="690" y="64" text-anchor="middle">8</text>
+        <circle class="padc" cx="766" cy="60"  r="15"/><text class="padn" x="766" y="64" text-anchor="middle">6</text>
+        <circle class="padc" cx="842" cy="60"  r="15"/><text class="padn" x="842" y="64" text-anchor="middle">4</text>
+        <circle class="padc" cx="918" cy="60"  r="15"/><text class="padn" x="918" y="64" text-anchor="middle">2</text>
+        <circle class="padc" cx="690" cy="136" r="15"/><text class="padn" x="690" y="140" text-anchor="middle">7</text>
+        <circle class="padc" cx="766" cy="136" r="15"/><text class="padn" x="766" y="140" text-anchor="middle">5</text>
+        <circle class="padc" cx="842" cy="136" r="15"/><text class="padn" x="842" y="140" text-anchor="middle">3</text>
+        <circle class="padc" cx="918" cy="136" r="15"/><text class="padn" x="918" y="140" text-anchor="middle">1</text>
+        <text class="fnl" x="690" y="92" text-anchor="middle" opacity=".5">IRQ</text>
+        <text class="fnl" x="766" y="92" text-anchor="middle">MOSI</text>
+        <text class="fnl" x="842" y="92" text-anchor="middle">CSN</text>
+        <text class="fnl" x="918" y="92" text-anchor="middle">VCC</text>
+        <text class="fnl" x="690" y="124" text-anchor="middle">MISO</text>
+        <text class="fnl" x="766" y="124" text-anchor="middle">SCK</text>
+        <text class="fnl" x="842" y="124" text-anchor="middle">CE</text>
+        <text class="fnl" x="918" y="124" text-anchor="middle">GND</text>
+      </g>
+      <!-- ---- M3 pads (x: 1280 1356 1432 1508) ---- -->
+      <g>
+        <circle class="padc" cx="1280" cy="60"  r="15"/><text class="padn" x="1280" y="64" text-anchor="middle">8</text>
+        <circle class="padc" cx="1356" cy="60"  r="15"/><text class="padn" x="1356" y="64" text-anchor="middle">6</text>
+        <circle class="padc" cx="1432" cy="60"  r="15"/><text class="padn" x="1432" y="64" text-anchor="middle">4</text>
+        <circle class="padc" cx="1508" cy="60"  r="15"/><text class="padn" x="1508" y="64" text-anchor="middle">2</text>
+        <circle class="padc" cx="1280" cy="136" r="15"/><text class="padn" x="1280" y="140" text-anchor="middle">7</text>
+        <circle class="padc" cx="1356" cy="136" r="15"/><text class="padn" x="1356" y="140" text-anchor="middle">5</text>
+        <circle class="padc" cx="1432" cy="136" r="15"/><text class="padn" x="1432" y="140" text-anchor="middle">3</text>
+        <circle class="padc" cx="1508" cy="136" r="15"/><text class="padn" x="1508" y="140" text-anchor="middle">1</text>
+        <text class="fnl" x="1280" y="92" text-anchor="middle" opacity=".5">IRQ</text>
+        <text class="fnl" x="1356" y="92" text-anchor="middle">MOSI</text>
+        <text class="fnl" x="1432" y="92" text-anchor="middle">CSN</text>
+        <text class="fnl" x="1508" y="92" text-anchor="middle">VCC</text>
+        <text class="fnl" x="1280" y="124" text-anchor="middle">MISO</text>
+        <text class="fnl" x="1356" y="124" text-anchor="middle">SCK</text>
+        <text class="fnl" x="1432" y="124" text-anchor="middle">CE</text>
+        <text class="fnl" x="1508" y="124" text-anchor="middle">GND</text>
+      </g>
+
+      <!-- ===================== ESP COLUMNS ===================== -->
+      <!-- board outline between the two columns -->
+      <rect class="board" x="60" y="398" width="785" height="1282" rx="14" opacity=".55"/>
+      <text class="modt" x="452" y="430" text-anchor="middle">ESP32-S3 (mặt sau)</text>
+      <text class="pinno" x="452" y="450" text-anchor="middle">cột trái = J3 · cột phải = J1 — khớp silk board bạn</text>
+
+      <!-- LEFT column J3 : x=90 , 22 pins, y=470 + (i-1)*55 -->
+      <!-- RIGHT column J1: x=815, same y -->
+      <!-- draw all dots -->
+      <g>
+        <!-- left dots -->
+        <circle class="padc" cx="90" cy="470"  r="13"/><circle class="padc" cx="90" cy="525" r="13"/><circle class="padc" cx="90" cy="580" r="13"/>
+        <circle class="padc" cx="90" cy="635"  r="13"/><circle class="padc" cx="90" cy="690" r="13"/><circle class="padc" cx="90" cy="745" r="13"/>
+        <circle class="padc" cx="90" cy="800"  r="13"/><circle class="padc" cx="90" cy="855" r="13"/><circle class="padc" cx="90" cy="910" r="13"/>
+        <circle class="padc" cx="90" cy="965"  r="13"/><circle class="padc" cx="90" cy="1020" r="13"/><circle class="padc" cx="90" cy="1075" r="13"/>
+        <circle class="padc" cx="90" cy="1130" r="13"/><circle class="padc" cx="90" cy="1185" r="13"/><circle class="padc" cx="90" cy="1240" r="13"/>
+        <circle class="padc" cx="90" cy="1295" r="13"/><circle class="padc" cx="90" cy="1350" r="13"/><circle class="padc" cx="90" cy="1405" r="13"/>
+        <circle class="padc" cx="90" cy="1460" r="13"/><circle class="padc" cx="90" cy="1515" r="13"/><circle class="padc" cx="90" cy="1570" r="13"/>
+        <circle class="padc" cx="90" cy="1625" r="13"/>
+      </g>
+      <!-- J3 labels (only the ones already used) -->
+      <g class="gpio" text-anchor="start">
+        <text x="112" y="1299" fill="var(--w-btn)">P48 · Prev</text>
+        <text x="112" y="1354" fill="var(--w-btn)">P47 · Next</text>
+        <text x="112" y="1409" fill="var(--w-btn)">P21 · OK</text>
+      </g>
+      <text class="pinno" x="112" y="1446" >nút — đã đấu</text>
+      <text class="pinno" x="90" y="1660" text-anchor="middle">J3 · hàng1→22</text>
+
+      <!-- RIGHT column J1 dots -->
+      <g>
+        <circle class="padc" cx="815" cy="470"  r="13"/><circle class="padc" cx="815" cy="525" r="13"/><circle class="padc" cx="815" cy="580" r="13"/>
+        <circle class="padc" cx="815" cy="635"  r="13"/><circle class="padc" cx="815" cy="690" r="13"/><circle class="padc" cx="815" cy="745" r="13"/>
+        <circle class="padc" cx="815" cy="800"  r="13"/><circle class="padc" cx="815" cy="855" r="13"/><circle class="padc" cx="815" cy="910" r="13"/>
+        <circle class="padc" cx="815" cy="965"  r="13"/><circle class="padc" cx="815" cy="1020" r="13"/><circle class="padc" cx="815" cy="1075" r="13"/>
+        <circle class="padc" cx="815" cy="1130" r="13"/><circle class="padc" cx="815" cy="1185" r="13"/><circle class="padc" cx="815" cy="1240" r="13"/>
+        <circle class="padc" cx="815" cy="1295" r="13"/><circle class="padc" cx="815" cy="1350" r="13"/><circle class="padc" cx="815" cy="1405" r="13"/>
+        <circle class="padc" cx="815" cy="1460" r="13"/><circle class="padc" cx="815" cy="1515" r="13"/><circle class="padc" cx="815" cy="1570" r="13"/>
+        <circle class="padc" cx="815" cy="1625" r="13"/>
+      </g>
+      <!-- J1 used-pin labels (to the right of the dots) — đúng silk & hàng thật -->
+      <g class="gpio" text-anchor="end">
+        <text x="793" y="474"  fill="var(--w-power)">3V3</text>
+        <text x="793" y="749"  fill="var(--w-csn)">P07 · CSN3</text>
+        <text x="793" y="804"  fill="var(--w-csn)">P15 · CSN1</text>
+        <text x="793" y="859"  fill="var(--w-ce)">P16 · CE1</text>
+        <text x="793" y="914"  fill="var(--w-csn)">P17 · CSN2</text>
+        <text x="793" y="969"  fill="var(--w-ce)">P18 · CE2</text>
+        <text x="793" y="1024" fill="var(--w-i2c)">P08 · SCL</text>
+        <text x="793" y="1189" fill="var(--w-i2c)">P09 · SDA</text>
+        <text x="793" y="1244" fill="var(--w-ce)">P10 · CE3</text>
+        <text x="793" y="1299" fill="var(--w-mosi)">P11 · MOSI</text>
+        <text x="793" y="1354" fill="var(--w-sck)">P12 · SCK</text>
+        <text x="793" y="1409" fill="var(--w-miso)">P13 · MISO</text>
+        <text x="793" y="1519" fill="var(--w-gnd)">G · GND</text>
+      </g>
+      <!-- row index on the right of J1 dots -->
+      <g class="pinno" text-anchor="start">
+        <text x="834" y="474">h1</text><text x="834" y="749">h6</text><text x="834" y="804">h7</text>
+        <text x="834" y="859">h8</text><text x="834" y="914">h9</text><text x="834" y="969">h10</text>
+        <text x="834" y="1024">h11</text><text x="834" y="1189">h14</text><text x="834" y="1244">h15</text>
+        <text x="834" y="1299">h16</text><text x="834" y="1354">h17</text><text x="834" y="1409">h18</text>
+        <text x="834" y="1519">h20</text>
+      </g>
+
+      <!-- OLED block (right) -->
+      <rect class="board" x="1090" y="470" width="300" height="70" rx="10"/>
+      <text class="modt" x="1240" y="462" text-anchor="middle">OLED — đã đấu</text>
+      <g>
+        <circle class="padc" cx="1130" cy="505" r="13"/><text class="padn" x="1130" y="509" text-anchor="middle">V</text>
+        <circle class="padc" cx="1200" cy="505" r="13"/><text class="padn" x="1200" y="509" text-anchor="middle">G</text>
+        <circle class="padc" cx="1270" cy="505" r="13"/><text class="fnl" x="1270" y="534" text-anchor="middle">SDA</text>
+        <circle class="padc" cx="1340" cy="505" r="13"/><text class="fnl" x="1340" y="534" text-anchor="middle">SCL</text>
+        <text class="fnl" x="1130" y="534" text-anchor="middle">3V3</text>
+        <text class="fnl" x="1200" y="534" text-anchor="middle">GND</text>
+      </g>
+
+      <!-- ===================== BUS (5 dây dùng chung) ===================== -->
+      <!-- horizontal rails under modules: 3V3=224 GND=250 SCK=276 MOSI=302 MISO=328 -->
+      <line class="busl" x1="60"  y1="224" x2="1508" y2="224" stroke="var(--w-power)"/>
+      <line class="busl" x1="60"  y1="250" x2="1508" y2="250" stroke="var(--w-gnd)"/>
+      <line class="busl" x1="136" y1="276" x2="1356" y2="276" stroke="var(--w-sck)"/>
+      <line class="busl" x1="136" y1="302" x2="1356" y2="302" stroke="var(--w-mosi)"/>
+      <line class="busl" x1="60"  y1="328" x2="1280" y2="328" stroke="var(--w-miso)"/>
+
+      <!-- taps up to module pads -->
+      <g>
+        <!-- 3V3 -> VCC (x 288/918/1508) -->
+        <line class="pvt" x1="288"  y1="224" x2="288"  y2="75" stroke="var(--w-power)"/>
+        <line class="pvt" x1="918"  y1="224" x2="918"  y2="75" stroke="var(--w-power)"/>
+        <line class="pvt" x1="1508" y1="224" x2="1508" y2="75" stroke="var(--w-power)"/>
+        <!-- GND -> GND (x 288/918/1508, bottom pad y136) -->
+        <line class="pvt" x1="300"  y1="250" x2="300"  y2="136" stroke="var(--w-gnd)"/>
+        <line class="pvt" x1="930"  y1="250" x2="930"  y2="136" stroke="var(--w-gnd)"/>
+        <line class="pvt" x1="1520" y1="250" x2="1520" y2="136" stroke="var(--w-gnd)"/>
+        <line class="pvt" x1="300"  y1="136" x2="288"  y2="136" stroke="var(--w-gnd)"/>
+        <line class="pvt" x1="930"  y1="136" x2="918"  y2="136" stroke="var(--w-gnd)"/>
+        <line class="pvt" x1="1520" y1="136" x2="1508" y2="136" stroke="var(--w-gnd)"/>
+        <!-- SCK -> SCK (x 136/766/1356 bottom) -->
+        <line class="pvt" x1="136"  y1="276" x2="136"  y2="136" stroke="var(--w-sck)"/>
+        <line class="pvt" x1="766"  y1="276" x2="766"  y2="136" stroke="var(--w-sck)"/>
+        <line class="pvt" x1="1356" y1="276" x2="1356" y2="136" stroke="var(--w-sck)"/>
+        <!-- MOSI -> MOSI (x 136/766/1356 top) -->
+        <line class="pvt" x1="124"  y1="302" x2="124"  y2="60" stroke="var(--w-mosi)"/>
+        <line class="pvt" x1="754"  y1="302" x2="754"  y2="60" stroke="var(--w-mosi)"/>
+        <line class="pvt" x1="1344" y1="302" x2="1344" y2="60" stroke="var(--w-mosi)"/>
+        <line class="pvt" x1="124"  y1="60"  x2="136"  y2="60" stroke="var(--w-mosi)"/>
+        <line class="pvt" x1="754"  y1="60"  x2="766"  y2="60" stroke="var(--w-mosi)"/>
+        <line class="pvt" x1="1344" y1="60"  x2="1356" y2="60" stroke="var(--w-mosi)"/>
+        <!-- MISO -> MISO (x 60/690/1280 bottom) -->
+        <line class="pvt" x1="60"   y1="328" x2="60"   y2="136" stroke="var(--w-miso)"/>
+        <line class="pvt" x1="690"  y1="328" x2="690"  y2="136" stroke="var(--w-miso)"/>
+        <line class="pvt" x1="1280" y1="328" x2="1280" y2="136" stroke="var(--w-miso)"/>
+      </g>
+
+      <!-- feeders: bus rail -> J1 pad (through the inter-module gaps) -->
+      <!-- TẤT CẢ feeder bus thả về bên TRÁI cột J1 — chừa sạch vùng OLED bên phải -->
+      <g>
+        <!-- 3V3: thả sát trái cột xuống 3V3 (815,470 / h1) -->
+        <polyline class="busl" points="795,224 795,470 802,470" stroke="var(--w-power)"/>
+        <!-- GND: khe trái (x630) xuống G (815,1515 / h20) -->
+        <polyline class="busl" points="630,250 630,1515 802,1515" stroke="var(--w-gnd)"/>
+        <!-- SCK: khe A (x520) xuống P12 (815,1350 / h17) -->
+        <polyline class="busl" points="520,276 520,1350 802,1350" stroke="var(--w-sck)"/>
+        <!-- MOSI: khe A (x470) xuống P11 (815,1295 / h16) -->
+        <polyline class="busl" points="470,302 470,1295 802,1295" stroke="var(--w-mosi)"/>
+        <!-- MISO: khe A (x420) xuống P13 (815,1405 / h18) -->
+        <polyline class="busl" points="420,328 420,1405 802,1405" stroke="var(--w-miso)"/>
+      </g>
+
+      <!-- ===================== CE / CSN (6 dây riêng) ===================== -->
+      <g>
+        <!-- M2 CSN2: P17 (815,910 / h9) -> M2 CSN (842,60) -->
+        <polyline class="pvt" points="802,910 858,910 858,60 842,60" stroke="var(--w-csn)"/>
+        <!-- M2 CE2 : P18 (815,965 / h10) -> M2 CE (842,136) -->
+        <polyline class="pvt" points="802,965 826,965 826,180 842,180 842,136" stroke="var(--w-ce)"/>
+
+        <!-- M1 CSN1: P15 (815,800 / h7) -> M1 CSN (212,60) -->
+        <polyline class="pvt" points="802,800 360,800 360,40 212,40 212,60" stroke="var(--w-csn)"/>
+        <!-- M1 CE1 : P16 (815,855 / h8) -> M1 CE (212,136) -->
+        <polyline class="pvt" points="802,855 338,855 338,186 212,186 212,136" stroke="var(--w-ce)"/>
+
+        <!-- M3 CSN3: P07 (815,745 / h6) -> chạy dưới OLED rồi lên PHẢI OLED (x1410) -> M3 CSN (1432,60) -->
+        <polyline class="pvt" points="802,745 1410,745 1410,44 1432,44 1432,60" stroke="var(--w-csn)"/>
+        <!-- M3 CE3 : P10 (815,1240 / h15) -> lên PHẢI OLED (x1424) -> M3 CE (1432,136) -->
+        <polyline class="pvt" points="802,1240 1424,1240 1424,180 1432,180 1432,136" stroke="var(--w-ce)"/>
+      </g>
+
+    </svg>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--w-power)"></i>3V3</span>
+      <span><i class="sw" style="background:var(--w-gnd)"></i>GND</span>
+      <span><i class="sw" style="background:var(--w-sck)"></i>SCK · P12</span>
+      <span><i class="sw" style="background:var(--w-mosi)"></i>MOSI · P11</span>
+      <span><i class="sw" style="background:var(--w-miso)"></i>MISO · P13</span>
+      <span><i class="sw" style="background:var(--w-ce)"></i>CE (riêng)</span>
+      <span><i class="sw" style="background:var(--w-csn)"></i>CSN (riêng)</span>
+      <span><i class="sw" style="background:var(--w-i2c)"></i>OLED</span>
+      <span><i class="sw" style="background:var(--w-btn)"></i>nút</span>
+    </div>
+    <p class="note">Chân module đọc theo số in: <b>1</b>=GND, <b>2</b>=VCC, <b>3</b>=CE, <b>4</b>=CSN, <b>5</b>=SCK, <b>6</b>=MOSI, <b>7</b>=MISO, <b>8</b>=IRQ (để trống). Sơ đồ nhìn mặt sau nên số in 8·6·4·2 (trên) / 7·5·3·1 (dưới) — đúng như ảnh bạn gửi.</p>
+  </div>
+
+  <!-- ===== cách đọc / thứ tự hàn ===== -->
+  <h2>Cách đi (đúng thứ tự để khỏi đè dây)</h2>
+  <div class="card">
+    <ul class="steps">
+      <li><b>Hàn 5 dây bus trước</b> (đường ngang dày: 3V3 đỏ, GND xám, SCK xanh dương, MOSI xanh lá, MISO tím). Mỗi màu <b>một sợi chạy ngang</b> ghé cả 3 module (nối tiếp module này sang module kia), rồi <b>một nhánh thả xuống đúng 1 chân J1</b>. Cả 3 module <b>dùng chung</b> 5 chân này.</li>
+      <li><b>Toàn bộ 5 nhánh bus thả về bên TRÁI cột J1</b> (khe giữa M1–M2): SCK/MOSI/MISO + GND gom thành bó dọc, 3V3 thả sát cột. <b>Chừa sạch vùng OLED bên phải.</b></li>
+      <li><b>CE3/CSN3 của M3 đi vòng bên PHẢI OLED</b> (không xuyên qua OLED): chạy ngang phía dưới OLED rồi mới lên module. Nhờ vậy khu OLED chỉ còn dây của chính nó.</li>
+      <li><b>Hàn 6 dây CE/CSN sau</b> (vàng = CE, cam = CSN), mỗi module 2 sợi tới đúng GPIO riêng. M2 ngắn nhất (ngay trên J1). M1 (trái) và M3 (phải) dài hơn vì nằm xa — chạy men mép trên, cắt bus ở góc vuông.</li>
+      <li><b>Tụ 10–100µF</b> sát chân 1–2 (GND–VCC) mỗi module.</li>
+    </ul>
+    <p class="note" style="margin-bottom:0"><b>Muốn ngắn gọn hơn nữa:</b> 3 dây SPI bắt buộc ở G11/G12/G13 (cuối cột J1). Nếu dời cụm 3 module xuống <b>sát cuối board (gần USB)</b> thì cả bus lẫn CE/CSN đều ngắn, gần như hết dây dài. Còn để module ở trên như hình thì 3 sợi SPI sẽ là mấy sợi dài nhất — chấp nhận được vì dây đồng có cách điện.</p>
+  </div>
+
+  <div class="card banner">
+    <p style="margin:0"><span class="warn">Đổi chân cho gọn (không cần nạp lại):</span> CE/CSN đổi runtime bằng serial 115200 hoặc web —
+    <code>set nrf24 &lt;ce1,csn1&gt; &lt;ce2,csn2&gt; &lt;ce3,csn3&gt;</code>. Chỉ <b>SCK=12 / MOSI=11 / MISO=13 giữ nguyên</b>.
+    Bạn muốn mỗi module lấy 2 chân kề nhau trên board → gửi tôi 3 cặp GPIO, tôi ra đúng câu lệnh.</p>
+  </div>
+</main>
+</body>
+</html>
